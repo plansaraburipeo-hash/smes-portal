@@ -388,9 +388,6 @@
     <button class="present-btn" onclick="window.print()">
       <span>🖨️</span> พิมพ์ / PDF
     </button>
-    <a href="smes_architecture.svg" id="link-svg" target="_blank" class="present-btn" style="text-decoration: none;">
-      <span>🖼️</span> ดูไฟล์ SVG
-    </a>
   </div>
 </div>
 
@@ -856,20 +853,17 @@
     var body = document.body;
     var btnText = document.getElementById('theme-text');
     var btnIcon = document.getElementById('theme-icon');
-    var linkSvg = document.getElementById('link-svg');
 
     if (isDark) {
       body.classList.remove('theme-light');
       body.classList.add('theme-dark');
       btnText.innerText = "สลับเป็นโหมดสว่าง (Light)";
       btnIcon.innerText = "☀️";
-      if (linkSvg) linkSvg.href = "smes_architecture.svg";
     } else {
       body.classList.remove('theme-dark');
       body.classList.add('theme-light');
       btnText.innerText = "สลับเป็นโหมดมืด (Dark)";
       btnIcon.innerText = "🌙";
-      if (linkSvg) linkSvg.href = "smes_architecture_light.svg";
     }
   }
 
