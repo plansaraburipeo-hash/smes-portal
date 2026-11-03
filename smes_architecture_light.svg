@@ -1,0 +1,547 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1560" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="background-color: #f8fafc; display: block; margin: 0 auto;">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGradLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="50%" stop-color="#f1f5f9"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+
+    <!-- Layer Card Gradients (Light) -->
+    <linearGradient id="feGradLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#eff6ff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#dbeafe" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="beGradLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#faf5ff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#f3e8ff" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="dbGradLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ecfdf5" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#d1fae5" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="extGradLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fffbeb" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#fef3c7" stop-opacity="0.4"/>
+    </linearGradient>
+
+    <!-- Soft Drop Shadows for Light Mode -->
+    <filter id="cardShadowLight" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+    <filter id="layerShadowLight" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#64748b" flood-opacity="0.08"/>
+    </filter>
+    <filter id="lineGlowLight" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#06c755" flood-opacity="0.25"/>
+    </filter>
+
+    <!-- Arrow Markers (High Contrast) -->
+    <marker id="arrBlueD" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+      <polygon points="0,0 7,3.5 0,7" fill="#2563eb"/>
+    </marker>
+    <marker id="arrBlueU" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto-start-reverse">
+      <polygon points="0,0 7,3.5 0,7" fill="#2563eb"/>
+    </marker>
+    <marker id="arrGreenD" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+      <polygon points="0,0 7,3.5 0,7" fill="#059669"/>
+    </marker>
+    <marker id="arrAmberD" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+      <polygon points="0,0 7,3.5 0,7" fill="#d97706"/>
+    </marker>
+  </defs>
+
+  <style>
+    :root { background-color: #f8fafc; color-scheme: light; }
+    svg { background-color: #f8fafc; }
+    .txt-title-l { font-family: system-ui, -apple-system, 'Prompt', 'Segoe UI', sans-serif; font-weight: 800; fill: #0f172a; }
+    .txt-sub-l { font-family: system-ui, -apple-system, 'Prompt', 'Segoe UI', sans-serif; fill: #0f172a; font-size: 13.5px; }
+    .txt-layer-badge-l { font-family: system-ui, -apple-system, 'Prompt', 'Segoe UI', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .txt-group-title-l { font-family: system-ui, -apple-system, 'Prompt', 'Segoe UI', sans-serif; font-size: 13px; font-weight: 700; }
+    .txt-card-title-l { font-family: system-ui, -apple-system, 'Prompt', 'Segoe UI', sans-serif; font-size: 12.5px; font-weight: 700; }
+    .txt-file-l { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; }
+    .txt-desc-l { font-family: system-ui, -apple-system, 'Prompt', 'Segoe UI', sans-serif; font-size: 10.5px; fill: #475569; }
+  </style>
+
+  <!-- ==================== BACKGROUND ==================== -->
+  <rect width="1600" height="1560" fill="url(#bgGradLight)"/>
+
+  <!-- Subtle Grid Lines -->
+  <g opacity="0.4" stroke="#cbd5e1" stroke-width="0.8" stroke-dasharray="4 4">
+    <line x1="100" y1="0" x2="100" y2="1560"/>
+    <line x1="300" y1="0" x2="300" y2="1560"/>
+    <line x1="500" y1="0" x2="500" y2="1560"/>
+    <line x1="700" y1="0" x2="700" y2="1560"/>
+    <line x1="900" y1="0" x2="900" y2="1560"/>
+    <line x1="1100" y1="0" x2="1100" y2="1560"/>
+    <line x1="1300" y1="0" x2="1300" y2="1560"/>
+    <line x1="1500" y1="0" x2="1500" y2="1560"/>
+  </g>
+
+  <!-- ==================== HEADER ==================== -->
+  <g transform="translate(0, 30)">
+    <!-- Agency Pill -->
+    <rect x="670" y="0" width="260" height="28" rx="14" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+    <text x="800" y="19" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#047857">
+      🏛️ สำนักงานศึกษาธิการจังหวัดสระบุรี
+    </text>
+
+    <!-- Main Title -->
+    <text x="800" y="62" text-anchor="middle" class="txt-title-l" font-size="28" letter-spacing="0.02em">
+      แผนผังสถาปัตยกรรมระบบ S-MES
+    </text>
+    <text x="800" y="86" text-anchor="middle" class="txt-sub-l" font-weight="700">
+      System for Management and Evaluation of Strategies
+    </text>
+    <text x="800" y="104" text-anchor="middle" class="txt-desc-l" font-size="11.5">
+      ระบบสารสนเทศบริหารจัดการและประเมินผลยุทธศาสตร์ บนแพลตฟอร์ม Google Apps Script &amp; Google Sheets
+    </text>
+  </g>
+
+  <!-- ==================== 1. FRONTEND LAYER ==================== -->
+  <g transform="translate(50, 150)">
+    <rect width="1500" height="215" rx="18" fill="url(#feGradLight)" stroke="#93c5fd" stroke-width="1.5" filter="url(#layerShadowLight)"/>
+
+    <rect x="20" y="16" width="460" height="30" rx="15" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.2"/>
+    <text x="250" y="36" text-anchor="middle" class="txt-layer-badge-l" fill="#1e40af">
+      🖥️ ชั้นส่วนหน้า (Frontend Layer) — ส่วนแสดงผลและประสบการณ์ผู้ใช้
+    </text>
+    <text x="1480" y="36" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#2563eb" font-weight="600">
+      HTML5 · Single Page Application (SPA) · Browser Runtime
+    </text>
+
+    <!-- Entry Point Cards (Left Column) -->
+    <g transform="translate(25, 60)">
+      <!-- Index.html -->
+      <rect width="420" height="66" rx="10" fill="#ffffff" stroke="#bfdbfe" stroke-width="1.2" filter="url(#cardShadowLight)"/>
+      <text x="15" y="26" class="txt-card-title-l" fill="#1e3a8a">📋 Index.html</text>
+      <rect x="15" y="33" width="130" height="18" rx="4" fill="#eff6ff"/>
+      <text x="22" y="46" class="txt-file-l" fill="#2563eb">HTML Shell &amp; Layout</text>
+      <text x="155" y="46" class="txt-desc-l">หน้าจอหลัก, Navigation Sidebar (แยก 3 กลุ่มงาน + ส่วนสนับสนุน), กระดิ่งแจ้งเตือน Real-time</text>
+
+      <!-- JS.html -->
+      <g transform="translate(0, 76)">
+        <rect width="420" height="66" rx="10" fill="#ffffff" stroke="#bfdbfe" stroke-width="1.2" filter="url(#cardShadowLight)"/>
+        <text x="15" y="26" class="txt-card-title-l" fill="#1e3a8a">⚡ JS.html</text>
+        <rect x="15" y="33" width="130" height="18" rx="4" fill="#eff6ff"/>
+        <text x="22" y="46" class="txt-file-l" fill="#2563eb">UI Logic &amp; Controllers</text>
+        <text x="155" y="46" class="txt-desc-l">จัดการสคริปต์หน้าจอ, SweetAlert2, Dynamic Forms, คำนวณงบประมาณ และเรียกเซิร์ฟเวอร์</text>
+      </g>
+    </g>
+
+    <!-- UI Sub-Modules (Right 3 Blocks based on real menu) -->
+    <g transform="translate(470, 60)">
+      <!-- Group 1: นโยบายและแผน -->
+      <rect width="325" height="142" rx="10" fill="#ffffff" stroke="#7dd3fc" stroke-width="1.2" filter="url(#cardShadowLight)"/>
+      <text x="15" y="22" class="txt-group-title-l" fill="#0284c7">📁 กลุ่มนโยบายและแผน</text>
+      <text x="15" y="44" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 📊 ภาพรวม (Dashboard)</text>
+      <text x="15" y="63" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 🧮 จัดสรร/โยกงบประมาณ</text>
+      <text x="15" y="82" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 📅 ติดตามแผนงาน (Gantt)</text>
+      <text x="15" y="101" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 💰 วางแผนกิจกรรม · 🌐 โครงการทั้งหมด</text>
+      <text x="15" y="120" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 📋 รายการโครงการ · 📈 รายงานผล (ไตรมาส)</text>
+
+      <!-- Group 2: บริหารงานบุคคล -->
+      <g transform="translate(345, 0)">
+        <rect width="325" height="142" rx="10" fill="#ffffff" stroke="#6ee7b7" stroke-width="1.2" filter="url(#cardShadowLight)"/>
+        <text x="15" y="22" class="txt-group-title-l" fill="#059669">👥 กลุ่มบริหารงานบุคคล</text>
+        <text x="15" y="46" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 🛡️ ติดตาม OIT</text>
+        <text x="15" y="68" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 🎒 พัฒนาบุคลากร (PDEV)</text>
+        <text x="15" y="90" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 📢 ระบบร้องเรียน ร้องทุกข์</text>
+        <text x="15" y="112" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• ⚖️ ระบบร้องเรียนทุจริต</text>
+      </g>
+
+      <!-- Group 3: อำนวยการ & สนับสนุน -->
+      <g transform="translate(690, 0)">
+        <rect width="315" height="142" rx="10" fill="#ffffff" stroke="#fcd34d" stroke-width="1.2" filter="url(#cardShadowLight)"/>
+        <text x="15" y="22" class="txt-group-title-l" fill="#d97706">🏢 กลุ่มอำนวยการ &amp; อื่นๆ</text>
+        <text x="15" y="46" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 🕒 Work From Home (WFH)</text>
+        <text x="15" y="68" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 📅 ปฏิทินวาระงาน</text>
+        <text x="15" y="90" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 📂 เอกสารเผยแพร่ · ⚙️ จัดการระบบ (Admin)</text>
+        <text x="15" y="112" font-family="system-ui, sans-serif" font-size="11" fill="#334155">• 📜 ประวัติแจ้งเตือน / โปรไฟล์</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Connector 1: Frontend <-> Backend -->
+  <g transform="translate(800, 365)">
+    <line x1="0" y1="0" x2="0" y2="55" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="6 3" marker-start="url(#arrBlueU)" marker-end="url(#arrBlueD)"/>
+    <rect x="-140" y="14" width="280" height="26" rx="13" fill="#ffffff" stroke="#2563eb" stroke-width="1.5" filter="url(#cardShadowLight)"/>
+    <text x="0" y="31" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#1d4ed8">
+      google.script.run (RPC) / HTTP API
+    </text>
+  </g>
+
+  <!-- ==================== 2. BACKEND LAYER ==================== -->
+  <g transform="translate(50, 420)">
+    <rect width="1500" height="525" rx="18" fill="url(#beGradLight)" stroke="#d8b4fe" stroke-width="1.5" filter="url(#layerShadowLight)"/>
+
+    <rect x="20" y="16" width="510" height="30" rx="15" fill="#f3e8ff" stroke="#a855f7" stroke-width="1.2"/>
+    <text x="275" y="36" text-anchor="middle" class="txt-layer-badge-l" fill="#6b21a8">
+      ⚙️ ชั้นประมวลผล (Backend Layer) — Google Apps Script (GAS) Services
+    </text>
+    <text x="1480" y="36" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#7e22ce" font-weight="600">
+      13 บริการแยกตามกลุ่มภารกิจ · Session Token &amp; Role-Based Authorization
+    </text>
+
+    <!-- Core Security & Config Banner -->
+    <g transform="translate(25, 55)">
+      <rect width="1450" height="42" rx="8" fill="#ffffff" stroke="#c084fc" stroke-width="1" filter="url(#cardShadowLight)"/>
+      <text x="15" y="26" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#581c87">
+        🔐 ศูนย์กลางการยืนยันตัวตนและการตั้งค่า (Core Authentication &amp; System Config):
+      </text>
+      <!-- Auth card pill -->
+      <rect x="490" y="9" width="370" height="24" rx="5" fill="#f5f3ff" stroke="#818cf8" stroke-width="1"/>
+      <text x="500" y="25" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#4338ca">
+        🔑 Backend_Auth.js (สิทธิ์/เข้าสู่ระบบ/โปรไฟล์)
+      </text>
+
+      <!-- รหัส.js pill -->
+      <rect x="870" y="9" width="380" height="24" rx="5" fill="#f5f3ff" stroke="#818cf8" stroke-width="1"/>
+      <text x="880" y="25" font-family="ui-monospace, monospace" font-size="11" font-weight="bold" fill="#4338ca">
+        ⚙️ รหัส.js (Global CONFIG &amp; SystemConfig)
+      </text>
+    </g>
+
+    <!-- 4 Group Columns -->
+    <g transform="translate(25, 110)">
+
+      <!-- Column 1: กลุ่มนโยบายและแผน -->
+      <g transform="translate(0, 0)">
+        <rect width="345" height="350" rx="12" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="1.2"/>
+        <text x="15" y="25" class="txt-group-title-l" fill="#0369a1">📁 1. กลุ่มนโยบายและแผน</text>
+        <text x="330" y="25" text-anchor="end" font-family="system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#0284c7">4 บริการ</text>
+
+        <!-- Card: Dashboard -->
+        <g transform="translate(12, 38)">
+          <rect width="320" height="68" rx="8" fill="#ffffff" stroke="#bae6fd" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="20" class="txt-card-title-l" fill="#0369a1">📊 ภาพรวมแดชบอร์ด</text>
+          <text x="10" y="36" class="txt-file-l" fill="#0284c7">Backend_Dashboard.js</text>
+          <text x="10" y="54" class="txt-desc-l">รวมข้อมูลข้ามกลุ่ม (Projects, Finance, PDEV, WFH, OIT) เพื่อแสดงผลภาพรวม KPI</text>
+        </g>
+        <!-- Card: Finance -->
+        <g transform="translate(12, 114)">
+          <rect width="320" height="68" rx="8" fill="#ffffff" stroke="#bae6fd" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="20" class="txt-card-title-l" fill="#0369a1">🧮 จัดสรรและโยกงบประมาณ</text>
+          <text x="10" y="36" class="txt-file-l" fill="#0284c7">Backend_Finance.js</text>
+          <text x="10" y="54" class="txt-desc-l">จัดการงบโครงการ, ยอดจัดสรร, บันทึกการโอนเงิน และเชื่อมต่อยอดกับรายการโครงการ</text>
+        </g>
+        <!-- Card: Projects -->
+        <g transform="translate(12, 190)">
+          <rect width="320" height="68" rx="8" fill="#ffffff" stroke="#bae6fd" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="20" class="txt-card-title-l" fill="#0369a1">📋 โครงการและแผนงาน (Gantt)</text>
+          <text x="10" y="36" class="txt-file-l" fill="#0284c7">Backend_Projects.js</text>
+          <text x="10" y="54" class="txt-desc-l">ติดตามแผนงาน Gantt, กิจกรรม, โครงการทั้งหมด, แนบเอกสาร Drive และประเมินผล</text>
+        </g>
+        <!-- Card: Reports -->
+        <g transform="translate(12, 266)">
+          <rect width="320" height="68" rx="8" fill="#ffffff" stroke="#bae6fd" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="20" class="txt-card-title-l" fill="#0369a1">📈 รายงานผลไตรมาส</text>
+          <text x="10" y="36" class="txt-file-l" fill="#0284c7">Backend_Reports.js</text>
+          <text x="10" y="54" class="txt-desc-l">บันทึกผลงาน Q1-Q4, สรุปปัญหาอุปสรรค, แนบไฟล์รายงาน และจัดทำสรุปภาพรวม</text>
+        </g>
+      </g>
+
+      <!-- Column 2: กลุ่มบริหารงานบุคคล -->
+      <g transform="translate(365, 0)">
+        <rect width="345" height="350" rx="12" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1.2"/>
+        <text x="15" y="25" class="txt-group-title-l" fill="#047857">👥 2. กลุ่มบริหารงานบุคคล</text>
+        <text x="330" y="25" text-anchor="end" font-family="system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#059669">3 บริการ</text>
+
+        <!-- Card: OIT -->
+        <g transform="translate(12, 38)">
+          <rect width="320" height="88" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="22" class="txt-card-title-l" fill="#047857">🛡️ ติดตาม OIT (ITA)</text>
+          <text x="10" y="40" class="txt-file-l" fill="#059669">Backend_OIT.js</text>
+          <text x="10" y="58" class="txt-desc-l">จัดการตัวชี้วัด OIT รายข้อ, ตรวจสอบหลักฐาน และเปิด/ปิดการเผยแพร่</text>
+          <text x="10" y="74" class="txt-desc-l">ประเมินคุณธรรมและความโปร่งใส ITA o1-o43 ครบถ้วน</text>
+        </g>
+        <!-- Card: PDEV -->
+        <g transform="translate(12, 138)">
+          <rect width="320" height="88" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="22" class="txt-card-title-l" fill="#047857">🎒 พัฒนาบุคลากร (PDEV)</text>
+          <text x="10" y="40" class="txt-file-l" fill="#059669">Backend_PDEV.js</text>
+          <text x="10" y="58" class="txt-desc-l">สะสมชั่วโมงพัฒนาตนเอง, แนบประกาศนียบัตร และออกรายงานสถิติบุคคล</text>
+          <text x="10" y="74" class="txt-desc-l">จัดเก็บไฟล์หลักฐานลงใน Google Drive อัตโนมัติ</text>
+        </g>
+        <!-- Card: Complaints -->
+        <g transform="translate(12, 238)">
+          <rect width="320" height="96" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="22" class="txt-card-title-l" fill="#047857">📢 ร้องเรียน / ทุจริต</text>
+          <text x="10" y="40" class="txt-file-l" fill="#059669">Backend_Complaints.js</text>
+          <text x="10" y="58" class="txt-desc-l">ชั้นความลับข้อมูลร้องเรียน, ตรวจสอบสถานะ, แจ้งเตือนผู้รับผิดชอบ และสรุปสถิติ</text>
+          <text x="10" y="74" class="txt-desc-l">แยกสิทธิ์การเข้าถึงข้อมูลลับเฉพาะคณะกรรมการตรวจสอบ</text>
+        </g>
+      </g>
+
+      <!-- Column 3: กลุ่มอำนวยการ -->
+      <g transform="translate(730, 0)">
+        <rect width="345" height="350" rx="12" fill="#fffbeb" stroke="#fde68a" stroke-width="1.2"/>
+        <text x="15" y="25" class="txt-group-title-l" fill="#b45309">🏢 3. กลุ่มอำนวยการ</text>
+        <text x="330" y="25" text-anchor="end" font-family="system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#d97706">2 บริการ</text>
+
+        <!-- Card: WFH (NO GPS!) -->
+        <g transform="translate(12, 38)">
+          <rect width="320" height="138" rx="8" fill="#ffffff" stroke="#fcd34d" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="24" class="txt-card-title-l" fill="#b45309">🕒 Work From Home (WFH)</text>
+          <text x="10" y="44" class="txt-file-l" fill="#d97706">Backend_WFH.js</text>
+          <text x="10" y="66" class="txt-desc-l">ขออนุมัติ WFH, ลงเวลาเข้า-ออกงาน, ส่งรายงานผลงาน และตรวจสอบสถิติ</text>
+          <text x="10" y="86" class="txt-desc-l">บันทึกเวลาปฏิบัติงานนอกสถานที่ พร้อมสรุปรายงานผลงานประจำวัน</text>
+          <rect x="10" y="115" width="220" height="16" rx="4" fill="#fef3c7"/>
+          <text x="16" y="127" font-family="system-ui, sans-serif" font-size="9.5" fill="#92400e" font-weight="bold">✔️ ไม่มีการบันทึกพิกัดตำแหน่ง</text>
+        </g>
+
+        <!-- Card: Calendar -->
+        <g transform="translate(12, 190)">
+          <rect width="320" height="144" rx="8" fill="#ffffff" stroke="#fcd34d" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="24" class="txt-card-title-l" fill="#b45309">📅 ปฏิทินวาระงาน</text>
+          <text x="10" y="44" class="txt-file-l" fill="#d97706">Backend_Calendar.js</text>
+          <text x="10" y="66" class="txt-desc-l">บันทึกวาระงาน, นัดหมายผู้บริหาร, แจ้งเตือน และเชื่อมโยงกับ Google Calendar</text>
+          <text x="10" y="86" class="txt-desc-l">ซิงค์วาระงานอัตโนมัติเข้าสู่ปฏิทินกลางของสำนักงาน (CalendarApp)</text>
+        </g>
+      </g>
+
+      <!-- Column 4: ส่วนสนับสนุน & บริการแจ้งเตือน LINE -->
+      <g transform="translate(1095, 0)">
+        <rect width="355" height="350" rx="12" fill="#f5f3ff" stroke="#d8b4fe" stroke-width="1.2"/>
+        <text x="15" y="25" class="txt-group-title-l" fill="#7e22ce">⚙️ 4. บริหารระบบ &amp; แจ้งเตือน</text>
+        <text x="340" y="25" text-anchor="end" font-family="system-ui, sans-serif" font-size="10.5" font-weight="bold" fill="#9333ea">4 บริการ</text>
+
+        <!-- Card: Admin -->
+        <g transform="translate(12, 38)">
+          <rect width="330" height="66" rx="8" fill="#ffffff" stroke="#e9d5ff" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="20" class="txt-card-title-l" fill="#6b21a8">🛡️ ระบบแอดมิน / Archive</text>
+          <text x="10" y="36" class="txt-file-l" fill="#7c3aed">Backend_Admin.js</text>
+          <text x="10" y="54" class="txt-desc-l">การย้ายข้อมูลประวัติโครงการ (Archive Data), จัดการบัญชีผู้ใช้ และสิทธิ์กลุ่มงาน</text>
+        </g>
+
+        <!-- Card: Notifications -->
+        <g transform="translate(12, 112)">
+          <rect width="330" height="66" rx="8" fill="#ffffff" stroke="#e9d5ff" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="20" class="txt-card-title-l" fill="#6b21a8">📜 ประวัติแจ้งเตือนในระบบ</text>
+          <text x="10" y="36" class="txt-file-l" fill="#7c3aed">Backend_Notifications.js</text>
+          <text x="10" y="54" class="txt-desc-l">บันทึกประวัติการแจ้งเตือน, แจกจ่ายข้อความเตือน และส่งต่อไปยังแอป LINE</text>
+        </g>
+
+        <!-- Card: LINE APPLICATION (HIGHLIGHTED!) -->
+        <g transform="translate(12, 186)">
+          <rect width="330" height="96" rx="8" fill="#f0fdf4" stroke="#06c755" stroke-width="2" filter="url(#lineGlowLight)"/>
+          <text x="10" y="22" class="txt-card-title-l" fill="#15803d">💬 เชื่อมต่อแอปพลิเคชัน LINE (LINE Integration)</text>
+          <rect x="10" y="28" width="130" height="18" rx="4" fill="#dcfce7"/>
+          <text x="16" y="41" class="txt-file-l" fill="#16a34a" font-weight="bold">Backend_Line.js</text>
+          <text x="10" y="58" font-family="system-ui, sans-serif" font-size="10" font-weight="bold" fill="#14532d">
+            ระบบแจ้งเตือนและสื่อสารอัจฉริยะ (LINE Messaging API &amp; Webhook):
+          </text>
+          <text x="10" y="73" class="txt-desc-l" fill="#166534">
+            • ผูกบัญชีผู้ใช้ S-MES กับ LINE ID (Account Linking via Webhook)
+          </text>
+          <text x="10" y="88" class="txt-desc-l" fill="#15803d">
+            • ส่งรายงานวาระงานประจำวันอัตโนมัติ (Automated Daily Digest) &amp; Flex Messages
+          </text>
+        </g>
+
+        <!-- Card: Docs -->
+        <g transform="translate(12, 290)">
+          <rect width="330" height="48" rx="8" fill="#ffffff" stroke="#e9d5ff" stroke-width="1" filter="url(#cardShadowLight)"/>
+          <text x="10" y="19" class="txt-card-title-l" fill="#6b21a8">📂 เอกสารเผยแพร่</text>
+          <text x="10" y="36" class="txt-desc-l">คลังไฟล์คู่มือ, ข้อเสนอโครงการที่อนุมัติ และเอกสารสาธารณะ (Drive Integration)</text>
+        </g>
+      </g>
+
+    </g>
+
+    <!-- Inter-module integration notes footer -->
+    <g transform="translate(25, 480)">
+      <rect width="1450" height="30" rx="6" fill="#ffffff" stroke="#e0e7ff" stroke-width="1"/>
+      <text x="15" y="20" font-family="system-ui, sans-serif" font-size="11.5" fill="#334155">
+        <tspan fill="#b45309" font-weight="bold">⚡ การเชื่อมโยงข้ามโมดูล:</tspan>
+        <tspan fill="#0369a1"> โครงการ (Projects) ⇄ งบประมาณ (Finance)</tspan>  •  
+        <tspan fill="#047857"> ทุกเหตุการณ์เตือน ➔ บันทึก (Notifications) ➔ ยิงเข้า (แอป LINE)</tspan>  •  
+        <tspan fill="#6b21a8"> ทุกโมดูล ➔ ประมวลผลภาพรวม (Dashboard)</tspan>
+      </text>
+    </g>
+  </g>
+
+  <!-- Connector 2: Backend <-> Database & External -->
+  <g transform="translate(800, 945)">
+    <!-- ฝั่งซ้าย: ลงสู่ Google Sheets -->
+    <line x1="-280" y1="0" x2="-280" y2="55" stroke="#059669" stroke-width="2.5" stroke-dasharray="6 3" marker-end="url(#arrGreenD)"/>
+    <rect x="-420" y="14" width="280" height="26" rx="13" fill="#ffffff" stroke="#059669" stroke-width="1.5" filter="url(#cardShadowLight)"/>
+    <text x="-280" y="31" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#047857">
+      SpreadsheetApp (CRUD)
+    </text>
+
+    <!-- ฝั่งขวา: ออกสู่ External APIs -->
+    <line x1="380" y1="0" x2="380" y2="55" stroke="#d97706" stroke-width="2.5" stroke-dasharray="6 3" marker-end="url(#arrAmberD)"/>
+    <rect x="260" y="14" width="240" height="26" rx="13" fill="#ffffff" stroke="#d97706" stroke-width="1.5" filter="url(#cardShadowLight)"/>
+    <text x="380" y="31" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#b45309">
+      External Services API
+    </text>
+  </g>
+
+  <!-- ==================== 3 & 4. DATA LAYER & EXTERNAL SERVICES ==================== -->
+  <!-- 3. DATABASE LAYER (Google Sheets) -->
+  <g transform="translate(50, 1000)">
+    <rect width="990" height="340" rx="18" fill="url(#dbGradLight)" stroke="#6ee7b7" stroke-width="1.5" filter="url(#layerShadowLight)"/>
+
+    <rect x="20" y="16" width="370" height="30" rx="15" fill="#d1fae5" stroke="#059669" stroke-width="1.2"/>
+    <text x="205" y="36" text-anchor="middle" class="txt-layer-badge-l" fill="#047857">
+      🗄️ ชั้นฐานข้อมูล (Data Layer) — Google Sheets
+    </text>
+    <text x="970" y="36" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#059669" font-weight="600">
+      SpreadsheetApp NoSQL Model · แยกชีตตามบริบทงาน
+    </text>
+
+    <!-- Database Sheet Cards (8 Cards Grid 4x2) -->
+    <g transform="translate(20, 60)">
+      <!-- Row 1 -->
+      <g transform="translate(0, 0)">
+        <rect width="225" height="115" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="12" y="24" class="txt-card-title-l" fill="#047857">📁 โครงการ &amp; แผน</text>
+        <text x="12" y="44" class="txt-file-l" fill="#059669">Projects, Activities</text>
+        <text x="12" y="66" class="txt-desc-l">ข้อมูลโครงการ/Gantt</text>
+        <text x="12" y="84" class="txt-desc-l">กิจกรรมย่อย และไทม์ไลน์</text>
+      </g>
+      <g transform="translate(240, 0)">
+        <rect width="225" height="115" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="12" y="24" class="txt-card-title-l" fill="#047857">💰 งบประมาณ</text>
+        <text x="12" y="44" class="txt-file-l" fill="#059669">BudgetAllocations</text>
+        <text x="12" y="66" class="txt-desc-l">ยอดจัดสรรและประวัติโอน</text>
+        <text x="12" y="84" class="txt-desc-l">การโอนย้ายงบประมาณข้ามแผน</text>
+      </g>
+      <g transform="translate(480, 0)">
+        <rect width="225" height="115" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="12" y="24" class="txt-card-title-l" fill="#047857">📈 รายงานไตรมาส</text>
+        <text x="12" y="44" class="txt-file-l" fill="#059669">Reports Sheet</text>
+        <text x="12" y="66" class="txt-desc-l">ผลการดำเนินงาน Q1-Q4</text>
+        <text x="12" y="84" class="txt-desc-l">ปัญหาอุปสรรคและรูปภาพกิจกรรม</text>
+      </g>
+      <g transform="translate(720, 0)">
+        <rect width="225" height="115" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="12" y="24" class="txt-card-title-l" fill="#047857">🛡️ ตัวชี้วัด OIT</text>
+        <text x="12" y="44" class="txt-file-l" fill="#059669">OIT_Items, Evidence</text>
+        <text x="12" y="66" class="txt-desc-l">ข้อมูล ITA รายตัวชี้วัด</text>
+        <text x="12" y="84" class="txt-desc-l">ตัวชี้วัดความโปร่งใส ITA o1-o43</text>
+      </g>
+
+      <!-- Row 2 -->
+      <g transform="translate(0, 130)">
+        <rect width="225" height="125" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="12" y="24" class="txt-card-title-l" fill="#047857">🎒 พัฒนาบุคลากร</text>
+        <text x="12" y="44" class="txt-file-l" fill="#059669">PDEV_Records</text>
+        <text x="12" y="66" class="txt-desc-l">ประวัติการอบรมบุคลากร</text>
+        <text x="12" y="84" class="txt-desc-l">ชั่วโมงสะสม และใบประกาศ</text>
+      </g>
+      <g transform="translate(240, 130)">
+        <rect width="225" height="125" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="12" y="24" class="txt-card-title-l" fill="#047857">📢 เรื่องร้องเรียน</text>
+        <text x="12" y="44" class="txt-file-l" fill="#059669">Complaints Sheet</text>
+        <text x="12" y="66" class="txt-desc-l">ข้อร้องทุกข์ &amp; ทุจริต</text>
+        <text x="12" y="84" class="txt-desc-l">ชั้นความลับ และผลการสืบสวน</text>
+      </g>
+      <!-- WFH Sheet (NO GPS!) -->
+      <g transform="translate(480, 130)">
+        <rect width="225" height="125" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="12" y="24" class="txt-card-title-l" fill="#047857">🕒 บันทึก WFH</text>
+        <text x="12" y="44" class="txt-file-l" fill="#059669">WFH_Requests, Logs</text>
+        <text x="12" y="66" class="txt-desc-l">คำขอ &amp; บันทึกเวลาทำงาน</text>
+        <text x="12" y="84" class="txt-desc-l">เวลาเข้า-ออกงาน, รายงานผลงาน</text>
+        <text x="12" y="102" font-family="system-ui, sans-serif" font-size="9.5" fill="#059669" font-weight="bold">✔️ ไม่มีข้อมูลพิกัดสถานที่</text>
+      </g>
+      <g transform="translate(720, 130)">
+        <rect width="225" height="125" rx="8" fill="#ffffff" stroke="#a7f3d0" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="12" y="24" class="txt-card-title-l" fill="#047857">⚙️ ผู้ใช้ &amp; ตั้งค่า</text>
+        <text x="12" y="44" class="txt-file-l" fill="#059669">Users, SystemConfig</text>
+        <text x="12" y="66" class="txt-desc-l">สิทธิ์, โทเคน, แจ้งเตือน</text>
+        <text x="12" y="84" class="txt-desc-l">บัญชีผู้ใช้, รหัสผ่านผสม Pepper</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- 4. EXTERNAL SERVICES LAYER -->
+  <g transform="translate(1060, 1000)">
+    <rect width="490" height="340" rx="18" fill="url(#extGradLight)" stroke="#fcd34d" stroke-width="1.5" filter="url(#layerShadowLight)"/>
+
+    <rect x="20" y="16" width="310" height="30" rx="15" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+    <text x="175" y="36" text-anchor="middle" class="txt-layer-badge-l" fill="#b45309">
+      🌐 บริการภายนอก (External APIs)
+    </text>
+    <text x="470" y="36" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="#d97706" font-weight="600">
+      Third-Party
+    </text>
+
+    <g transform="translate(20, 60)">
+      <!-- LINE Application External Platform -->
+      <g transform="translate(0, 0)">
+        <rect width="450" height="100" rx="10" fill="#f0fdf4" stroke="#06c755" stroke-width="2" filter="url(#lineGlowLight)"/>
+        <text x="16" y="26" class="txt-card-title-l" fill="#15803d" font-size="13.5">💬 แพลตฟอร์มแอปพลิเคชัน LINE (LINE Messaging Platform)</text>
+        <rect x="16" y="34" width="280" height="20" rx="4" fill="#dcfce7"/>
+        <text x="24" y="48" class="txt-file-l" fill="#16a34a" font-weight="bold">LINE Messaging API / Webhook Endpoint</text>
+        <text x="16" y="70" class="txt-desc-l" fill="#166534">• รับ Webhook เชื่อมบัญชีผู้ใช้เมื่อพิมพ์ ผูกบัญชี:username</text>
+        <text x="16" y="86" class="txt-desc-l" fill="#166534">• ยิงแจ้งเตือนสรุปงานประจำวัน (Daily Digest) และสถานะอนุมัติสู่สมาร์ตโฟนทันที</text>
+      </g>
+
+      <!-- Google Drive API -->
+      <g transform="translate(0, 112)">
+        <rect width="450" height="66" rx="8" fill="#ffffff" stroke="#fde68a" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="16" y="22" class="txt-card-title-l" fill="#b45309">📁 Google Drive Service</text>
+        <text x="16" y="38" class="txt-file-l" fill="#d97706">DriveApp / Drive API</text>
+        <text x="16" y="54" class="txt-desc-l">จัดเก็บไฟล์แนบโครงการ, หลักฐาน OIT, รูปภาพ และโฟลเดอร์ Archive ประจำปี</text>
+      </g>
+
+      <!-- Google Calendar API -->
+      <g transform="translate(0, 190)">
+        <rect width="450" height="66" rx="8" fill="#ffffff" stroke="#fde68a" stroke-width="1" filter="url(#cardShadowLight)"/>
+        <text x="16" y="22" class="txt-card-title-l" fill="#b45309">📅 Google Calendar Service</text>
+        <text x="16" y="38" class="txt-file-l" fill="#d97706">CalendarApp API</text>
+        <text x="16" y="54" class="txt-desc-l">ซิงค์วาระงานผู้บริหารและการประชุมลงใน Google Calendar อัตโนมัติ</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== 5. LEGEND & SYSTEM INSIGHTS ==================== -->
+  <g transform="translate(50, 1365)">
+    <rect width="1500" height="120" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" filter="url(#cardShadowLight)"/>
+    <text x="25" y="26" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#475569" letter-spacing="0.05em">
+      📌 คำอธิบายสัญลักษณ์และการทำงานเชื่อมโยง (System Insights)
+    </text>
+
+    <g transform="translate(25, 42)">
+      <!-- Item 1: Policy -->
+      <g transform="translate(0, 0)">
+        <rect width="335" height="60" rx="6" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="1"/>
+        <text x="12" y="20" font-family="system-ui, sans-serif" font-size="11.5" font-weight="bold" fill="#0369a1">📁 กลุ่มนโยบายและแผน</text>
+        <text x="12" y="36" class="txt-desc-l">ควบคุมวัฏจักรโครงการ งบประมาณ และการรายงานผลไตรมาส</text>
+        <text x="12" y="50" class="txt-desc-l">ติดตาม Gantt Timeline และรายงานความก้าวหน้า</text>
+      </g>
+
+      <!-- Item 2: HR -->
+      <g transform="translate(365, 0)">
+        <rect width="335" height="60" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+        <text x="12" y="20" font-family="system-ui, sans-serif" font-size="11.5" font-weight="bold" fill="#047857">👥 กลุ่มบริหารงานบุคคล</text>
+        <text x="12" y="36" class="txt-desc-l">ดูแลความโปร่งใส ITA (OIT), ชั่วโมงพัฒนาตนเอง (PDEV)</text>
+        <text x="12" y="50" class="txt-desc-l">และข้อร้องเรียน/ทุจริตที่มีการแยกชั้นความลับ</text>
+      </g>
+
+      <!-- Item 3: Admin -->
+      <g transform="translate(730, 0)">
+        <rect width="335" height="60" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+        <text x="12" y="20" font-family="system-ui, sans-serif" font-size="11.5" font-weight="bold" fill="#b45309">🏢 กลุ่มอำนวยการ</text>
+        <text x="12" y="36" class="txt-desc-l">บริหารการลงเวลาปฏิบัติงานนอกสถานที่ (WFH) และปฏิทินวาระงาน</text>
+        <text x="12" y="50" class="txt-desc-l">ลงเวลาเข้า-ออกงาน (ไม่เก็บพิกัด) ซิงค์เข้า Google Calendar</text>
+      </g>
+
+      <!-- Item 4: LINE Application -->
+      <g transform="translate(1095, 0)">
+        <rect width="355" height="60" rx="6" fill="#f0fdf4" stroke="#06c755" stroke-width="1.5"/>
+        <text x="12" y="20" font-family="system-ui, sans-serif" font-size="11.5" font-weight="bold" fill="#15803d">💬 แอปพลิเคชัน LINE (LINE Integration)</text>
+        <text x="12" y="36" class="txt-desc-l" fill="#166534">ช่องทางแจ้งเตือนอัจฉริยะ (Daily Digest &amp; Real-time Alerts)</text>
+        <text x="12" y="50" class="txt-desc-l" fill="#166534">ผ่าน LINE Messaging API สู่สมาร์ตโฟนบุคลากร</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ==================== FOOTER ==================== -->
+  <text x="800" y="1525" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#94a3b8">
+    ระบบ S-MES · สำนักงานศึกษาธิการจังหวัดสระบุรี · ออกแบบตามสถาปัตยกรรม Google Apps Script &amp; Google Sheets
+  </text>
+</svg>

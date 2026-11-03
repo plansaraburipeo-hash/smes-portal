@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สถาปัตยกรรมระบบ S-MES (System for Management and Evaluation of Strategies)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* ==================== THEME VARIABLES ==================== */
+    :root, body.theme-dark {
+      --bg-body: #070c1b;
+      --bg-page: #0b1329;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --layer-fe-border: rgba(59, 130, 246, 0.4);
+      --layer-fe-bg: linear-gradient(180deg, rgba(30, 58, 138, 0.18) 0%, rgba(15, 23, 42, 0.6) 100%);
+      --badge-fe-bg: rgba(59, 130, 246, 0.2);
+      --badge-fe-border: rgba(59, 130, 246, 0.4);
+      --badge-fe-text: #93c5fd;
+
+      --layer-be-border: rgba(168, 85, 247, 0.4);
+      --layer-be-bg: linear-gradient(180deg, rgba(88, 28, 135, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+      --badge-be-bg: rgba(168, 85, 247, 0.2);
+      --badge-be-border: rgba(168, 85, 247, 0.4);
+      --badge-be-text: #d8b4fe;
+
+      --layer-db-border: rgba(16, 185, 129, 0.4);
+      --layer-db-bg: linear-gradient(180deg, rgba(6, 95, 70, 0.18) 0%, rgba(15, 23, 42, 0.6) 100%);
+      --badge-db-bg: rgba(16, 185, 129, 0.2);
+      --badge-db-border: rgba(16, 185, 129, 0.4);
+      --badge-db-text: #6ee7b7;
+
+      --layer-ext-border: rgba(245, 158, 11, 0.4);
+      --layer-ext-bg: linear-gradient(180deg, rgba(146, 64, 14, 0.18) 0%, rgba(15, 23, 42, 0.6) 100%);
+      --badge-ext-bg: rgba(245, 158, 11, 0.2);
+      --badge-ext-border: rgba(245, 158, 11, 0.4);
+      --badge-ext-text: #fcd34d;
+
+      --card-fe-bg: rgba(30, 58, 138, 0.3);
+      --card-fe-border: rgba(96, 165, 250, 0.35);
+      --card-fe-text: #dbeafe;
+
+      --card-policy-bg: rgba(14, 165, 233, 0.12);
+      --card-policy-border: rgba(56, 189, 248, 0.3);
+      --card-policy-text: #e0f2fe;
+
+      --card-hr-bg: rgba(16, 185, 129, 0.12);
+      --card-hr-border: rgba(52, 211, 153, 0.3);
+      --card-hr-text: #d1fae5;
+
+      --card-admin-bg: rgba(245, 158, 11, 0.12);
+      --card-admin-border: rgba(251, 191, 36, 0.3);
+      --card-admin-text: #fef3c7;
+
+      --card-sys-bg: rgba(168, 85, 247, 0.12);
+      --card-sys-border: rgba(192, 132, 252, 0.3);
+      --card-sys-text: #f3e8ff;
+
+      --card-db-bg: rgba(6, 95, 70, 0.3);
+      --card-db-border: rgba(52, 211, 153, 0.3);
+      --card-db-text: #a7f3d0;
+
+      --card-ext-bg: rgba(146, 64, 14, 0.25);
+      --card-ext-border: rgba(251, 191, 36, 0.3);
+      --card-ext-text: #fef08a;
+
+      --card-line-bg: rgba(6, 199, 85, 0.15);
+      --card-line-border: #06c755;
+      --card-line-text: #bbf7d0;
+
+      --auth-box-bg: rgba(59, 7, 100, 0.3);
+      --auth-box-border: rgba(168, 85, 247, 0.35);
+      --sub-box-bg: rgba(0, 0, 0, 0.25);
+      --footer-card-bg: rgba(15, 23, 42, 0.7);
+      --footer-card-border: rgba(255, 255, 255, 0.1);
+      --shadow-color: rgba(0, 0, 0, 0.4);
+    }
+
+    body.theme-light {
+      --bg-body: #f1f5f9;
+      --bg-page: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      
+      --layer-fe-border: #93c5fd;
+      --layer-fe-bg: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      --badge-fe-bg: #dbeafe;
+      --badge-fe-border: #3b82f6;
+      --badge-fe-text: #1d4ed8;
+
+      --layer-be-border: #d8b4fe;
+      --layer-be-bg: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%);
+      --badge-be-bg: #f3e8ff;
+      --badge-be-border: #a855f7;
+      --badge-be-text: #6b21a8;
+
+      --layer-db-border: #6ee7b7;
+      --layer-db-bg: linear-gradient(180deg, #ecfdf5 0%, #ffffff 100%);
+      --badge-db-bg: #d1fae5;
+      --badge-db-border: #059669;
+      --badge-db-text: #047857;
+
+      --layer-ext-border: #fcd34d;
+      --layer-ext-bg: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);
+      --badge-ext-bg: #fef3c7;
+      --badge-ext-border: #d97706;
+      --badge-ext-text: #b45309;
+
+      --card-fe-bg: #ffffff;
+      --card-fe-border: #bfdbfe;
+      --card-fe-text: #1e3a8a;
+
+      --card-policy-bg: #ffffff;
+      --card-policy-border: #bae6fd;
+      --card-policy-text: #0369a1;
+
+      --card-hr-bg: #ffffff;
+      --card-hr-border: #a7f3d0;
+      --card-hr-text: #047857;
+
+      --card-admin-bg: #ffffff;
+      --card-admin-border: #fde68a;
+      --card-admin-text: #b45309;
+
+      --card-sys-bg: #ffffff;
+      --card-sys-border: #e9d5ff;
+      --card-sys-text: #6b21a8;
+
+      --card-db-bg: #ffffff;
+      --card-db-border: #a7f3d0;
+      --card-db-text: #047857;
+
+      --card-ext-bg: #ffffff;
+      --card-ext-border: #fde68a;
+      --card-ext-text: #b45309;
+
+      --card-line-bg: #f0fdf4;
+      --card-line-border: #06c755;
+      --card-line-text: #15803d;
+
+      --auth-box-bg: #ffffff;
+      --auth-box-border: #c084fc;
+      --sub-box-bg: #f1f5f9;
+      --footer-card-bg: #ffffff;
+      --footer-card-border: #cbd5e1;
+      --shadow-color: rgba(100, 116, 139, 0.12);
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-main);
+      font-family: 'Prompt', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.5;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .arch-wrapper {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+      background: var(--bg-page);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px var(--shadow-color);
+      transition: all 0.3s ease;
+    }
+
+    /* กล่องระดับ Layer */
+    .arch-layer {
+      position: relative;
+      border-radius: 20px;
+      border: 1.5px solid;
+      padding: 24px 24px 28px;
+      margin-bottom: 26px;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px var(--shadow-color);
+    }
+
+    .layer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+    }
+
+    .layer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 999px;
+      border: 1px solid;
+    }
+
+    /* สไตล์การ์ด Component */
+    .node-card {
+      position: relative;
+      border-radius: 12px;
+      border: 1px solid;
+      padding: 12px 14px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 0 3px 10px var(--shadow-color);
+    }
+
+    .node-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px var(--shadow-color);
+      z-index: 20;
+    }
+
+    .node-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .node-file {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 10.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--sub-box-bg);
+      align-self: flex-start;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .node-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Layer Colors */
+    .layer-frontend { border-color: var(--layer-fe-border); background: var(--layer-fe-bg); }
+    .layer-frontend .layer-badge { background: var(--badge-fe-bg); border-color: var(--badge-fe-border); color: var(--badge-fe-text); }
+    .card-fe { background: var(--card-fe-bg); border-color: var(--card-fe-border); color: var(--card-fe-text); }
+
+    .layer-backend { border-color: var(--layer-be-border); background: var(--layer-be-bg); }
+    .layer-backend .layer-badge { background: var(--badge-be-bg); border-color: var(--badge-be-border); color: var(--badge-be-text); }
+
+    .card-policy { background: var(--card-policy-bg); border-color: var(--card-policy-border); color: var(--card-policy-text); }
+    .card-hr { background: var(--card-hr-bg); border-color: var(--card-hr-border); color: var(--card-hr-text); }
+    .card-admin { background: var(--card-admin-bg); border-color: var(--card-admin-border); color: var(--card-admin-text); }
+    .card-system { background: var(--card-sys-bg); border-color: var(--card-sys-border); color: var(--card-sys-text); }
+
+    .card-line {
+      background: var(--card-line-bg) !important;
+      border-color: var(--card-line-border) !important;
+      color: var(--card-line-text) !important;
+      border-width: 2px !important;
+    }
+
+    .layer-db { border-color: var(--layer-db-border); background: var(--layer-db-bg); }
+    .layer-db .layer-badge { background: var(--badge-db-bg); border-color: var(--badge-db-border); color: var(--badge-db-text); }
+    .card-db { background: var(--card-db-bg); border-color: var(--card-db-border); color: var(--card-db-text); }
+
+    .layer-external { border-color: var(--layer-ext-border); background: var(--layer-ext-bg); }
+    .layer-external .layer-badge { background: var(--badge-ext-bg); border-color: var(--badge-ext-border); color: var(--badge-ext-text); }
+    .card-ext { background: var(--card-ext-bg); border-color: var(--card-ext-border); color: var(--card-ext-text); }
+
+    /* Tooltip */
+    [data-tip] { position: relative; }
+    [data-tip]:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Presentation Toolbar */
+    .present-toolbar {
+      position: sticky;
+      top: 14px;
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .present-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    .present-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .present-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    .present-btn.primary {
+      background: #2563eb;
+      border-color: #3b82f6;
+      color: #ffffff;
+    }
+    .present-btn.primary:hover {
+      background: #1d4ed8;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    }
+    .present-btn.theme-toggle {
+      background: #f59e0b;
+      border-color: #fbbf24;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .present-btn.theme-toggle:hover {
+      background: #d97706;
+      color: #ffffff;
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #ffffff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .arch-wrapper { max-width: 100% !important; padding: 0 !important; box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body class="theme-dark">
+
+<!-- แถบควบคุมการนำเสนอ (Toolbar) -->
+<div class="present-toolbar no-print">
+  <div class="present-bar">
+    <button class="present-btn theme-toggle" id="theme-btn" onclick="toggleTheme()">
+      <span id="theme-icon">☀️</span> <span id="theme-text">สลับเป็นโหมดสว่าง (Light)</span>
+    </button>
+    <div style="width: 1px; height: 18px; background: rgba(255,255,255,0.2);"></div>
+    <button class="present-btn primary" onclick="toggleFullscreen()">
+      <span>🖥️</span> นำเสนอเต็มจอ (F11)
+    </button>
+    <button class="present-btn" onclick="zoomDiagram(0.1)">
+      <span>➕</span> ซูมเข้า
+    </button>
+    <button class="present-btn" onclick="zoomDiagram(-0.1)">
+      <span>➖</span> ซูมออก
+    </button>
+    <button class="present-btn" onclick="resetZoom()">
+      <span>🔄</span> 100%
+    </button>
+    <div style="width: 1px; height: 18px; background: rgba(255,255,255,0.2);"></div>
+    <button class="present-btn" onclick="window.print()">
+      <span>🖨️</span> พิมพ์ / PDF
+    </button>
+    <a href="smes_architecture.svg" id="link-svg" target="_blank" class="present-btn" style="text-decoration: none;">
+      <span>🖼️</span> ดูไฟล์ SVG
+    </a>
+  </div>
+</div>
+
+<div class="arch-wrapper" id="zoom-container" style="transform-origin: top center; transition: transform 0.2s ease;">
+
+  <!-- ==================== ส่วนหัว (HEADER) ==================== -->
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 mb-3">
+      <span>🏛️</span> สำนักงานศึกษาธิการจังหวัดสระบุรี
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2" style="color: var(--text-main);">
+      แผนผังสถาปัตยกรรมระบบ S-MES
+    </h1>
+    <p class="text-sm max-w-2xl mx-auto" style="color: var(--text-muted);">
+      <span class="font-semibold" style="color: var(--text-main);">System for Management and Evaluation of Strategies</span><br>
+      ระบบสารสนเทศบริหารจัดการและประเมินผลยุทธศาสตร์ บนแพลตฟอร์ม Google Apps Script & Google Sheets
+    </p>
+  </div>
+
+  <!-- ==================== 1. FRONTEND LAYER ==================== -->
+  <div class="arch-layer layer-frontend">
+    <div class="layer-header">
+      <span class="layer-badge">
+        <span>🖥️</span> ชั้นส่วนหน้า (Frontend Layer) — ส่วนแสดงผลและประสบการณ์ผู้ใช้
+      </span>
+      <span class="text-xs font-semibold hidden sm:inline" style="color: var(--badge-fe-text);">HTML5 · Single Page Application (SPA) · Browser Runtime</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <!-- โครงสร้างหลัก (Core Shell) -->
+      <div class="lg:col-span-4 flex flex-col gap-3">
+        <div class="text-xs font-bold uppercase tracking-wider text-sky-500">📄 ไฟล์หลัก (Entry Point &amp; Controllers)</div>
+        <div class="node-card card-fe" data-tip="ไฟล์โครงสร้างหลัก HTML, Sidebar เมนู, Header Topbar และ Modal กล่องโต้ตอบ">
+          <div class="node-header">
+            <span class="text-base">📋</span>
+            <span>Index.html</span>
+          </div>
+          <span class="node-file">HTML Shell &amp; Layout</span>
+          <span class="node-sub">หน้าจอหลัก, Navigation Sidebar (แยก 3 กลุ่มงาน + ส่วนสนับสนุน), กระดิ่งแจ้งเตือน Real-time</span>
+        </div>
+        <div class="node-card card-fe" data-tip="ตรรกะ UI, Router หน้าจอ (switchAppSection), เรียก GAS API และวาดกราฟ Chart.js">
+          <div class="node-header">
+            <span class="text-base">⚡</span>
+            <span>JS.html</span>
+          </div>
+          <span class="node-file">UI Logic &amp; Controllers</span>
+          <span class="node-sub">จัดการสคริปต์หน้าจอ, SweetAlert2, Dynamic Forms, คำนวณงบประมาณ และเรียกเซิร์ฟเวอร์</span>
+        </div>
+      </div>
+
+      <!-- เมนูและโมดูลย่อยตาม Sidebar จริง -->
+      <div class="lg:col-span-8 flex flex-col gap-3">
+        <div class="text-xs font-bold uppercase tracking-wider text-sky-500">📱 โมดูลย่อยบนหน้าจอ (UI Sub-Modules ตามแถบเมนูจริง)</div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <!-- กลุ่มนโยบายและแผน -->
+          <div class="p-2.5 rounded-lg border border-sky-500/30 bg-sky-500/10 flex flex-col gap-1">
+            <div class="text-[11px] font-bold text-sky-500 flex items-center gap-1.5">📁 กลุ่มนโยบายและแผน</div>
+            <ul class="text-[10.5px] space-y-1 mt-1" style="color: var(--text-muted);">
+              <li>📊 ภาพรวม (Dashboard)</li>
+              <li>🧮 จัดสรร/โยกงบประมาณ</li>
+              <li>📅 ติดตามแผนงาน (Gantt)</li>
+              <li>💰 วางแผนกิจกรรม</li>
+              <li>🌐 โครงการทั้งหมด</li>
+              <li>📋 รายการโครงการ</li>
+              <li>📈 รายงานผล (ไตรมาส)</li>
+            </ul>
+          </div>
+
+          <!-- กลุ่มบริหารงานบุคคล -->
+          <div class="p-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 flex flex-col gap-1">
+            <div class="text-[11px] font-bold text-emerald-500 flex items-center gap-1.5">👥 กลุ่มบริหารงานบุคคล</div>
+            <ul class="text-[10.5px] space-y-1 mt-1" style="color: var(--text-muted);">
+              <li>🛡️ ติดตาม OIT (ITA 43 ข้อ)</li>
+              <li>🎒 พัฒนาบุคลากร (PDEV)</li>
+              <li>📢 ระบบร้องเรียน ร้องทุกข์</li>
+              <li>⚖️ ระบบร้องเรียนทุจริต</li>
+            </ul>
+          </div>
+
+          <!-- กลุ่มอำนวยการ & สนับสนุน -->
+          <div class="p-2.5 rounded-lg border border-amber-500/30 bg-amber-500/10 flex flex-col gap-1">
+            <div class="text-[11px] font-bold text-amber-500 flex items-center gap-1.5">🏢 กลุ่มอำนวยการ &amp; อื่นๆ</div>
+            <ul class="text-[10.5px] space-y-1 mt-1" style="color: var(--text-muted);">
+              <li>🕒 Work From Home (WFH)</li>
+              <li>📅 ปฏิทินวาระงาน</li>
+              <li>📂 เอกสารเผยแพร่</li>
+              <li>⚙️ จัดการระบบ (Admin)</li>
+              <li>📜 ประวัติแจ้งเตือน / โปรไฟล์</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connector: Frontend <-> Backend -->
+  <div class="flex justify-center my-[-10px] relative z-10">
+    <svg width="360" height="56" style="overflow: visible;">
+      <defs>
+        <marker id="m-down-c" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <polygon points="0,0 6,3 0,6" fill="#2563eb"/>
+        </marker>
+        <marker id="m-up-c" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+          <polygon points="0,0 6,3 0,6" fill="#2563eb"/>
+        </marker>
+      </defs>
+      <line x1="180" y1="2" x2="180" y2="54" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="5 3" marker-start="url(#m-up-c)" marker-end="url(#m-down-c)"/>
+      <rect x="70" y="15" width="220" height="26" rx="13" fill="var(--bg-page)" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="180" y="32" text-anchor="middle" font-size="10.5" font-weight="700" fill="#2563eb" letter-spacing="0.05em">
+        google.script.run (RPC) / HTTP API
+      </text>
+    </svg>
+  </div>
+
+  <!-- ==================== 2. BACKEND LAYER ==================== -->
+  <div class="arch-layer layer-backend">
+    <div class="layer-header">
+      <span class="layer-badge">
+        <span>⚙️</span> ชั้นประมวลผล (Backend Layer) — Google Apps Script (GAS) Services
+      </span>
+      <span class="text-xs font-semibold hidden sm:inline" style="color: var(--badge-be-text);">13 บริการแยกตามกลุ่มภารกิจ · Session Token &amp; Role-Based Authorization</span>
+    </div>
+
+    <!-- โซนศูนย์กลางความปลอดภัยและการตั้งค่า (Auth & Core Config) -->
+    <div class="mb-5 p-3.5 rounded-xl border flex flex-wrap items-center justify-between gap-3" style="background: var(--auth-box-bg); border-color: var(--auth-box-border);">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🔐</span>
+        <div>
+          <div class="text-xs font-bold" style="color: var(--badge-be-text);">ศูนย์กลางการยืนยันตัวตนและการตั้งค่า (Core Authentication &amp; System Config)</div>
+          <div class="text-[11px]" style="color: var(--text-muted);">ทุกฟังก์ชันของทุกกลุ่มงานต้องผ่านการตรวจสอบ Session Token และสิทธิ์เฉพาะทางก่อนประมวลผล</div>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2 text-xs">
+        <span class="px-2 py-1 rounded font-mono font-bold" style="background: var(--sub-box-bg); border: 1px solid var(--layer-be-border); color: var(--text-main);">
+          🔑 Backend_Auth.js (สิทธิ์/เข้าสู่ระบบ/โปรไฟล์)
+        </span>
+        <span class="px-2 py-1 rounded font-mono font-bold" style="background: var(--sub-box-bg); border: 1px solid var(--layer-be-border); color: var(--text-main);">
+          ⚙️ รหัส.js (Global CONFIG &amp; SystemConfig)
+        </span>
+      </div>
+    </div>
+
+    <!-- 4 กลุ่มงานหลักตามเมนูจริง -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+
+      <!-- 1. กลุ่มนโยบายและแผน -->
+      <div class="flex flex-col gap-3 p-3.5 rounded-xl border border-sky-500/25 bg-sky-500/5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-sky-500 flex items-center gap-1.5">
+            <span>📁</span> 1. กลุ่มนโยบายและแผน
+          </span>
+          <span class="text-[10px] text-sky-500/70 font-semibold">4 บริการ</span>
+        </div>
+
+        <div class="node-card card-policy" data-tip="สรุปยอด KPI ผู้บริหาร, กราฟงบประมาณ, ความก้าวหน้าโครงการ และสถิติต่างๆ">
+          <div class="node-header"><span>📊</span> <span>ภาพรวมแดชบอร์ด</span></div>
+          <span class="node-file">Backend_Dashboard.js</span>
+          <span class="node-sub">รวมข้อมูลข้ามกลุ่ม (Projects, Finance, PDEV, WFH, OIT) เพื่อแสดงผลภาพรวม KPI</span>
+        </div>
+
+        <div class="node-card card-policy" data-tip="จัดสรรงบประมาณประจำปี, โอนย้ายงบข้ามโครงการ และติดตามประวัติการโอนเงิน">
+          <div class="node-header"><span>🧮</span> <span>จัดสรรและโยกงบประมาณ</span></div>
+          <span class="node-file">Backend_Finance.js</span>
+          <span class="node-sub">จัดการงบโครงการ, ยอดจัดสรร, บันทึกการโอนเงิน และเชื่อมต่อยอดกับรายการโครงการ</span>
+        </div>
+
+        <div class="node-card card-policy" data-tip="เสนอโครงการ, แผนงาน Gantt Chart, กิจกรรมและงบประมาณย่อย และรายชื่อโครงการ">
+          <div class="node-header"><span>📋</span> <span>โครงการและแผนงาน (Gantt)</span></div>
+          <span class="node-file">Backend_Projects.js</span>
+          <span class="node-sub">ติดตามแผนงาน Gantt, กิจกรรม, โครงการทั้งหมด, แนบเอกสาร Drive และประเมินผล</span>
+        </div>
+
+        <div class="node-card card-policy" data-tip="รายงานผลการดำเนินงานรายไตรมาส (Q1-Q4) และส่งออกสรุป">
+          <div class="node-header"><span>📈</span> <span>รายงานผลไตรมาส</span></div>
+          <span class="node-file">Backend_Reports.js</span>
+          <span class="node-sub">บันทึกผลการดำเนินงาน, ปัญหาอุปสรรค, แนบไฟล์รายงาน และจัดทำสรุปภาพรวม</span>
+        </div>
+      </div>
+
+      <!-- 2. กลุ่มบริหารงานบุคคล -->
+      <div class="flex flex-col gap-3 p-3.5 rounded-xl border border-emerald-500/25 bg-emerald-500/5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-emerald-500 flex items-center gap-1.5">
+            <span>👥</span> 2. กลุ่มบริหารงานบุคคล
+          </span>
+          <span class="text-[10px] text-emerald-500/70 font-semibold">3 บริการ</span>
+        </div>
+
+        <div class="node-card card-hr" data-tip="ตัวชี้วัดการประเมินคุณธรรมและความโปร่งใส (ITA) พร้อมแนบหลักฐาน">
+          <div class="node-header"><span>🛡️</span> <span>ติดตาม OIT (ITA)</span></div>
+          <span class="node-file">Backend_OIT.js</span>
+          <span class="node-sub">จัดการตัวชี้วัด OIT รายข้อ (o1-o43), ตรวจสอบหลักฐาน และเปิด/ปิดการเผยแพร่</span>
+        </div>
+
+        <div class="node-card card-hr" data-tip="บันทึกประวัติการฝึกอบรม/สัมมนา/พัฒนาตนเองของบุคลากร พร้อมชั่วโมงอบรม">
+          <div class="node-header"><span>🎒</span> <span>พัฒนาบุคลากร (PDEV)</span></div>
+          <span class="node-file">Backend_PDEV.js</span>
+          <span class="node-sub">สะสมชั่วโมงพัฒนาตนเอง, แนบประกาศนียบัตร และออกรายงานสถิติบุคคล</span>
+        </div>
+
+        <div class="node-card card-hr" data-tip="รับเรื่องร้องเรียนทั่วไป ร้องทุกข์ และระบบร้องเรียนการทุจริตประพฤติมิชอบ">
+          <div class="node-header"><span>📢</span> <span>ร้องเรียน / ทุจริต</span></div>
+          <span class="node-file">Backend_Complaints.js</span>
+          <span class="node-sub">ชั้นความลับข้อมูลร้องเรียน, ตรวจสอบสถานะ, แจ้งเตือนผู้รับผิดชอบ และสรุปสถิติ</span>
+        </div>
+      </div>
+
+      <!-- 3. กลุ่มอำนวยการ -->
+      <div class="flex flex-col gap-3 p-3.5 rounded-xl border border-amber-500/25 bg-amber-500/5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-amber-500 flex items-center gap-1.5">
+            <span>🏢</span> 3. กลุ่มอำนวยการ
+          </span>
+          <span class="text-[10px] text-amber-500/70 font-semibold">2 บริการ</span>
+        </div>
+
+        <!-- Card: WFH (NO GPS!) -->
+        <div class="node-card card-admin" data-tip="ลงเวลาปฏิบัติงานนอกสถานที่ (WFH), บันทึกรายงานผลงาน และการอนุมัติ">
+          <div class="node-header"><span>🕒</span> <span>Work From Home (WFH)</span></div>
+          <span class="node-file">Backend_WFH.js</span>
+          <span class="node-sub">ขออนุมัติ WFH, ลงเวลาเข้า-ออกงาน, ส่งรายงานผลงาน และตรวจสอบสถิติ</span>
+          <span class="mt-1 text-[9.5px] font-bold text-amber-600 bg-amber-500/10 px-1.5 py-0.5 rounded self-start">
+            ✔️ ไม่มีการบันทึกพิกัดตำแหน่ง
+          </span>
+        </div>
+
+        <div class="node-card card-admin" data-tip="ปฏิทินวาระงานผู้บริหาร, ประชุม, นัดหมาย และกิจกรรมสำคัญของสำนักงาน">
+          <div class="node-header"><span>📅</span> <span>ปฏิทินวาระงาน</span></div>
+          <span class="node-file">Backend_Calendar.js</span>
+          <span class="node-sub">บันทึกวาระงาน, นัดหมายผู้บริหาร, แจ้งเตือน และเชื่อมโยงกับ Google Calendar</span>
+        </div>
+      </div>
+
+      <!-- 4. ส่วนสนับสนุน & สื่อสารแจ้งเตือน -->
+      <div class="flex flex-col gap-3 p-3.5 rounded-xl border border-purple-500/25 bg-purple-500/5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-purple-500 flex items-center gap-1.5">
+            <span>⚙️</span> 4. บริหารระบบ &amp; แจ้งเตือน
+          </span>
+          <span class="text-[10px] text-purple-500/70 font-semibold">4 บริการ</span>
+        </div>
+
+        <div class="node-card card-system" data-tip="บริหารสิทธิ์ผู้ใช้, จัดการข้อมูลรายปี, ย้ายข้อมูลขึ้น Archive และตั้งค่าระบบ">
+          <div class="node-header"><span>🛡️</span> <span>ระบบแอดมิน / Archive</span></div>
+          <span class="node-file">Backend_Admin.js</span>
+          <span class="node-sub">การย้ายข้อมูลประวัติโครงการ (Archive Data), จัดการบัญชีผู้ใช้ และสิทธิ์กลุ่มงาน</span>
+        </div>
+
+        <div class="node-card card-system" data-tip="ศูนย์กลางประวัติแจ้งเตือนในระบบ (In-App Bell), นับ Badge ตัวเลข และสถานะอ่านแล้ว">
+          <div class="node-header"><span>📜</span> <span>ประวัติแจ้งเตือนในระบบ</span></div>
+          <span class="node-file">Backend_Notifications.js</span>
+          <span class="node-sub">บันทึกประวัติการแจ้งเตือน, แจกจ่ายข้อความเตือน และส่งต่อไปยังแอป LINE</span>
+        </div>
+
+        <!-- Card: LINE Application (Highlight) -->
+        <div class="node-card card-line" data-tip="ระบบเชื่อมต่อ LINE Messaging API เพื่อการแจ้งเตือนและการสื่อสารอัจฉริยะในองค์กร">
+          <div class="node-header font-bold text-emerald-600">
+            <span class="text-base">💬</span> <span>เชื่อมต่อแอปพลิเคชัน LINE (LINE Integration)</span>
+          </div>
+          <span class="node-file font-bold text-emerald-700">Backend_Line.js</span>
+          <div class="node-sub font-medium mt-1 space-y-1" style="line-height: 1.4;">
+            <div class="font-bold text-emerald-600">ระบบแจ้งเตือนและสื่อสารอัจฉริยะ (LINE Messaging API &amp; Webhook):</div>
+            <div>• ผูกบัญชีผู้ใช้ S-MES กับ LINE ID (Account Linking via Webhook)</div>
+            <div>• ส่งรายงานวาระงานประจำวันอัตโนมัติ (Automated Daily Digest)</div>
+            <div>• แจ้งเตือนสถานะโครงการและ WFH แบบทันที (Real-time Flex Messages)</div>
+          </div>
+        </div>
+
+        <div class="node-card card-system" data-tip="คลังเอกสารเผยแพร่และดาวน์โหลดแบบฟอร์ม">
+          <div class="node-header"><span>📂</span> <span>เอกสารเผยแพร่</span></div>
+          <span class="node-file">Drive Integration</span>
+          <span class="node-sub">คลังไฟล์คู่มือ, ข้อเสนอโครงการที่อนุมัติ และเอกสารสาธารณะ</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- เส้นเชื่อมโยงข้อมูลภายในระหว่างโมดูล -->
+    <div class="mt-5 pt-3 border-t flex flex-wrap items-center justify-between gap-3 text-[11px]" style="border-color: var(--layer-be-border); color: var(--text-muted);">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-amber-500">⚡ การเชื่อมโยงข้ามโมดูล:</span>
+        <span>โครงการ (Projects) ⇄ งบประมาณ (Finance)</span>
+        <span>|</span>
+        <span>ทุกเหตุการณ์เตือน ➔ บันทึก (Notifications) ➔ ยิงเข้า (แอป LINE)</span>
+        <span>|</span>
+        <span>ทุกโมดูล ➔ ประมวลผลภาพรวม (Dashboard)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connector: Backend <-> Database & External -->
+  <div class="flex justify-center my-[-10px] relative z-10">
+    <svg width="460" height="56" style="overflow: visible;">
+      <defs>
+        <marker id="m-green-c" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <polygon points="0,0 6,3 0,6" fill="#059669"/>
+        </marker>
+        <marker id="m-amber-c" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <polygon points="0,0 6,3 0,6" fill="#d97706"/>
+        </marker>
+      </defs>
+      <line x1="160" y1="2" x2="160" y2="54" stroke="#059669" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#m-green-c)"/>
+      <rect x="70" y="15" width="180" height="26" rx="13" fill="var(--bg-page)" stroke="#059669" stroke-width="1.5"/>
+      <text x="160" y="32" text-anchor="middle" font-size="10.5" font-weight="700" fill="#059669">
+        SpreadsheetApp (CRUD)
+      </text>
+
+      <line x1="330" y1="2" x2="330" y2="54" stroke="#d97706" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#m-amber-c)"/>
+      <rect x="255" y="15" width="150" height="26" rx="13" fill="var(--bg-page)" stroke="#d97706" stroke-width="1.5"/>
+      <text x="330" y="32" text-anchor="middle" font-size="10.5" font-weight="700" fill="#d97706">
+        External Services API
+      </text>
+    </svg>
+  </div>
+
+  <!-- ==================== 3 & 4. DATA LAYER & EXTERNAL SERVICES ==================== -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+    <!-- 3. DATABASE LAYER (Google Sheets) -->
+    <div class="lg:col-span-8 arch-layer layer-db">
+      <div class="layer-header">
+        <span class="layer-badge">
+          <span>🗄️</span> ชั้นฐานข้อมูล (Data Layer) — Google Sheets
+        </span>
+        <span class="text-xs font-semibold hidden sm:inline" style="color: var(--badge-db-text);">SpreadsheetApp NoSQL Model · แยกชีตตามบริบทงาน</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div class="node-card card-db" data-tip="ชีต Projects & ProjectActivities: บันทึกข้อมูลโครงการ, กิจกรรมย่อย, ไทม์ไลน์ และสถานะ">
+          <div class="node-header"><span>📁</span> โครงการ &amp; แผน</div>
+          <span class="node-file">Projects, Activities</span>
+          <span class="node-sub">ข้อมูลโครงการ/Gantt</span>
+        </div>
+        <div class="node-card card-db" data-tip="ชีต BudgetAllocations & BudgetTransfers: ยอดจัดสรรงบประมาณและประวัติการโอนเปลี่ยนแปลงงบ">
+          <div class="node-header"><span>💰</span> งบประมาณ</div>
+          <span class="node-file">BudgetAllocations</span>
+          <span class="node-sub">ยอดจัดสรรและประวัติโอน</span>
+        </div>
+        <div class="node-card card-db" data-tip="ชีต Reports: รายงานผลการดำเนินงานรายไตรมาส ปัญหาอุปสรรค และรูปภาพกิจกรรม">
+          <div class="node-header"><span>📈</span> รายงานไตรมาส</div>
+          <span class="node-file">Reports Sheet</span>
+          <span class="node-sub">ผลการดำเนินงาน Q1-Q4</span>
+        </div>
+        <div class="node-card card-db" data-tip="ชีต OIT_Items & OIT_Evidence: ตัวชี้วัดความโปร่งใส ITA รายข้อ และลิงก์หลักฐาน">
+          <div class="node-header"><span>🛡️</span> ตัวชี้วัด OIT</div>
+          <span class="node-file">OIT_Items, Evidence</span>
+          <span class="node-sub">ข้อมูล ITA 43 ตัวชี้วัด</span>
+        </div>
+        <div class="node-card card-db" data-tip="ชีต PDEV_Records: ทะเบียนประวัติการพัฒนาบุคลากร ชั่วโมงสะสม และเกียรติบัตร">
+          <div class="node-header"><span>🎒</span> พัฒนาบุคลากร</div>
+          <span class="node-file">PDEV_Records</span>
+          <span class="node-sub">ประวัติการอบรมบุคลากร</span>
+        </div>
+        <div class="node-card card-db" data-tip="ชีต Complaints: เรื่องร้องเรียนทั่วไปและเรื่องร้องเรียนการทุจริตพร้อมระดับสิทธิ์เข้าถึง">
+          <div class="node-header"><span>📢</span> เรื่องร้องเรียน</div>
+          <span class="node-file">Complaints Sheet</span>
+          <span class="node-sub">ข้อร้องทุกข์ &amp; ทุจริต</span>
+        </div>
+        <!-- WFH Sheet (NO GPS!) -->
+        <div class="node-card card-db" data-tip="ชีต WFH_Requests & WFH_Logs: บันทึกคำขอลงเวลาปฏิบัติงานนอกสถานที่และประวัติการทำงาน">
+          <div class="node-header"><span>🕒</span> บันทึก WFH</div>
+          <span class="node-file">WFH_Requests, Logs</span>
+          <span class="node-sub">คำขอ &amp; บันทึกเวลาทำงาน</span>
+        </div>
+        <div class="node-card card-db" data-tip="ชีต Users, SystemConfig & Notifications: บัญชีผู้ใช้, รหัสผ่านผสม Pepper, และการแจ้งเตือน">
+          <div class="node-header"><span>⚙️</span> ผู้ใช้ &amp; ตั้งค่า</div>
+          <span class="node-file">Users, SystemConfig</span>
+          <span class="node-sub">สิทธิ์, โทเคน, แจ้งเตือน</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. EXTERNAL SERVICES LAYER -->
+    <div class="lg:col-span-4 arch-layer layer-external">
+      <div class="layer-header">
+        <span class="layer-badge">
+          <span>🌐</span> บริการภายนอก (External APIs)
+        </span>
+        <span class="text-xs font-semibold" style="color: var(--badge-ext-text);">Third-Party</span>
+      </div>
+
+      <div class="flex flex-col gap-2.5">
+        <!-- LINE Application External -->
+        <div class="node-card card-ext" style="border-color: #06c755 !important; background: var(--card-line-bg); color: var(--card-line-text);" data-tip="แพลตฟอร์ม LINE Messaging API: รับ Webhook ตอบกลับ และยิง Push Notification ตรงสู่สมาร์ตโฟนบุคลากร">
+          <div class="node-header font-bold text-emerald-600">
+            <span>💬</span> <span>แพลตฟอร์มแอปพลิเคชัน LINE (LINE Messaging Platform)</span>
+          </div>
+          <span class="node-file font-bold text-emerald-700">LINE Messaging API / Webhook Endpoint</span>
+          <div class="node-sub space-y-1 mt-1" style="color: var(--text-main); line-height: 1.4;">
+            <div>• รับ Webhook เชื่อมบัญชีผู้ใช้เมื่อพิมพ์ <code style="background:rgba(0,0,0,0.2); padding:1px 4px; border-radius:3px;">ผูกบัญชี:username</code></div>
+            <div>• ยิงแจ้งเตือนสรุปงานประจำวัน (Daily Digest) และสถานะอนุมัติสู่สมาร์ตโฟนทันที</div>
+          </div>
+        </div>
+
+        <!-- Google Drive API -->
+        <div class="node-card card-ext" data-tip="Google Drive API (DriveApp): จัดเก็บไฟล์ข้อเสนอโครงการ, ไฟล์รายงาน, หลักฐาน OIT และสำรอง Archive">
+          <div class="node-header"><span>📁</span> <span>Google Drive Service</span></div>
+          <span class="node-file">DriveApp / Drive API</span>
+          <span class="node-sub">จัดเก็บไฟล์แนบโครงการ, หลักฐาน OIT, รูปภาพ และโฟลเดอร์ Archive ประจำปี</span>
+        </div>
+
+        <!-- Google Calendar API -->
+        <div class="node-card card-ext" data-tip="Google Calendar API (CalendarApp): บันทึกนัดหมายและวาระงานลงในปฏิทินขององค์กรโดยอัตโนมัติ">
+          <div class="node-header"><span>📅</span> <span>Google Calendar Service</span></div>
+          <span class="node-file">CalendarApp API</span>
+          <span class="node-sub">ซิงค์วาระงานผู้บริหารและการประชุมลงใน Google Calendar อัตโนมัติ</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== 5. คำอธิบายสัญลักษณ์และเกร็ดเชิงเทคนิค ==================== -->
+  <div class="p-4 rounded-xl border mt-2" style="background: var(--footer-card-bg); border-color: var(--footer-card-border);">
+    <div class="text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-2" style="color: var(--text-muted);">
+      <span>📌</span> คำอธิบายสัญลักษณ์และการทำงานเชื่อมโยง (System Insights)
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs" style="color: var(--text-main);">
+      <div class="flex items-start gap-2">
+        <span class="p-1 rounded bg-sky-500/20 text-sky-500 font-bold">📁</span>
+        <div>
+          <strong class="text-sky-500">กลุ่มนโยบายและแผน</strong>
+          <div class="text-[11px]" style="color: var(--text-muted);">ควบคุมวัฏจักรโครงการ งบประมาณ และการรายงานผลไตรมาส</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-2">
+        <span class="p-1 rounded bg-emerald-500/20 text-emerald-500 font-bold">👥</span>
+        <div>
+          <strong class="text-emerald-500">กลุ่มบริหารงานบุคคล</strong>
+          <div class="text-[11px]" style="color: var(--text-muted);">ดูแลความโปร่งใส ITA (OIT), ชั่วโมงพัฒนาตนเอง (PDEV) และข้อร้องเรียน</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-2">
+        <span class="p-1 rounded bg-amber-500/20 text-amber-500 font-bold">🏢</span>
+        <div>
+          <strong class="text-amber-500">กลุ่มอำนวยการ</strong>
+          <div class="text-[11px]" style="color: var(--text-muted);">บริหารการลงเวลาปฏิบัติงานนอกสถานที่ (WFH) และปฏิทินวาระงาน</div>
+        </div>
+      </div>
+      <div class="flex items-start gap-2">
+        <span class="p-1 rounded bg-emerald-500/20 text-emerald-600 font-bold">💬</span>
+        <div>
+          <strong class="text-emerald-600">แอปพลิเคชัน LINE (LINE Integration)</strong>
+          <div class="text-[11px]" style="color: var(--text-muted);">ช่องทางแจ้งเตือนอัจฉริยะ (Daily Digest &amp; Real-time Alerts) ผ่าน LINE Messaging API</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="text-center mt-8 text-xs" style="color: var(--text-dim);">
+    ระบบ S-MES · สำนักงานศึกษาธิการจังหวัดสระบุรี · ออกแบบตามสถาปัตยกรรม Google Apps Script &amp; Google Sheets
+  </div>
+
+</div>
+
+<script>
+  var currentScale = 1;
+  var isDark = true;
+
+  function toggleTheme() {
+    isDark = !isDark;
+    var body = document.body;
+    var btnText = document.getElementById('theme-text');
+    var btnIcon = document.getElementById('theme-icon');
+    var linkSvg = document.getElementById('link-svg');
+
+    if (isDark) {
+      body.classList.remove('theme-light');
+      body.classList.add('theme-dark');
+      btnText.innerText = "สลับเป็นโหมดสว่าง (Light)";
+      btnIcon.innerText = "☀️";
+      if (linkSvg) linkSvg.href = "smes_architecture.svg";
+    } else {
+      body.classList.remove('theme-dark');
+      body.classList.add('theme-light');
+      btnText.innerText = "สลับเป็นโหมดมืด (Dark)";
+      btnIcon.innerText = "🌙";
+      if (linkSvg) linkSvg.href = "smes_architecture_light.svg";
+    }
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        alert("กรุณากดแป้น F11 บนคีย์บอร์ดเพื่อเข้าสู่โหมดเต็มจอ");
+      });
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+    }
+  }
+
+  function zoomDiagram(delta) {
+    currentScale = Math.min(Math.max(0.5, currentScale + delta), 2.0);
+    var el = document.getElementById('zoom-container');
+    if (el) el.style.transform = 'scale(' + currentScale + ')';
+  }
+
+  function resetZoom() {
+    currentScale = 1;
+    var el = document.getElementById('zoom-container');
+    if (el) el.style.transform = 'scale(1)';
+  }
+</script>
+</body>
+</html>
