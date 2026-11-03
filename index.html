@@ -8453,7 +8453,9 @@ function renderGanttChart() {
           } else {
             document.getElementById('admin-doc-list').innerHTML = "<tr><td colspan='6' style='text-align:center; color:red;'>⚠️ โหลดข้อมูลไม่สำเร็จ (กรุณาอัปเดตไฟล์ Code.gs)</td></tr>";
           }
-        }
+        })
+        .getAdminDocuments(token);
+    }
 
 
 // ================================================================
@@ -8482,6 +8484,15 @@ function loadArchModule() {
     }
     iframe.src = 'smes_architecture_light.html';
     iframe.setAttribute('data-loaded', 'true');
+  }
+}
+
+// Preload architecture module once DOM is available
+if (typeof window !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(loadArchModule, 500); });
+  } else {
+    setTimeout(loadArchModule, 500);
   }
 }
 
@@ -8532,9 +8543,6 @@ function openArchModalFullscreen() {
   }
 }
 
-)
-        .getAdminDocuments(token);
-    }
 async function doUploadDocument() {
       var title = document.getElementById('admin-doc-title').value;
       var cat = document.getElementById('admin-doc-category').value;
