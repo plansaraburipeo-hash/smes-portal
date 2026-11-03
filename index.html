@@ -319,7 +319,8 @@
   /* TABLE STYLING (Glassmorphism) */
   /* ------------------------------------------- */
   .table-wrapper { 
-      overflow: hidden; 
+      overflow-x: auto; 
+      -webkit-overflow-scrolling: touch;
       width: 100%; 
       border-radius: 20px; margin-bottom: 24px;
       background: rgba(255, 255, 255, 0.45);
@@ -708,7 +709,57 @@
     }
     #ledger-modal table {
         table-layout: auto !important;
-        min-width: 680px !important;
+        min-width: 880px !important;
+    }
+    
+    /* Global Mobile Table Improvements (Step 3) */
+    .table-responsive {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        width: 100% !important;
+    }
+    .table-responsive table {
+        max-width: none !important;
+    }
+    /* Prevent monetary and date values from colliding or wrapping */
+    #ledger-modal table td,
+    #ledger-modal table th {
+        box-sizing: border-box !important;
+    }
+    #ledger-modal table td:nth-child(1),
+    #ledger-modal table td:nth-child(4),
+    #ledger-modal table td:nth-child(5),
+    #ledger-modal table td:nth-child(6),
+    #ledger-modal table td:nth-child(7),
+    #ledger-modal table td:nth-child(8) {
+        white-space: nowrap !important;
+    }
+    #tracking-main-tbody td:nth-child(1),
+    #tracking-main-tbody td:nth-child(3),
+    #tracking-main-tbody td:nth-child(4),
+    #tracking-main-tbody td:nth-child(5),
+    #tracking-main-tbody td:nth-child(6),
+    #tracking-main-tbody td:nth-child(7) {
+        white-space: nowrap !important;
+    }
+    #transfer-draft-tbody td:nth-child(1),
+    #transfer-draft-tbody td:nth-child(4),
+    #transfer-draft-tbody td:nth-child(6) {
+        white-space: nowrap !important;
+    }
+    #transfer-batch-history td:nth-child(1),
+    #transfer-batch-history td:nth-child(3),
+    #transfer-batch-history td:nth-child(4),
+    #transfer-batch-history td:nth-child(5) {
+        white-space: nowrap !important;
+    }
+    #transfer-balance-tbody td:nth-child(1),
+    #transfer-balance-tbody td:nth-child(3),
+    #transfer-balance-tbody td:nth-child(4),
+    #transfer-balance-tbody td:nth-child(5),
+    #transfer-balance-tbody td:nth-child(6),
+    #transfer-balance-tbody td:nth-child(7) {
+        white-space: nowrap !important;
     }
 
     /* PDEV Mobile & Tablets Overrides */
@@ -1735,7 +1786,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                     </button>
                 </div>
                 <div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 6px; background: white;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; margin: 0;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; margin: 0; min-width: 720px;">
                     <thead style="background: #f1f5f9; color: #475569; border-bottom: 2px solid #cbd5e1;">
                             <tr>
                                 <th style="padding: 12px; border: 1px solid #cbd5e1; width: 10%; text-align: center;">ปีงบประมาณ</th>
@@ -1783,7 +1834,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
             </div>
 
             <div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 6px;">
-                <table style="width: 100%; border-collapse: collapse;">
+                <table style="width: 100%; border-collapse: collapse; min-width: 880px;">
                     <thead style="background: #f1f5f9;">
                         <tr>
                             <th style="padding: 12px; border: 1px solid #cbd5e1; text-align: center; width: 70px;">บัตร</th>
@@ -1855,7 +1906,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
 
 <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); width: 100%;">
                     <div class="table-responsive" style="max-height: 45vh; overflow-y: auto; overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; margin: 0; min-width: 680px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; margin: 0; min-width: 880px;">
                             <thead style="background: #f1f5f9; line-height: 1.3;">
                                 <tr style="height: 35px;">
                                     <th rowspan="2" style="position: sticky; top: 0; z-index: 999; background: #f1f5f9; padding: 6px 4px; border: 1px solid #e2e8f0; width: 10%; text-align: center;">วันที่</th>
@@ -1890,7 +1941,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
             </div>
             
                     <div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 6px;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px; min-width: 780px;">
                             <thead style="position: sticky; top: 0; background: #f1f5f9; z-index: 10; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                                 <tr>
                                     <th style="padding: 8px 4px; border: 1px solid #cbd5e1; width: 8%; text-align: center">บัตร</th>
@@ -1938,7 +1989,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                         </div>
                     </div>
 
-                    <div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 15px;"><table style="width: 100%; border-collapse: collapse; margin: 0; font-size: 13px; min-width: 650px;">
+                    <div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 15px;"><table style="width: 100%; border-collapse: collapse; margin: 0; font-size: 13px; min-width: 720px;">
                         <thead style="background: #f1f5f9;">
                             <tr>
                                 <th style="padding: 10px; border: 1px solid #cbd5e1; width: 5%;">ลำดับ</th>
@@ -1970,7 +2021,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
 
         <div style="background: #fff; padding: 20px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
             <h3 style="margin-top: 0; margin-bottom: 15px; color: #1e4a2d;">📂 ประวัติการอนุมัติโยกงบประมาณ (แยกตามรอบการประชุม)</h3>
-            <div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 15px;"><table style="width: 100%; border-collapse: collapse; margin: 0; font-size: 13px; min-width: 650px;">
+            <div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 15px;"><table style="width: 100%; border-collapse: collapse; margin: 0; font-size: 13px; min-width: 720px;">
                 <thead style="background: #f8fafc;">
                     <tr>
                         <th style="padding: 10px; border: 1px solid #cbd5e1; text-align: left;">วัน/เวลาที่บันทึก</th>
@@ -2117,7 +2168,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
               <!-- ตารางแสดงผลประวัติ -->
               <div class="table-responsive" style="flex: 1; overflow-y: auto;">
                 <!-- ตารางเข้างาน -->
-                <table id="ts-table-in" style="width:100%; table-layout: fixed; border-collapse:collapse; display:none;">
+                <table id="ts-table-in" style="width:100%; min-width: 650px; border-collapse:collapse; display:none;">
                   <thead>
                     <tr style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
                       <th style="padding:10px; font-size:13px; font-weight:600; color:#334155; text-align:left; width:20%;">เวลา</th>
@@ -2133,7 +2184,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                 </table>
                 
                 <!-- ตารางออกงาน -->
-                <table id="ts-table-out" style="width:100%; table-layout: fixed; border-collapse:collapse; display:none;">
+                <table id="ts-table-out" style="width:100%; min-width: 650px; border-collapse:collapse; display:none;">
                   <thead>
                     <tr style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
                       <th style="padding:10px; font-size:13px; font-weight:600; color:#334155; text-align:left; width:20%;">เวลา</th>
@@ -2170,7 +2221,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
             </div>
             <div class="table-wrapper">
               <div class="table-responsive">
-                <table>
+                <table style="width:100%; min-width:650px;">
                   <thead>
                     <tr>
                       <th style="width: 15%;">วันที่อัปโหลด</th>
@@ -2203,7 +2254,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                     <button onclick="addActivityGroup()" style="background-color: #3b82f6; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">➕ เพิ่มกิจกรรมใหม่</button>
                 </div>
                 
-                <div class="table-wrapper">
+                <div class="table-wrapper"><div class="table-responsive">
                     <table style="width: 100%; min-width: 900px; border-collapse: collapse;" id="plan-expense-table">
                         <thead>
                             <tr style="background-color: #1e4a2d; color: white; text-align: left;">
@@ -2224,7 +2275,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                             </tr>
                         </tfoot>
                     </table>
-                </div>
+                </div></div>
 
                 <div style="text-align: right; border-top: 1px solid #eee; padding-top: 20px;">
                     <button onclick="saveActivityPlanDraft()" style="background-color: #f59e0b; color: white; border: none; padding: 12px 25px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; margin-right: 10px;">📝 บันทึกแบบร่าง (ทำต่อทีหลัง)</button>
@@ -2232,7 +2283,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                 </div>
                 <div style="margin-top: 40px; border-top: 2px solid #e2e8f0; padding-top: 20px;">
                     <h3 style="color: #1e4a2d; margin-bottom: 15px;">📋 ประวัติแผนกิจกรรมของคุณ</h3>
-                    <div class="table-wrapper">
+                    <div class="table-wrapper"><div class="table-responsive">
                         <table style="width: 100%; min-width: 800px; border-collapse: collapse;">
                             <thead>
                                 <tr style="background-color: #f1f5f9;">
@@ -2246,7 +2297,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                                 <tr><td colspan="4" class="loading">กำลังดึงข้อมูล...</td></tr>
                             </tbody>
                         </table>
-                    </div>
+                    </div></div>
                 </div>
 
             </div>
@@ -2261,7 +2312,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
             </div>
             <div class="table-wrapper">
               <div class="table-responsive">
-                <table>
+                <table style="width:100%; min-width:750px;">
                   <thead>
                     <tr>
                       <th style="width:15%; cursor:pointer;" onclick="sortTable('project-list', 0)">รหัสโครงการ ↕️</th>
@@ -2334,7 +2385,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           </div>
           
           <div id="admin-proj" class="admin-module"><div style="background: white; padding: 20px; border-radius: 8px;"><h3 style="margin-top: 0; color: #1e4a2d; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">📝 โครงการ <button onclick="exportAdminData('projects')" class="admin-only-ui" style="width:auto; margin:0 0 0 auto; padding:4px 12px; background:#10b981; font-size:12px; color:white; border:none; border-radius:4px;">📥 Export</button> <button onclick="openBulkTransferModal()" class="admin-only-ui" style="width:auto; margin:0; padding:4px 12px; background:#f59e0b; color:white; font-size:12px; border:none; border-radius:4px;">🔄 โอนย้าย</button></h3>
-          <div class="table-wrapper"><div class="table-responsive"><table>
+          <div class="table-wrapper"><div class="table-responsive"><table style="width:100%; min-width:850px;">
             <thead><tr>
           <th style="width:5%; text-align:center;" class="admin-only-ui"><input type="checkbox" onclick="toggleAllProj(this)"></th>
           <th style="width:12%; cursor:pointer;" onclick="sortTable('admin-project-approval-list', 1)">รหัส ↕️</th>
@@ -2346,7 +2397,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
         </tr></thead><tbody id="admin-project-approval-list"></tbody></table></div></div></div></div>
           
           <div id="admin-rep" class="admin-module hidden"><div style="background: white; padding: 20px; border-radius: 8px;"><h3 style="margin-top: 0; color: #d97706; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">📉 รายงานผล <button onclick="exportAdminData('reports')" class="admin-only-ui" style="width:auto; margin:0 0 0 auto; padding:4px 12px; background:#10b981; font-size:12px; color:white; border:none; border-radius:4px;">📥 Export</button></h3>
-          <div class="table-wrapper"><div class="table-responsive"><table><thead><tr><th style="width:15%;">รหัสโครงการ</th><th style="width:20%;">ไตรมาส</th><th style="width:20%;">กลุ่มงาน/ผู้รายงาน</th><th style="width:15%;">สถานะรายงาน</th><th style="width:30%; text-align: center;">จัดการ</th></tr></thead><tbody id="admin-report-approval-list"></tbody></table></div></div></div></div>
+          <div class="table-wrapper"><div class="table-responsive"><table style="width:100%; min-width:800px;"><thead><tr><th style="width:15%;">รหัสโครงการ</th><th style="width:20%;">ไตรมาส</th><th style="width:20%;">กลุ่มงาน/ผู้รายงาน</th><th style="width:15%;">สถานะรายงาน</th><th style="width:30%; text-align: center;">จัดการ</th></tr></thead><tbody id="admin-report-approval-list"></tbody></table></div></div></div></div>
 
           <div id="admin-api" class="admin-module hidden admin-only-ui">
             <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; color: #334155;">
@@ -2381,8 +2432,8 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                 </select>
               </div>
               
-              <div class="table-wrapper">
-                <table style="margin-top: 0;">
+              <div class="table-wrapper"><div class="table-responsive">
+                <table style="margin-top: 0; width:100%; min-width:720px;">
                   <thead>
                     <tr>
                       <th style="width:15%;">Username</th>
@@ -2395,7 +2446,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                   </thead>
                   <tbody id="admin-user-list"></tbody>
                 </table>
-              </div>
+              </div></div>
 
               <div id="users-pagination" style="text-align: right; margin-top: 15px;">
                 <button onclick="changeUsersPage(-1)" style="width:auto; padding:5px 15px; margin:0;">◀</button>
@@ -2516,7 +2567,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
               <h3 style="margin-top: 0; color: #1e4a2d;">📋 รายการเอกสารทั้งหมด</h3>
               <div class="table-wrapper">
                 <div class="table-responsive">
-                  <table>
+                  <table style="width:100%; min-width:720px;">
                     <thead>
                       <tr>
                         <th style="width: 10%;">วันที่</th>
@@ -2943,7 +2994,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
         </button>
       </div>
       <div class="table-responsive" style="padding: 0 16px 16px 16px; background: #f8fafc;">
-        <table style="width:100%; border-collapse:collapse; table-layout:fixed; word-wrap:break-word; white-space:normal;">
+        <table style="width:100%; border-collapse:collapse; min-width:750px;">
           <thead>
             <tr style="background:#1e4a2d;color:white;">
               <th style="width:12%; padding:10px 8px;text-align:left;font-size:13px;">วันที่อบรม</th>
@@ -3416,7 +3467,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                <h3 style="margin: 0; color: #1e4a2d;">📈 โครงการที่อนุมัติแล้ว (รอรายงานผล)</h3>
                <div style="flex:1; max-width: 300px; min-width: 200px;"><input type="text" id="search-reports" oninput="renderMyProjectsAndReports()" placeholder="🔍 ค้นหาชื่อ/รหัสโครงการ..." style="margin:0; padding:8px 10px; border-radius:5px; border:1px solid #ccc; width:100%;"></div>
             </div>
-            <div class="table-wrapper"><div class="table-responsive"><table><thead><tr><th style="width: 15%;">รหัส</th><th style="width: 30%;">ชื่อโครงการ</th><th style="width: 25%; text-align: center;">สถานะการรายงาน</th><th style="width: 15%; text-align: center;">สถานะล่าสุด</th><th style="width: 15%; text-align: center;">จัดการ</th></tr></thead><tbody id="report-project-list"></tbody></table></div></div>
+            <div class="table-wrapper"><div class="table-responsive"><table style="width:100%; min-width:750px;"><thead><tr><th style="width: 15%;">รหัส</th><th style="width: 30%;">ชื่อโครงการ</th><th style="width: 25%; text-align: center;">สถานะการรายงาน</th><th style="width: 15%; text-align: center;">สถานะล่าสุด</th><th style="width: 15%; text-align: center;">จัดการ</th></tr></thead><tbody id="report-project-list"></tbody></table></div></div>
           </div>
         </div>
 
@@ -3668,8 +3719,8 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
   </div>
 
   <!-- ตาราง -->
-  <div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 8px; max-height: 65vh; overflow-y: auto; overflow-x: hidden;">
-    <table style="width: 100%; border-collapse: collapse; font-size: 13px; table-layout: auto;">
+  <div class="table-responsive" style="border: 1px solid #cbd5e1; border-radius: 8px; max-height: 65vh; overflow-y: auto; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 13px; table-layout: auto; min-width: 850px;">
       <thead style="position: sticky; top: 0; background: #f8fafc; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
         <tr>
           <th style="padding: 12px 8px; border: 1px solid #e2e8f0; width: 4%; text-align: center;" class="oit-admin-only-ui hidden"><input type="checkbox" id="oit-chk-all" onclick="toggleAllOitChecks(this)" style="cursor: pointer;"></th>
@@ -4018,7 +4069,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
     </div>
 
     <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 800px;">
         <thead>
           <tr style="background: rgba(30, 74, 45, 0.08); border-bottom: 2px solid #cbd5e1;">
             <th style="padding: 12px 10px; font-weight: bold; color: #1e4a2d; width: 15%;">วัน-เวลาที่ร้องเรียน</th>
@@ -4162,7 +4213,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
     </div>
 
     <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 800px;">
         <thead>
           <tr style="background: rgba(30, 74, 45, 0.08); border-bottom: 2px solid #cbd5e1;">
             <th style="padding: 12px 10px; font-weight: bold; color: #1e4a2d; width: 15%;">วัน-เวลาที่ส่งฟอร์ม</th>
@@ -10614,9 +10665,9 @@ function reloadLedgerTable() {
                     <td style="padding:8px 4px; color:#888;">-</td>
                     <td style="padding:8px 4px; color:#888;">-</td>
                     <td style="padding:8px 4px; text-align:left; font-weight:bold; color:#1e4a2d; line-height:1.4;">ยอดยกมา / เงินที่ได้รับจัดสรร</td>
-                    <td style="padding:8px 4px; text-align:right; font-weight:bold; color:#16a34a;">${baseAmount.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
-                    <td style="padding:8px 4px; text-align:right; color:#888;">-</td>
-                    <td style="padding:8px 4px; text-align:right; font-weight:900; color:#1e293b;">${baseAmount.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                    <td style="padding:8px 4px; text-align:right; font-weight:bold; color:#16a34a; white-space:nowrap;">${baseAmount.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                    <td style="padding:8px 4px; text-align:right; color:#888; white-space:nowrap;">-</td>
+                    <td style="padding:8px 4px; text-align:right; font-weight:900; color:#1e293b; white-space:nowrap;">${baseAmount.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
                     <td style="padding:8px 4px; color:#888;">-</td>
                     <td style="padding:8px 4px; color:#888;">-</td>
                 </tr>
@@ -10672,11 +10723,11 @@ function reloadLedgerTable() {
                         <div style="display:block;">${safeTxt(tx.description)}</div>
                     </td>
                     
-                    <td style="padding:8px 4px; text-align:right; background:#f0fdf4; vertical-align:middle;">${rcvCol}</td>
-                    <td style="padding:8px 4px; text-align:right; background:#fef2f2; vertical-align:middle;">${payCol}</td>
-                    <td style="padding:8px 4px; text-align:right; font-weight:bold; color:#1e293b; vertical-align:middle;">${runningBalance.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
-                    <td style="padding:8px 4px; color:#d97706; font-weight:bold; word-break:break-word; text-align:center; vertical-align:middle;">${tx.dikaNo || '-'}</td>
-                    <td style="padding:6px 4px; text-align:center; vertical-align:middle;">${actionBtns}</td>
+                    <td style="padding:8px 4px; text-align:right; background:#f0fdf4; vertical-align:middle; white-space:nowrap;">${rcvCol}</td>
+                    <td style="padding:8px 4px; text-align:right; background:#fef2f2; vertical-align:middle; white-space:nowrap;">${payCol}</td>
+                    <td style="padding:8px 4px; text-align:right; font-weight:bold; color:#1e293b; vertical-align:middle; white-space:nowrap;">${runningBalance.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                    <td style="padding:8px 4px; color:#d97706; font-weight:bold; text-align:center; vertical-align:middle; white-space:nowrap;">${tx.dikaNo || '-'}</td>
+                    <td style="padding:6px 4px; text-align:center; vertical-align:middle; white-space:nowrap;">${actionBtns}</td>
                 </tr>`;
             });
 
@@ -10684,9 +10735,9 @@ function reloadLedgerTable() {
             tbody.innerHTML += `
                 <tr style="background:#e2e8f0; border-top:2px solid #64748b; font-size:13px;">
                     <td colspan="3" style="padding:10px 6px; text-align:right; font-weight:bold; color:#334155;">รวมยอดเคลื่อนไหวสะสม:</td>
-                    <td style="padding:10px 4px; text-align:right; font-weight:bold; color:#16a34a;">${totalRcvExtra > 0 ? '+'+totalRcvExtra.toLocaleString(undefined, {minimumFractionDigits:2}) : '-'}</td>
-                    <td style="padding:10px 4px; text-align:right; font-weight:900; color:#dc2626; text-decoration:underline;">${totalUsed !== 0 ? totalUsed.toLocaleString(undefined, {minimumFractionDigits:2}) : '0.00'}</td>
-                    <td style="padding:10px 4px; text-align:right; font-weight:900; color:#0f172a; text-decoration:underline;">${runningBalance.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                    <td style="padding:10px 4px; text-align:right; font-weight:bold; color:#16a34a; white-space:nowrap;">${totalRcvExtra > 0 ? '+'+totalRcvExtra.toLocaleString(undefined, {minimumFractionDigits:2}) : '-'}</td>
+                    <td style="padding:10px 4px; text-align:right; font-weight:900; color:#dc2626; text-decoration:underline; white-space:nowrap;">${totalUsed !== 0 ? totalUsed.toLocaleString(undefined, {minimumFractionDigits:2}) : '0.00'}</td>
+                    <td style="padding:10px 4px; text-align:right; font-weight:900; color:#0f172a; text-decoration:underline; white-space:nowrap;">${runningBalance.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
                     <td colspan="2"></td>
                 </tr>
             `;
