@@ -4534,10 +4534,22 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                                 args: args
                             };
                             
-                            var maxAttempts = 3;
+                            // ⏱️ ปรับเวลารอและการลองใหม่แบบอัจฉริยะ (Adaptive RPC Timeout & Retry)
+                            var RPC_PROFILES = {
+                                'importProjectFromBlob': { timeout: 150000, maxAttempts: 1, label: 'การอ่านเอกสารและวิเคราะห์ด้วย AI' },
+                                'importReportFromBlob':  { timeout: 150000, maxAttempts: 1, label: 'การอ่านรายงานและวิเคราะห์ด้วย AI' },
+                                'archiveDataAdmin':      { timeout: 180000, maxAttempts: 1, label: 'การจัดเก็บและย้ายไฟล์ Archive' },
+                                'submitNewProject':      { timeout: 90000,  maxAttempts: 2, label: 'การบันทึกข้อเสนอโครงการ' },
+                                'updateExistingProject': { timeout: 90000,  maxAttempts: 2, label: 'การอัปเดตข้อมูลโครงการ' },
+                                'submitQuarterlyReport': { timeout: 90000,  maxAttempts: 2, label: 'การส่งรายงานไตรมาส' },
+                                'uploadDocumentAdmin':   { timeout: 90000,  maxAttempts: 2, label: 'การอัปโหลดเอกสารเผยแพร่' }
+                            };
+                            var profile = RPC_PROFILES[prop] || { timeout: 40000, maxAttempts: 3, label: 'การเชื่อมต่อ' };
+                            var timeoutMs = profile.timeout;
+                            var maxAttempts = profile.maxAttempts;
                             function attemptRequest(attempt) {
                                 var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-                                var timeoutId = controller ? setTimeout(function() { controller.abort(); }, 40000) : null;
+                                var timeoutId = controller ? setTimeout(function() { controller.abort(); }, timeoutMs) : null;
                                 
                                 fetch(endpoint, {
                                     method: 'POST',
@@ -4571,7 +4583,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                                 .catch(function(err) {
                                     if (timeoutId) clearTimeout(timeoutId);
                                     var isAbort = err.name === 'AbortError';
-                                    var errMsg = isAbort ? 'Request Timeout (สัญญาณช้า)' : (err.message || 'Network Error');
+                                    var errMsg = isAbort ? ('หมดเวลารอ (' + Math.round(timeoutMs / 1000) + ' วินาที)') : (err.message || 'Network Error');
                                     
                                     // 🌟 Auto-Retry อัตโนมัติสูงสุด 3 ครั้ง เมื่อเจอปัญหาเน็ตสวิง / Load failed / Timeout
                                     if (attempt < maxAttempts) {
@@ -4589,10 +4601,18 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                                     } else {
                                         if (typeof Swal !== 'undefined') {
                                             Swal.fire({
-                                                icon: 'error',
-                                                title: 'การเชื่อมต่อขัดข้อง',
+
+                                                icon: isAbort ? 'warning' : 'error',
+                                                title: isAbort ? 'การประมวลผลใช้เวลานานกว่าปกติ' : 'การเชื่อมต่อขัดข้อง',
+                                                html: isAbort 
+                                                    ? `<div style="text-align:left; font-size:14px; line-height:1.6; color:#334155;">` +
+                                                      `ระบบ<b>${profile.label}</b> ใช้เวลาเกิน ${Math.round(timeoutMs / 1000)} วินาที<br><br>` +
+                                                      `<div style="background:#fffbeb; border-left:4px solid #f59e0b; padding:10px 12px; border-radius:4px; font-size:13px;">` +
+                                                      `💡 <b>คำแนะนำ:</b> เอกสารอาจมีขนาดใหญ่ หรือเซิร์ฟเวอร์กำลังประมวลผลหนัก กรุณาลองใหม่อีกครั้ง หรือตรวจสอบไฟล์ครับ` +
+                                                      `</div></div>`
+                                                    : undefined,
                                                 text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ระบบได้ (' + errMsg + ') กรุณาตรวจสอบสัญญาณอินเทอร์เน็ตแล้วลองใหม่อีกครั้ง',
-                                                confirmButtonText: '🔄 ลองเชื่อมต่อใหม่',
+                                                confirmButtonText: isAbort ? '🔄 ลองใหม่อีกครั้ง' : '🔄 ลองเชื่อมต่อใหม่',
                                                 showCancelButton: true,
                                                 cancelButtonText: 'ปิด'
                                             }).then(function(result) {
@@ -7571,7 +7591,7 @@ function doArchiveData() {
             cancelButtonText: 'ยกเลิก'
         }).then((result) => {
             if (result.isConfirmed) {
-                showLoading("กำลังประมวลผลและย้ายข้อมูลเข้า Archive...");
+                showLoading("กำลังประมวลผลและย้ายไฟล์เข้าสู่ Archive ใน Google Drive... (อาจใช้เวลาประมาณ 1-3 นาที กรุณารอสักครู่)");
                 
                 // ✅ แก้ไขเป็น
                 google.script.run.withSuccessHandler(function(res) { 
@@ -7591,6 +7611,9 @@ function doArchiveData() {
                     } else { 
                         Swal.fire('เกิดข้อผิดพลาด', res.message, 'error');
                     } 
+                }).withFailureHandler(function(err) {
+                    hideLoading();
+                    Swal.fire('ข้อผิดพลาด', err.message || String(err), 'error');
                 }).archiveDataAdmin(sessionStorage.getItem('eMENSCR_Token'), year);
             }
         });
@@ -18066,7 +18089,7 @@ function triggerImportProjectFile(event) {
   if(overlay) overlay.style.display = 'flex';
   if(statusDiv) {
     statusDiv.style.display = 'block';
-    statusDiv.innerHTML = 'กำลังวิเคราะห์ข้อมูล...';
+    statusDiv.innerHTML = '<span style="color:#d97706; font-weight:500;">⏳ กำลังสแกนเอกสารและวิเคราะห์ด้วย AI... (อาจใช้เวลาประมาณ 1-2 นาที กรุณารอสักครู่)</span>';
   }
 
   var reader = new FileReader();
@@ -18092,8 +18115,12 @@ function triggerImportProjectFile(event) {
       event.target.value = ""; 
     }).withFailureHandler(function(err) {
       if(overlay) overlay.style.display = 'none';
-      if(statusDiv) statusDiv.innerHTML = '<span style="color: red;">❌ เกิดข้อผิดพลาด: ' + err.message + '</span>';
-      else Swal.fire('เกิดข้อผิดพลาดของระบบ', err.message, 'error');
+      var errText = err.message || String(err);
+      if (errText.indexOf('aborted') > -1 || errText.indexOf('Timeout') > -1 || errText.indexOf('หมดเวลารอ') > -1) {
+        errText = 'การประมวลผลเอกสารใช้เวลานานเกินกำหนด (อาจเนื่องจากไฟล์มีหลายหน้าหรือสัญญาณอินเทอร์เน็ตไม่เสถียร) กรุณาลองใหม่อีกครั้ง';
+      }
+      if(statusDiv) statusDiv.innerHTML = '<span style="color: red;">❌ เกิดข้อผิดพลาด: ' + errText + '</span>';
+      else Swal.fire('การประมวลผลขัดข้อง', errText, 'warning');
       event.target.value = ""; 
     }).importProjectFromBlob(token, base64, mimeType, fileName);
   };
@@ -18188,7 +18215,11 @@ function triggerImportReportFile(event) {
       event.target.value = ""; 
     }).withFailureHandler(function(err) {
       if(overlay) overlay.style.display = 'none';
-      Swal.fire('เกิดข้อผิดพลาดของระบบ', err.message, 'error');
+      var errText = err.message || String(err);
+      if (errText.indexOf('aborted') > -1 || errText.indexOf('Timeout') > -1 || errText.indexOf('หมดเวลารอ') > -1) {
+        errText = 'การประมวลผลรายงานใช้เวลานานเกินกำหนด (อาจเนื่องจากไฟล์มีหลายหน้าหรือสัญญาณอินเทอร์เน็ตไม่เสถียร) กรุณาลองใหม่อีกครั้ง';
+      }
+      Swal.fire('การประมวลผลขัดข้อง', errText, 'warning');
       event.target.value = ""; 
     }).importReportFromBlob(token, base64, mimeType, fileName, selectedQuarter);
   };
@@ -18556,8 +18587,9 @@ document.querySelectorAll(".auto-logo-img").forEach(e => e.src = APP_LOGO_B64);
 </script>
   <div id="ai-loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; color: white; font-family: 'Prompt', sans-serif;">
     <div style="width: 70px; height: 70px; border: 6px solid rgba(255,255,255,0.1); border-top: 6px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 30px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);"></div>
-    <h2 style="margin: 0 0 15px 0; font-weight: 600; font-size: 26px; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.8); letter-spacing: 0.5px;">กำลังส่งไฟล์ให้ AI วิเคราะห์...</h2>
-    <p style="margin: 0; color: #fef08a; font-size: 16px; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">กรุณารอสักครู่ (ประมาณ 10-20 วินาที)</p>
+    <h2 style="margin: 0 0 15px 0; font-weight: 600; font-size: 26px; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.8); letter-spacing: 0.5px;">กำลังสแกนเอกสารและวิเคราะห์ด้วย AI...</h2>
+    <p style="margin: 0; color: #fef08a; font-size: 16px; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">ระบบกำลังประมวลผล OCR และ AI กรุณารอสักครู่ (ประมาณ 1 - 2 นาที)</p>
+    <p style="margin-top: 8px; color: #cbd5e1; font-size: 13px;">(เอกสารที่มีหลายหน้าอาจใช้เวลาเพิ่มขึ้น โปรดอย่าเพิ่งปิดหน้าต่างนี้ครับ)</p>
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
   </div>
 </body>
