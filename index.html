@@ -2400,7 +2400,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           <div class="admin-tabs">
             <button id="tab-admin-proj" class="admin-tab-btn active" onclick="switchAdminModule('admin-proj')">📋 1. โครงการ</button>
             <button id="tab-admin-rep" class="admin-tab-btn" onclick="switchAdminModule('admin-rep')">📉 2. รายงานไตรมาส</button>
-            <button id="tab-admin-user" class="admin-tab-btn admin-only-ui" onclick="switchAdminModule('admin-user')">👥 3. บุคลากร</button>
+            <button id="tab-admin-user" class="admin-tab-btn admin-only-ui" onclick="switchAdminModule('admin-user')">👥 3. บุคลากร<span id="tab-admin-user-badge" style="display:none; background:#f59e0b; color:white; border-radius:10px; padding:1px 6px; font-size:11px; margin-left:5px; font-weight:bold;">0</span></button>
             <button id="tab-admin-arc" class="admin-tab-btn admin-only-ui" onclick="switchAdminModule('admin-arc')">📦 4. Archive</button>
             <button id="tab-admin-set" class="admin-tab-btn admin-only-ui" onclick="switchAdminModule('admin-set')">⚙️ 5. ยุทธศาสตร์</button>
             <button id="tab-admin-sys" class="admin-tab-btn admin-only-ui" onclick="switchAdminModule('admin-sys')">🎛️ 6. ระบบ (Config)</button>
@@ -2457,9 +2457,13 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           <div id="admin-user" class="admin-module hidden admin-only-ui">
             <div style="background: white; padding: 20px; border-radius: 8px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap:wrap; gap:10px;">
-                <h3 style="margin: 0;">👥 จัดการบุคลากร</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <h3 style="margin: 0;">👥 จัดการบุคลากร</h3>
+                  <span id="admin-pending-user-badge" class="badge" style="background:#f59e0b; color:white; display:none; padding:4px 8px; border-radius:12px; font-size:12px; font-weight:bold;">⏳ รออนุมัติ 0 ท่าน</span>
+                </div>
                 <select id="filter-user-status" onchange="usersPage=1; renderAdminUsersTable()" style="margin: 0; padding: 5px 10px; width: auto;">
                   <option value="all">แสดงทั้งหมด</option>
+                  <option value="Pending">⏳ รออนุมัติ (Pending)</option>
                   <option value="Active">✅ Active</option>
                   <option value="Inactive">🔴 Inactive</option>
                 </select>
@@ -4961,7 +4965,7 @@ function switchAdminModule(modId) {
             }
         } 
         
-        if (modId === 'admin-user' && globalAdminUsers.length === 0) loadAdminUsers();
+        if (modId === 'admin-user') loadAdminUsers();
         if (modId === 'admin-set' && globalSettingsData.length === 0) loadSettingsAdmin();
         if (modId === 'admin-doc' && globalAdminDocs.length === 0) loadAdminDocuments();
         if (modId === 'admin-sys' && typeof loadAdminSystemConfigUI === 'function') loadAdminSystemConfigUI();
@@ -7607,7 +7611,34 @@ function doArchiveData() {
       var tbody = document.getElementById('admin-user-list'); 
       var filterStat = document.getElementById('filter-user-status') ? document.getElementById('filter-user-status').value : 'all'; 
       tbody.innerHTML = "";
+      // อัปเดตตัวนับและป้ายสถานะรออนุมัติบนหัวตารางและแท็บ
+      var pendingCount = globalAdminUsers.filter(u => u.status === 'Pending').length;
+      var pBadge = document.getElementById('admin-pending-user-badge');
+      if (pBadge) {
+        if (pendingCount > 0) {
+          pBadge.innerText = '⏳ รออนุมัติ ' + pendingCount + ' ท่าน';
+          pBadge.style.display = 'inline-block';
+        } else {
+          pBadge.style.display = 'none';
+        }
+      }
+      var tBadge = document.getElementById('tab-admin-user-badge');
+      if (tBadge) {
+        if (pendingCount > 0) {
+          tBadge.innerText = pendingCount;
+          tBadge.style.display = 'inline-block';
+        } else {
+          tBadge.style.display = 'none';
+        }
+      }
+
       var filteredUsers = globalAdminUsers.filter(u => filterStat === 'all' || u.status === filterStat);
+      // จัดเรียงให้ผู้ใช้สถานะ 'Pending' ขึ้นมาอยู่ด้านบนสุดเสมอ
+      filteredUsers.sort(function(a, b) {
+        if (a.status === 'Pending' && b.status !== 'Pending') return -1;
+        if (a.status !== 'Pending' && b.status === 'Pending') return 1;
+        return 0;
+      });
       if(filteredUsers.length === 0) { 
         tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:#888;'>ไม่พบข้อมูลบุคลากร</td></tr>"; 
         document.getElementById('users-page-info').innerText = "0 / 0";
@@ -7628,7 +7659,14 @@ function doArchiveData() {
                 (u.role === "Executive" ? `<span class="badge" style="background:#0284c7; color:white;">Executive</span>` : 
                 (u.role === "Finance" || u.role === "การเงิน" ? `<span class="badge" style="background:#f59e0b; color:white;">Finance</span>` : 
                 `<span class="badge" style="background:#e5e7eb; color:#4b5563;">User</span>`));
-        var statBadge = u.status === "Active" ? `<span class="badge success">Active</span>` : `<span class="badge" style="background:#fee2e2; color:#ef4444;">Inactive</span>`;
+        var statBadge = "";
+        if (u.status === "Active") {
+          statBadge = `<span class="badge success">Active</span>`;
+        } else if (u.status === "Pending") {
+          statBadge = `<span class="badge" style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; font-weight:bold;">⏳ รออนุมัติ</span>`;
+        } else {
+          statBadge = `<span class="badge" style="background:#fee2e2; color:#ef4444;">Inactive</span>`;
+        }
 var actionBtns = `<div style="display:flex; flex-direction:column; gap:6px; align-items:stretch; width:100%; min-width:110px;">
             <select id="group_${u.username}" style="padding:4px; font-size:12px; margin:0; width:100%;">
                 <option value="กลุ่มนโยบายและแผน" ${u.group==='กลุ่มนโยบายและแผน'?'selected':''}>กลุ่มนโยบายและแผน</option>
@@ -7646,10 +7684,19 @@ var actionBtns = `<div style="display:flex; flex-direction:column; gap:6px; alig
                 <option value="Finance" ${u.role === 'Finance' ? 'selected' : ''}>การเงิน (Finance)</option>
             </select>
             <select id="stat_${u.username}" style="padding:4px; font-size:12px; margin:0; width:100%;">
+                <option value="Pending" ${u.status==='Pending'?'selected':''}>⏳ รออนุมัติ (Pending)</option>
                 <option value="Active" ${u.status==='Active'?'selected':''}>✅ Active</option>
                 <option value="Inactive" ${u.status==='Inactive'?'selected':''}>🔴 Inactive (ระงับ)</option>
             </select>
-            <button onclick="doUpdateUser('${u.username}')" style="background:#16a34a; color:white; padding:6px 8px; font-size:12px; margin:0; border-radius:4px; border:none; width:100%; cursor:pointer;">💾 บันทึก</button>
+            <div style="display:flex; gap:4px;">
+              ${u.status === 'Pending' ? `
+              <button onclick="doApproveUser('${u.username}')" style="background:#16a34a; color:white; padding:6px 4px; font-size:11px; margin:0; border-radius:4px; border:none; flex:1; cursor:pointer; font-weight:bold;">✅ อนุมัติ</button>
+              <button onclick="doRejectUser('${u.username}', true)" style="background:#dc2626; color:white; padding:6px 4px; font-size:11px; margin:0; border-radius:4px; border:none; flex:1; cursor:pointer; font-weight:bold;">❌ ปฏิเสธ</button>
+              ` : `
+              <button onclick="doUpdateUser('${u.username}')" style="background:#16a34a; color:white; padding:6px 4px; font-size:11px; margin:0; border-radius:4px; border:none; flex:2; cursor:pointer;">💾 บันทึก</button>
+              <button onclick="doRejectUser('${u.username}', false)" style="background:#ef4444; color:white; padding:6px 4px; font-size:11px; margin:0; border-radius:4px; border:none; flex:1; cursor:pointer;" title="ลบผู้ใช้">🗑️ ลบ</button>
+              `}
+            </div>
         </div>`;
         tbody.innerHTML += `<tr><td>${u.username}</td><td style="white-space: normal;">${u.name}</td><td>${u.group}</td><td>${roleBadge}</td><td>${statBadge}</td><td style="text-align:center; vertical-align:middle;">${actionBtns}</td></tr>`;
       });
@@ -7689,6 +7736,84 @@ function doUpdateUser(username) {
             }
         });
     }
+    function doApproveUser(username) {
+        var g = document.getElementById(`group_${username}`) ? document.getElementById(`group_${username}`).value : "";
+        var r = document.getElementById(`role_${username}`) ? document.getElementById(`role_${username}`).value : "User";
+        Swal.fire({
+            title: 'ยืนยันการอนุมัติผู้ใช้งาน?',
+            html: `<div style="text-align:left; font-size:14px; line-height:1.6; color:#334155;">` +
+                  `คุณต้องการอนุมัติให้บัญชี <b>${username}</b> เข้าใช้งานระบบ S-MES ใช่หรือไม่?<br><br>` +
+                  `<div style="background:#f8fafc; padding:12px; border-radius:6px; border-left:4px solid #16a34a; font-size:13px;">` +
+                  `📌 <b>กลุ่มงาน:</b> ${g}<br>` +
+                  `🛡️ <b>บทบาทสิทธิ์:</b> ${r}<br>` +
+                  `📧 <i>ระบบจะเปิดสถานะ Active และส่งอีเมลแจ้งผลการอนุมัติไปยังผู้ใช้งาน</i>` +
+                  `</div></div>`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#16a34a',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '✅ อนุมัติการเข้าใช้งาน',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                showLoading("กำลังอนุมัติผู้ใช้งาน...");
+                google.script.run.withSuccessHandler(function(res) {
+                    hideLoading();
+                    if (res && res.success) {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: res.message || 'อนุมัติผู้ใช้งานเรียบร้อยแล้ว', showConfirmButton: false, timer: 2000 });
+                        loadAdminUsers();
+                        if (typeof fetchNotifications === 'function') fetchNotifications();
+                    } else {
+                        Swal.fire('เกิดข้อผิดพลาด', (res && res.message) ? res.message : 'ไม่สามารถอนุมัติได้', 'error');
+                    }
+                }).withFailureHandler(function(err) {
+                    hideLoading();
+                    Swal.fire('ข้อผิดพลาดจากเซิร์ฟเวอร์', err.message || String(err), 'error');
+                }).approveUserAdmin(sessionStorage.getItem('eMENSCR_Token'), username, r, g);
+            }
+        });
+    }
+
+    function doRejectUser(username, isPending) {
+        var actionTitle = isPending ? 'ปฏิเสธคำขอลงทะเบียน?' : 'ยืนยันการลบบุคลากร?';
+        var actionDesc = isPending 
+            ? `คุณต้องการปฏิเสธคำขอและลบข้อมูลบัญชี <b>${username}</b> ออกจากระบบใช่หรือไม่?<br><div style="text-align:left; background:#fef2f2; color:#991b1b; padding:10px; border-radius:6px; margin-top:8px; font-size:12px; border-left:3px solid #ef4444;">⚠️ ข้อมูลคำขอจะถูกลบออกจากฐานข้อมูล และบันทึกประวัติการปฏิเสธลงใน Audit Log</div>`
+            : `คุณต้องการลบข้อมูลบัญชีบุคลากร <b>${username}</b> ออกจากระบบใช่หรือไม่?<br><div style="text-align:left; background:#fef2f2; color:#991b1b; padding:10px; border-radius:6px; margin-top:8px; font-size:12px; border-left:3px solid #ef4444;">⚠️ การกระทำนี้จะลบบัญชีและตัดการเชื่อมต่อเซสชันทั้งหมดทันที พร้อมบันทึก Audit Log</div>`;
+        var defaultReason = isPending ? "ข้อมูลไม่ตรงกับบุคลากรในสังกัด" : "ยกเลิกบัญชีผู้ใช้งาน";
+
+        Swal.fire({
+            title: actionTitle,
+            html: `<div style="text-align:left; font-size:14px; line-height:1.6; color:#334155;">${actionDesc}</div>`,
+            icon: 'warning',
+            input: 'text',
+            inputLabel: 'ระบุเหตุผลในการปฏิเสธ/ลบ:',
+            inputValue: defaultReason,
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: '🗑️ ยืนยันการลบข้อมูล',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var reason = result.value || defaultReason;
+                showLoading("กำลังดำเนินการ...");
+                google.script.run.withSuccessHandler(function(res) {
+                    hideLoading();
+                    if (res && res.success) {
+                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: res.message || 'ดำเนินการเรียบร้อยแล้ว', showConfirmButton: false, timer: 2000 });
+                        loadAdminUsers();
+                        if (typeof fetchNotifications === 'function') fetchNotifications();
+                    } else {
+                        Swal.fire('เกิดข้อผิดพลาด', (res && res.message) ? res.message : 'ไม่สามารถดำเนินการได้', 'error');
+                    }
+                }).withFailureHandler(function(err) {
+                    hideLoading();
+                    Swal.fire('ข้อผิดพลาดจากเซิร์ฟเวอร์', err.message || String(err), 'error');
+                }).rejectAndRemoveUserRequest(sessionStorage.getItem('eMENSCR_Token'), username, reason);
+            }
+        });
+    }
+
     function loadSettingsAdmin() { var tbody = document.getElementById('setting-list'); tbody.innerHTML = "<tr><td colspan='6' class='loading'>กำลังดึงข้อมูล...</td></tr>"; google.script.run.withSuccessHandler(function(res) { if(res.success) { globalSettingsData = res.data; globalSettingsData.sort(function(a,b) { return a.level - b.level; }); settingsPage = 1; renderSettingsTable(); } }).getSystemSettings(); }
     function renderSettingsTable() {
       var tbody = document.getElementById('setting-list'); 
@@ -7806,6 +7931,19 @@ function doDeleteSetting(type, detail) {
           
           var listHtml = ""; 
           
+          // อัปเดตตัวเลขแจ้งเตือนบนแท็บ Admin บุคลากร
+          var pendingUserNotif = adminNotifs.find(function(n) { return n.module === 'admin-user'; });
+          var tBadge = document.getElementById('tab-admin-user-badge');
+          if (tBadge) {
+              if (pendingUserNotif) {
+                  var match = pendingUserNotif.text.match(/(\d+)\s*ท่าน/);
+                  tBadge.innerText = match ? match[1] : '!';
+                  tBadge.style.display = 'inline-block';
+              } else {
+                  tBadge.style.display = 'none';
+              }
+          }
+
           // 👑 ส่วนของ Admin
           if (adminNotifs.length > 0) {
               listHtml += `<div style="padding: 8px 15px; background: #1e4a2d; color: white; font-size: 12px; font-weight: bold; position: sticky; top: 0; z-index: 10;">👑 แจ้งเตือนระบบ (สำหรับ Admin)</div>`;
@@ -8107,7 +8245,36 @@ function doLogin() {
         } else { 
             // แจ้งเตือนเมื่อรหัสผิด หรือไม่พบผู้ใช้
             setTimeout(function() {
-                showAlert("เข้าสู่ระบบไม่สำเร็จ", res.message, "error"); 
+                var msg = res.message || "เข้าสู่ระบบไม่สำเร็จ";
+                if (msg.indexOf("รอผู้ดูแลระบบ") > -1 || msg.indexOf("รอการอนุมัติ") > -1) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'อยู่ระหว่างรอการอนุมัติ',
+                        html: `<div style="text-align:left; font-size:14px; line-height:1.6; color:#334155;">
+                                 <p style="margin-bottom:10px;">${msg}</p>
+                                 <div style="background:#fffbeb; border-left:4px solid #f59e0b; padding:10px 12px; border-radius:4px; font-size:13px;">
+                                   <b style="color:#b45309;">💡 คำแนะนำ:</b> หากท่านเป็นบุคลากรในสังกัดและต้องการเร่งรัดการอนุมัติ กรุณาติดต่อผู้ดูแลระบบ (กลุ่มนโยบายและแผน)
+                                 </div>
+                               </div>`,
+                        confirmButtonText: 'รับทราบ',
+                        confirmButtonColor: '#f59e0b'
+                    });
+                } else if (msg.indexOf("ถูกระงับการใช้งาน") > -1) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'บัญชีถูกระงับการใช้งาน',
+                        html: `<div style="text-align:left; font-size:14px; line-height:1.6; color:#334155;">
+                                 <p style="margin-bottom:10px;">${msg}</p>
+                                 <div style="background:#fef2f2; border-left:4px solid #ef4444; padding:10px 12px; border-radius:4px; font-size:13px;">
+                                   <b style="color:#b91c1c;">⚠️ แจ้งเตือน:</b> บัญชีนี้ถูกปิดกั้นการเข้าใช้งานชั่วคราว กรุณาติดต่อผู้ดูแลระบบเพื่อตรวจสอบสถานะ
+                                 </div>
+                               </div>`,
+                        confirmButtonText: 'ตกลง',
+                        confirmButtonColor: '#ef4444'
+                    });
+                } else {
+                    showAlert("เข้าสู่ระบบไม่สำเร็จ", msg, "error"); 
+                } 
             }, 100);
         } 
     }).withFailureHandler(function(err) {
@@ -8192,7 +8359,18 @@ function doRegister() {
             .withSuccessHandler(function(res) { 
                 hideLoading(); 
                 if(res.success) { 
-                    Swal.fire({ icon: 'success', title: 'สมัครสมาชิกสำเร็จ!', text: res.message, timer: 2000, showConfirmButton: false }).then(() => {
+                    Swal.fire({ 
+                        icon: 'info', 
+                        title: 'ลงทะเบียนสำเร็จ!', 
+                        html: `<div style="text-align:left; font-size:14px; line-height:1.6; color:#334155;">
+                                 <p style="margin-bottom:10px;">${res.message || 'ระบบได้รับข้อมูลการลงทะเบียนของท่านเรียบร้อยแล้ว'}</p>
+                                 <div style="background:#fffbeb; border-left:4px solid #f59e0b; padding:10px 12px; border-radius:4px; font-size:13px;">
+                                   <b style="color:#b45309;">⏳ ขั้นตอนต่อไป:</b> ผู้ดูแลระบบ (Admin) จะตรวจสอบความถูกต้องและอนุมัติสิทธิ์เข้าใช้งาน เมื่อได้รับอนุมัติแล้ว ท่านจะสามารถเข้าสู่ระบบได้ทันที
+                                 </div>
+                               </div>`,
+                        confirmButtonText: 'รับทราบ',
+                        confirmButtonColor: '#1e4a2d'
+                    }).then(() => {
                         // 🧹 ล้างข้อมูลในฟอร์มทิ้งทั้งหมด
                         document.getElementById('reg-user').value = ''; 
                         document.getElementById('reg-password').value = '';
