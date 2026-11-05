@@ -4536,8 +4536,8 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                             
                             // ⏱️ ปรับเวลารอและการลองใหม่แบบอัจฉริยะ (Adaptive RPC Timeout & Retry)
                             var RPC_PROFILES = {
-                                'importProjectFromBlob': { timeout: 150000, maxAttempts: 1, label: 'การอ่านเอกสารและวิเคราะห์ด้วย AI' },
-                                'importReportFromBlob':  { timeout: 150000, maxAttempts: 1, label: 'การอ่านรายงานและวิเคราะห์ด้วย AI' },
+                                'importProjectFromBlob': { timeout: 180000, maxAttempts: 1, label: 'การอ่านเอกสารและวิเคราะห์ด้วย AI' },
+                                'importReportFromBlob':  { timeout: 180000, maxAttempts: 1, label: 'การอ่านรายงานและวิเคราะห์ด้วย AI' },
                                 'archiveDataAdmin':      { timeout: 180000, maxAttempts: 1, label: 'การจัดเก็บและย้ายไฟล์ Archive' },
                                 'submitNewProject':      { timeout: 90000,  maxAttempts: 2, label: 'การบันทึกข้อเสนอโครงการ' },
                                 'updateExistingProject': { timeout: 90000,  maxAttempts: 2, label: 'การอัปเดตข้อมูลโครงการ' },
