@@ -4439,28 +4439,60 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           </select>
         </div>
 
-        <!-- Box: บุคลากรเฉพาะกลุ่ม -->
-        <div id="cal-box-specific" class="hidden" style="margin-bottom:10px; padding:10px; background:#fff; border:1px solid #e0f2fe; border-radius:6px;">
-          <label style="font-weight:bold; font-size:13px; color:#0369a1;">เลือกกลุ่มงานที่เกี่ยวข้อง:</label>
-          <select id="cal-select-group" onchange="onCalSelectGroupChange(event)" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; margin-top:5px;">
-            <option value="">-- พิมพ์รายละเอียดหรือเลือกกลุ่มงาน --</option>
-            <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
-            <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
-            <option value="กลุ่มบริหารงานการเงินและสินทรัพย์">กลุ่มบริหารงานการเงินและสินทรัพย์</option>
-            <option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
-            <option value="กลุ่มพัฒนาครูและบุคลากรทางการศึกษา">กลุ่มพัฒนาครูและบุคลากรทางการศึกษา</option>
-            <option value="กลุ่มนิเทศ ติดตาม และประเมินผล">กลุ่มนิเทศ ติดตาม และประเมินผล</option>
-            <option value="กลุ่มส่งเสริมการจัดการศึกษา">กลุ่มส่งเสริมการจัดการศึกษา</option>
-            <option value="กลุ่มส่งเสริมการศึกษาทางไกลฯ (DLICT)">กลุ่มส่งเสริมการศึกษาทางไกลฯ (DLICT)</option>
-            <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
-            <option value="กลุ่มกฎหมายและคดี">กลุ่มกฎหมายและคดี</option>
-          </select>
-          <div id="cal-group-members-checklist" class="hidden" style="margin-top:10px; max-height:150px; overflow-y:auto; border:1px solid #cbd5e1; border-radius:4px; padding:8px; background:#f8fafc;">
+        <!-- Box: บุคลากรเฉพาะกลุ่ม / ผู้บริหาร + กลุ่มงาน -->
+        <div id="cal-box-specific" class="hidden" style="margin-bottom:10px; padding:12px; background:#f8fafc; border:1px solid #bae6fd; border-radius:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <label style="font-weight:bold; font-size:13px; color:#0369a1;">🏢 เลือกกลุ่มงานที่เกี่ยวข้อง:</label>
+            <span id="cal-selected-groups-badge" style="font-size:11px; font-weight:600; color:#0284c7; background:#e0f2fe; padding:2px 8px; border-radius:12px;">ยังไม่ได้เลือกกลุ่ม</span>
+          </div>
+          
+          <div style="background:#fff; border:1px solid #cbd5e1; border-radius:6px; padding:8px; max-height:165px; overflow-y:auto; display:flex; flex-direction:column; gap:4px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:bold; color:#0369a1; padding:4px 6px; background:#f0f9ff; border-radius:4px; cursor:pointer;">
+              <input type="checkbox" id="cal-grp-all" value="บุคลากรทุกกลุ่ม" onchange="onCalGroupCheckboxChange('ALL')">
+              <span>🌟 บุคลากรทุกกลุ่ม (ทุกกลุ่มงาน)</span>
+            </label>
+            <hr style="margin:4px 0; border:0; border-top:1px solid #e2e8f0;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; padding:2px 6px;">
+              <input type="checkbox" class="cal-grp-item" value="กลุ่มอำนวยการ" onchange="onCalGroupCheckboxChange()">
+              <span>กลุ่มอำนวยการ</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; padding:2px 6px;">
+              <input type="checkbox" class="cal-grp-item" value="กลุ่มนโยบายและแผน" onchange="onCalGroupCheckboxChange()">
+              <span>กลุ่มนโยบายและแผน</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; padding:2px 6px;">
+              <input type="checkbox" class="cal-grp-item" value="กลุ่มบริหารงานบุคคล" onchange="onCalGroupCheckboxChange()">
+              <span>กลุ่มบริหารงานบุคคล</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; padding:2px 6px;">
+              <input type="checkbox" class="cal-grp-item" value="กลุ่มพัฒนาการศึกษา" onchange="onCalGroupCheckboxChange()">
+              <span>กลุ่มพัฒนาการศึกษา</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; padding:2px 6px;">
+              <input type="checkbox" class="cal-grp-item" value="กลุ่มนิเทศ ติดตาม และประเมินผล" onchange="onCalGroupCheckboxChange()">
+              <span>กลุ่มนิเทศ ติดตาม และประเมินผล</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; padding:2px 6px;">
+              <input type="checkbox" class="cal-grp-item" value="กลุ่มส่งเสริมการศึกษาเอกชน" onchange="onCalGroupCheckboxChange()">
+              <span>กลุ่มส่งเสริมการศึกษาเอกชน</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; padding:2px 6px;">
+              <input type="checkbox" class="cal-grp-item" value="กลุ่มลูกเสือ ยุวกาชาด และกิจการนักเรียน" onchange="onCalGroupCheckboxChange()">
+              <span>กลุ่มลูกเสือ ยุวกาชาด และกิจการนักเรียน</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; padding:2px 6px;">
+              <input type="checkbox" class="cal-grp-item" value="หน่วยตรวจสอบภายใน" onchange="onCalGroupCheckboxChange()">
+              <span>หน่วยตรวจสอบภายใน</span>
+            </label>
+          </div>
+          <input type="hidden" id="cal-select-group" value="">
+          
+          <div id="cal-group-members-checklist" class="hidden" style="margin-top:10px; max-height:150px; overflow-y:auto; border:1px solid #cbd5e1; border-radius:6px; padding:8px; background:#fff;">
             <!-- Checkboxes will be injected here -->
           </div>
           <div style="margin-top:10px;">
-             <label style="font-size:12px; color:#64748b;">หรือพิมพ์ชื่อผู้รับผิดชอบเพิ่มเติม:</label>
-             <input type="text" id="cal-specific-users" placeholder="เช่น นางสาว A" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;">
+             <label style="font-size:12px; color:#64748b; font-weight:600;">หรือพิมพ์ชื่อผู้รับผิดชอบเพิ่มเติม:</label>
+             <input type="text" id="cal-specific-users" placeholder="เช่น นายวุฒินันท์ หอมจันทร์, นางสาว A" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; margin-top:4px;">
           </div>
         </div>
       </div>
@@ -16756,8 +16788,48 @@ function openCalEventModal(arg1, eventDataStr) {
         document.getElementById('cal-chk-exec1').checked = (evt.assignedExecutives && evt.assignedExecutives.indexOf('EXEC_1') > -1);
         document.getElementById('cal-chk-exec2').checked = (evt.assignedExecutives && evt.assignedExecutives.indexOf('EXEC_2') > -1);
         document.getElementById('cal-select-dutyteam').value = evt.assignedDutyTeams || '';
-        document.getElementById('cal-select-group').value = evt.assignedGroups || '';
         document.getElementById('cal-specific-users').value = evt.assignedUsers || '';
+        
+        var rawGrp = evt.assignedGroups || '';
+        document.getElementById('cal-select-group').value = rawGrp;
+        var allCb = document.getElementById('cal-grp-all');
+        var itemCbs = document.querySelectorAll('.cal-grp-item');
+        var grpBadge = document.getElementById('cal-selected-groups-badge');
+        
+        if (rawGrp === 'บุคลากรทุกกลุ่ม' || rawGrp === 'ทุกกลุ่มงาน' || rawGrp === 'ทุกกลุ่ม') {
+            if (allCb) allCb.checked = true;
+            itemCbs.forEach(function(cb) { cb.checked = true; });
+            if (grpBadge) {
+                grpBadge.innerText = "บุคลากรทุกกลุ่ม";
+                grpBadge.style.color = "#6d28d9";
+                grpBadge.style.background = "#ede9fe";
+            }
+        } else if (rawGrp) {
+            if (allCb) allCb.checked = false;
+            var savedGrps = rawGrp.split(',').map(function(s){ return s.trim(); });
+            var checkedCount = 0;
+            itemCbs.forEach(function(cb) {
+                var isChk = savedGrps.indexOf(cb.value) !== -1;
+                cb.checked = isChk;
+                if (isChk) checkedCount++;
+            });
+            if (grpBadge) {
+                grpBadge.innerText = (checkedCount === 1) ? (savedGrps[0] + " (เจ้าภาพ)") : (checkedCount + " กลุ่มงานที่เกี่ยวข้อง");
+                grpBadge.style.color = "#0284c7";
+                grpBadge.style.background = "#e0f2fe";
+            }
+            renderCalGroupMembers(savedGrps);
+        } else {
+            if (allCb) allCb.checked = false;
+            itemCbs.forEach(function(cb) { cb.checked = false; });
+            if (grpBadge) {
+                grpBadge.innerText = "ยังไม่ได้เลือกกลุ่ม";
+                grpBadge.style.color = "#64748b";
+                grpBadge.style.background = "#f1f5f9";
+            }
+            var mContOld = document.getElementById('cal-group-members-checklist');
+            if (mContOld) { mContOld.classList.add('hidden'); mContOld.innerHTML = ''; }
+        }
         
     } else {
         // Clear old data
@@ -16774,6 +16846,18 @@ function openCalEventModal(arg1, eventDataStr) {
         document.getElementById('cal-select-dutyteam').value = '';
         document.getElementById('cal-chk-exec1').checked = false;
         document.getElementById('cal-chk-exec2').checked = false;
+        var allCbNew = document.getElementById('cal-grp-all');
+        var itemCbsNew = document.querySelectorAll('.cal-grp-item');
+        var grpBadgeNew = document.getElementById('cal-selected-groups-badge');
+        if (allCbNew) allCbNew.checked = false;
+        itemCbsNew.forEach(function(cb) { cb.checked = false; });
+        if (grpBadgeNew) {
+            grpBadgeNew.innerText = "ยังไม่ได้เลือกกลุ่ม";
+            grpBadgeNew.style.color = "#64748b";
+            grpBadgeNew.style.background = "#f1f5f9";
+        }
+        var mContNew = document.getElementById('cal-group-members-checklist');
+        if (mContNew) { mContNew.classList.add('hidden'); mContNew.innerHTML = ''; }
         
         // Default assignment type to 1
         var radios = document.getElementsByName('cal-assignment-type');
@@ -17106,6 +17190,25 @@ function loadCalendarEventsUI() {
 // Print / Export Calendar Agenda to PDF
 // ==========================================
 
+// Helper: Format Assigned Groups (Single = เจ้าภาพ, Multiple = รายการขีด -, All = บุคลากรทุกกลุ่ม)
+function formatAssignedGroupsDisplay(assignedGroupsStr, isHtml) {
+    if (!assignedGroupsStr) return "";
+    var s = assignedGroupsStr.toString().trim();
+    if (!s) return "";
+    if (s === "บุคลากรทุกกลุ่ม" || s === "ทุกกลุ่มงาน" || s === "ทุกกลุ่ม") {
+        return isHtml ? '<span style="background:#ede9fe; color:#6d28d9; padding:2px 8px; border-radius:12px; font-weight:bold; font-size:12px;">บุคลากรทุกกลุ่ม</span>' : "บุคลากรทุกกลุ่ม";
+    }
+    var grps = s.split(',').map(function(g) { return g.trim(); }).filter(Boolean);
+    if (grps.length === 1) {
+        return isHtml ? (escapeHtml(grps[0]) + ' <b style="color:#0284c7;">(เจ้าภาพ)</b>') : (grps[0] + " (เจ้าภาพ)");
+    }
+    if (isHtml) {
+        return grps.map(function(g) { return "- " + escapeHtml(g); }).join('<br>');
+    } else {
+        return grps.map(function(g) { return "- " + g; }).join('\n');
+    }
+}
+
 // ฟังก์ชัน helper สร้างตาราง HTML สำหรับ print
 function buildAgendaHtml(title, eventsToRender) {
     var thMonths = ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
@@ -17140,7 +17243,7 @@ function buildAgendaHtml(title, eventsToRender) {
             var timeStr = ev.time ? ev.time + " น." : "-";
             if (ev.timeEnd) timeStr = (ev.time || "") + " - " + ev.timeEnd + " น.";
 
-            var assignInfo = escH(ev.assignedGroups || "");
+            var assignInfo = formatAssignedGroupsDisplay(ev.assignedGroups, true);
             if (String(ev.assignmentType) === "1") {
                 var displayTeam = ev.assignedDutyTeams || '';
                 var membersList = '';
@@ -17483,6 +17586,7 @@ function openCalendarDailyView(dateStr) {
                 gHtml += typeBadge;
                 gHtml += '</div>';
                 if (ev.location) gHtml += '<div style="font-size: 12px; color: #64748b; margin-top: 2px;">📍 สถานที่: ' + escapeHtml(ev.location) + '</div>';
+                if (ev.assignedGroups) gHtml += '<div style="font-size: 12px; color: #4338ca; margin-top: 2px;">🏢 กลุ่มงาน: ' + formatAssignedGroupsDisplay(ev.assignedGroups, true) + '</div>';
                 if (ev.dressCode) gHtml += '<div style="font-size: 12px; color: #64748b;">👔 การแต่งกาย: ' + escapeHtml(ev.dressCode) + '</div>';
                 if (ev.carDriver) gHtml += '<div style="font-size: 12px; color: #64748b;">🚗 หมายเลขรถ/พขร.: ' + escapeHtml(ev.carDriver) + '</div>';
                 gHtml += membersHtml;
@@ -17694,8 +17798,9 @@ function renderPersonalAgenda() {
         if (String(ev.assignmentType) === '4') {
             var groupStr = ev.assignedGroups || '';
             var userStr = ev.assignedUsers || '';
+            if (groupStr === 'บุคลากรทุกกลุ่ม' || groupStr === 'ทุกกลุ่มงาน') isMine = true;
             if (userStr.indexOf(currentName) > -1 || userStr.indexOf(currentUser) > -1) isMine = true;
-            if (currentGroup && groupStr.indexOf(currentGroup) > -1) isMine = true;
+            if (currentGroup && (groupStr.indexOf(currentGroup) > -1 || (currentGroup.indexOf('กลุ่มลูกเสือ') > -1 && groupStr.indexOf('กลุ่มลูกเสือ') > -1))) isMine = true;
         } 
         // แบบเวรพิธี 1 หรือ ผู้บริหาร+เวรพิธี 2
         else if (String(ev.assignmentType) === '1' || String(ev.assignmentType) === '2') {
@@ -17745,6 +17850,7 @@ function renderPersonalAgenda() {
         else if (String(ev.assignmentType) === '5') {
             var groupStr = ev.assignedGroups || '';
             var userStr = ev.assignedUsers || '';
+            if (groupStr === 'บุคลากรทุกกลุ่ม' || groupStr === 'ทุกกลุ่มงาน') isMine = true;
             if (userStr.indexOf(currentName) > -1 || userStr.indexOf(currentUser) > -1) isMine = true;
             if (currentGroup && groupStr.indexOf(currentGroup) > -1) isMine = true;
             
@@ -17972,6 +18078,104 @@ function loadGroupsAndUsersPublic() {
             }
         }
     }).getAllUsersPublic(token);
+}
+
+
+function onCalGroupCheckboxChange(source) {
+    var allCb = document.getElementById('cal-grp-all');
+    var itemCbs = document.querySelectorAll('.cal-grp-item');
+    var hiddenInput = document.getElementById('cal-select-group');
+    var badge = document.getElementById('cal-selected-groups-badge');
+    var memberContainer = document.getElementById('cal-group-members-checklist');
+    if (!hiddenInput) return;
+    
+    if (source === 'ALL') {
+        var isAll = allCb ? allCb.checked : false;
+        itemCbs.forEach(function(cb) { cb.checked = isAll; });
+    } else {
+        var checkedCount = 0;
+        itemCbs.forEach(function(cb) { if (cb.checked) checkedCount++; });
+        if (allCb) allCb.checked = (checkedCount === itemCbs.length);
+    }
+    
+    var selectedGroups = [];
+    itemCbs.forEach(function(cb) {
+        if (cb.checked) selectedGroups.push(cb.value);
+    });
+    
+    if (selectedGroups.length === itemCbs.length || (allCb && allCb.checked)) {
+        hiddenInput.value = "บุคลากรทุกกลุ่ม";
+        if (badge) {
+            badge.innerText = "บุคลากรทุกกลุ่ม";
+            badge.style.color = "#6d28d9";
+            badge.style.background = "#ede9fe";
+        }
+        if (memberContainer) {
+            memberContainer.classList.add('hidden');
+            memberContainer.innerHTML = '';
+        }
+    } else if (selectedGroups.length === 1) {
+        hiddenInput.value = selectedGroups[0];
+        if (badge) {
+            badge.innerText = selectedGroups[0] + " (เจ้าภาพ)";
+            badge.style.color = "#0284c7";
+            badge.style.background = "#e0f2fe";
+        }
+        renderCalGroupMembers(selectedGroups);
+    } else if (selectedGroups.length > 1) {
+        hiddenInput.value = selectedGroups.join(', ');
+        if (badge) {
+            badge.innerText = selectedGroups.length + " กลุ่มงานที่เกี่ยวข้อง";
+            badge.style.color = "#0369a1";
+            badge.style.background = "#e0f2fe";
+        }
+        renderCalGroupMembers(selectedGroups);
+    } else {
+        hiddenInput.value = "";
+        if (badge) {
+            badge.innerText = "ยังไม่ได้เลือกกลุ่ม";
+            badge.style.color = "#64748b";
+            badge.style.background = "#f1f5f9";
+        }
+        if (memberContainer) {
+            memberContainer.classList.add('hidden');
+            memberContainer.innerHTML = '';
+        }
+    }
+}
+
+function renderCalGroupMembers(selectedGroups) {
+    var container = document.getElementById('cal-group-members-checklist');
+    var inputUsers = document.getElementById('cal-specific-users');
+    if (!container || !inputUsers || !window.calPublicUsers) return;
+    
+    var groupUsers = window.calPublicUsers.filter(function(u) {
+        if (!u.group) return false;
+        return selectedGroups.some(function(g) { return u.group === g || (g.indexOf('กลุ่มลูกเสือ') > -1 && u.group.indexOf('กลุ่มลูกเสือ') > -1); });
+    });
+    
+    if (groupUsers.length === 0) {
+        container.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+    }
+    
+    var html = '<div style="font-size:12px; font-weight:bold; margin-bottom:5px; color:#475569;">เลือกบุคลากรในกลุ่มงานที่เกี่ยวข้อง:</div>';
+    html += '<div style="display:flex; flex-direction:column; gap:4px;">';
+    
+    var currentUsers = inputUsers.value.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    
+    groupUsers.forEach(function(u) {
+        if (!u.name) return;
+        var isChecked = currentUsers.indexOf(u.name) !== -1 ? 'checked' : '';
+        html += '<label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">';
+        html += '<input type="checkbox" class="cal-group-member-cb" value="' + escapeHtml(u.name) + '" ' + isChecked + ' onchange="updateCalSpecificUsersFromChecklist()">';
+        html += '<span>' + escapeHtml(u.name) + ' <small style="color:#64748b;">(' + escapeHtml(u.group || '') + ')</small></span>';
+        html += '</label>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+    container.classList.remove('hidden');
 }
 
 function onCalSelectGroupChange(e) {
