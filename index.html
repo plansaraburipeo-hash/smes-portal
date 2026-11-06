@@ -17382,22 +17382,41 @@ function openPrintWindow(htmlContent) {
 // Export รายเดือน
 function printCalendarAgenda() {
     if (!cachedCalendarEvents || cachedCalendarEvents.length === 0) {
-        Swal.fire('ไม่มีข้อมูล', 'ไม่มีวาระงานในเดือนที่เลือก', 'info');
+        Swal.fire('ไม่มีข้อมูล', 'ไม่มีวาระงานในระบบ', 'info');
         return;
     }
     var mSelect = document.getElementById('calendar-month-select');
     var ySelect = document.getElementById('calendar-year-select');
+    var selMonth = (mSelect && mSelect.value !== '') ? parseInt(mSelect.value, 10) : currentCalMonth; // 0-11
+    var selYear  = (ySelect && ySelect.value !== '') ? parseInt(ySelect.value, 10) : currentCalYear;
+
     var monthText = mSelect && mSelect.options[mSelect.selectedIndex] ? mSelect.options[mSelect.selectedIndex].text : '';
     var yearText  = ySelect && ySelect.options[ySelect.selectedIndex] ? ySelect.options[ySelect.selectedIndex].text : '';
 
+    // คำนวณวันเริ่มต้นและวันสิ้นสุดของเดือนที่เลือก (YYYY-MM-DD)
+    var monthStartStr = selYear + "-" + String(selMonth + 1).padStart(2, '0') + "-01";
+    var daysInMonth   = new Date(selYear, selMonth + 1, 0).getDate();
+    var monthEndStr   = selYear + "-" + String(selMonth + 1).padStart(2, '0') + "-" + String(daysInMonth).padStart(2, '0');
+
+    // กรองเฉพาะงานที่คาบเกี่ยวกับเดือนที่เลือก และไม่ใช่วันหยุดทั่วไป
     var sorted = cachedCalendarEvents.filter(function(e) {
-        return e.assignmentType !== 'HOLIDAY';
+        if (e.assignmentType === 'HOLIDAY') return false;
+        var s  = (e.startDate || e.date || "").substring(0, 10);
+        var ed = (e.endDate || e.startDate || e.date || "").substring(0, 10);
+        if (!s) return false;
+        // งานต้องคาบเกี่ยวกับเดือนนี้: วันสิ้นสุด >= วันที่ 1 ของเดือน และ วันเริ่มต้น <= วันสิ้นสุดของเดือน
+        return (ed >= monthStartStr && s <= monthEndStr);
     }).sort(function(a, b) {
         var d1 = a.startDate || a.date || "";
         var d2 = b.startDate || b.date || "";
         if (d1 === d2) return (a.time || "23:59").localeCompare(b.time || "23:59");
         return d1.localeCompare(d2);
     });
+
+    if (sorted.length === 0) {
+        Swal.fire('ไม่มีข้อมูล', 'ไม่มีวาระงานในเดือน' + (monthText ? ' ' + monthText : '') + (yearText ? ' ' + yearText : ''), 'info');
+        return;
+    }
 
     var title = 'วาระงานประจำเดือน ' + monthText + ' ' + yearText;
     openPrintWindow(buildAgendaHtml(title, sorted));
