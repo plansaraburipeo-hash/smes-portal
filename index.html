@@ -1188,7 +1188,8 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
       <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #64748b; line-height: 1.6; border-top: 1px solid #f1f5f9; padding-top: 15px;">
         <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
         สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
-        <span style="font-size: 11px; opacity: 0.8;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span>
+        <span style="font-size: 11px; opacity: 0.8;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
+        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v63 (06/11/2569)</small>
       </div>
     </div>
     
@@ -4314,7 +4315,8 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
     <div class="app-footer">
           <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
           สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
-          <span style="font-size: 11px; color: #94a3b8; display: inline-block; margin-top: 5px;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span>
+          <span style="font-size: 11px; color: #94a3b8; display: inline-block; margin-top: 5px;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
+          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v63 (06/11/2569)</small>
         </div>
       </div>
       <button id="btn-back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 9999; border: none; outline: none; background-color: #f59e0b; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s; width: 50px; height: 50px; align-items: center; justify-content: center;">
@@ -17209,6 +17211,38 @@ function formatAssignedGroupsDisplay(assignedGroupsStr, isHtml) {
     }
 }
 
+// ฟังก์ชันแปลงวันที่ให้เป็น YYYY-MM-DD (ค.ศ.) มาตรฐาน ป้องกันปัญหาปี พ.ศ. 2569 และรูปแบบทับ DD/MM/YYYY
+function normalizeToIsoDate(val) {
+    if (!val) return "";
+    if (val instanceof Date) {
+        var y = val.getFullYear();
+        if (y > 2400) y -= 543;
+        var m = String(val.getMonth() + 1).padStart(2, '0');
+        var d = String(val.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + d;
+    }
+    var s = String(val).trim();
+    // ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss
+    var isoMatch = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (isoMatch) {
+        var y = parseInt(isoMatch[1], 10);
+        if (y > 2400) y -= 543;
+        var m = String(parseInt(isoMatch[2], 10)).padStart(2, '0');
+        var d = String(parseInt(isoMatch[3], 10)).padStart(2, '0');
+        return y + '-' + m + '-' + d;
+    }
+    // Slash format: DD/MM/YYYY or D/M/YYYY
+    var slashMatch = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (slashMatch) {
+        var y = parseInt(slashMatch[3], 10);
+        if (y > 2400) y -= 543;
+        var m = String(parseInt(slashMatch[2], 10)).padStart(2, '0');
+        var d = String(parseInt(slashMatch[1], 10)).padStart(2, '0');
+        return y + '-' + m + '-' + d;
+    }
+    return s.substring(0, 10);
+}
+
 // ฟังก์ชัน helper สร้างตาราง HTML สำหรับ print
 function buildAgendaHtml(title, eventsToRender) {
     var thMonths = ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
@@ -17220,7 +17254,8 @@ function buildAgendaHtml(title, eventsToRender) {
 
     function fmtDate(dStr) {
         if (!dStr) return "";
-        var p = dStr.substring(0,10).split('-');
+        var iso = normalizeToIsoDate(dStr);
+        var p = iso.split('-');
         if (p.length !== 3) return dStr;
         return parseInt(p[2], 10) + " " + thMonths[parseInt(p[1], 10)] + " " + (parseInt(p[0], 10) + 543);
     }
@@ -17390,6 +17425,9 @@ function printCalendarAgenda() {
     var selMonth = (mSelect && mSelect.value !== '') ? parseInt(mSelect.value, 10) : currentCalMonth; // 0-11
     var selYear  = (ySelect && ySelect.value !== '') ? parseInt(ySelect.value, 10) : currentCalYear;
 
+    // Guard ป้องกันปี พ.ศ. (เช่น 2569 -> 2026)
+    if (selYear > 2400) selYear -= 543;
+
     var monthText = mSelect && mSelect.options[mSelect.selectedIndex] ? mSelect.options[mSelect.selectedIndex].text : '';
     var yearText  = ySelect && ySelect.options[ySelect.selectedIndex] ? ySelect.options[ySelect.selectedIndex].text : '';
 
@@ -17401,14 +17439,15 @@ function printCalendarAgenda() {
     // กรองเฉพาะงานที่คาบเกี่ยวกับเดือนที่เลือก และไม่ใช่วันหยุดทั่วไป
     var sorted = cachedCalendarEvents.filter(function(e) {
         if (e.assignmentType === 'HOLIDAY') return false;
-        var s  = (e.startDate || e.date || "").substring(0, 10);
-        var ed = (e.endDate || e.startDate || e.date || "").substring(0, 10);
+        var s  = normalizeToIsoDate(e.startDate || e.date || "");
+        var ed = normalizeToIsoDate(e.endDate || e.startDate || e.date || "");
         if (!s) return false;
+        if (!ed) ed = s;
         // งานต้องคาบเกี่ยวกับเดือนนี้: วันสิ้นสุด >= วันที่ 1 ของเดือน และ วันเริ่มต้น <= วันสิ้นสุดของเดือน
         return (ed >= monthStartStr && s <= monthEndStr);
     }).sort(function(a, b) {
-        var d1 = a.startDate || a.date || "";
-        var d2 = b.startDate || b.date || "";
+        var d1 = normalizeToIsoDate(a.startDate || a.date || "");
+        var d2 = normalizeToIsoDate(b.startDate || b.date || "");
         if (d1 === d2) return (a.time || "23:59").localeCompare(b.time || "23:59");
         return d1.localeCompare(d2);
     });
@@ -17432,7 +17471,7 @@ function printCalendarAgendaByDay() {
     // หา min/max date จาก events
     var dates = [];
     cachedCalendarEvents.forEach(function(ev) {
-        var d = (ev.startDate || ev.date || "").substring(0,10);
+        var d = normalizeToIsoDate(ev.startDate || ev.date || "");
         if (d && dates.indexOf(d) < 0) dates.push(d);
     });
     dates.sort();
@@ -17442,7 +17481,9 @@ function printCalendarAgendaByDay() {
     // calendar-month-select เก็บค่าเป็น 0-indexed (0=ม.ค.) ต้องบวก 1 ให้เป็นเดือนจริง
     var mRaw = mSelect ? parseInt(mSelect.value, 10) : -1;
     var m1   = mRaw >= 0 ? (mRaw + 1) : 0;  // เดือนจริง 1-12
-    var y = ySelect ? ySelect.value : "";
+    var yNum = ySelect ? parseInt(ySelect.value, 10) : 0;
+    if (yNum > 2400) yNum -= 543;
+    var y = yNum ? String(yNum) : "";
     // default เป็นวันนี้ในเดือนที่เลือก หรือวันแรกของ events
     var today = new Date();
     var defaultDate = (y && m1) ? (y + '-' + String(m1).padStart(2,'0') + '-' + today.getDate().toString().padStart(2,'0')) : dates[0] || "";
@@ -17468,11 +17509,13 @@ function printCalendarAgendaByDay() {
         if (!result.isConfirmed) return;
         var selectedDate = result.value;
 
+        var selNorm = normalizeToIsoDate(selectedDate);
         var dayEvents = cachedCalendarEvents.filter(function(ev) {
             if (ev.assignmentType === 'HOLIDAY') return false;
-            var evStart = (ev.startDate || ev.date || "").substring(0,10);
-            var evEnd   = (ev.endDate  || ev.date || "").substring(0,10);
-            return selectedDate >= evStart && selectedDate <= evEnd;
+            var evStart = normalizeToIsoDate(ev.startDate || ev.date || "");
+            var evEnd   = normalizeToIsoDate(ev.endDate  || ev.date || "");
+            if (!evEnd) evEnd = evStart;
+            return selNorm >= evStart && selNorm <= evEnd;
         }).sort(function(a, b) {
             return (a.time || "23:59").localeCompare(b.time || "23:59");
         });
