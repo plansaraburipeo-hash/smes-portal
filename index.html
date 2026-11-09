@@ -1205,7 +1205,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
         <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
         สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
         <span style="font-size: 11px; opacity: 0.8;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.5.3 (Build 67)</small>
+        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.6.0 (Build 68)</small>
       </div>
     </div>
     
@@ -4332,7 +4332,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
           สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
           <span style="font-size: 11px; color: #94a3b8; display: inline-block; margin-top: 5px;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.5.3 (Build 67)</small>
+          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.6.0 (Build 68)</small>
         </div>
       </div>
       <button id="btn-back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 9999; border: none; outline: none; background-color: #f59e0b; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s; width: 50px; height: 50px; align-items: center; justify-content: center;">
@@ -4556,7 +4556,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
     </div>
   </div>
 
-  <script>
+  ﻿<script>
     // ==========================================
     // 0. Universal RPC Bridge for S-MES
     // Enables decoupled execution (GitHub Pages, External Web Server)
@@ -10650,6 +10650,26 @@ function saveBudgetAllocation(statusMode) {
                 budgetData.push({ rowId: tr.getAttribute('data-row-id') || '', cardNo: cardInput.value.trim(), itemName: nameInput.value.trim(), amount: parseFloat(inputAmt.value.replace(/,/g, '')) || 0 });
             });
 
+            // u{1F31F} [PILLAR 3] Frontend Duplicate Card Validation - ตรวจสอบเลขบัตรซ้ำในปีเดียวกันก่อนบันทึก
+            var _cardNoCount = {};
+            var _duplicates = [];
+            budgetData.forEach(function(item) {
+                var cNo = item.cardNo;
+                if (!cNo || cNo === 'LIMIT' || cNo === 'SP-1' || cNo === 'SP-2') return;
+                if (Number(item.amount) <= 0) return; // บัตรที่ไม่มีงบจะไม่ถูกบันทึก จึงข้ามการตรวจ
+                _cardNoCount[cNo] = (_cardNoCount[cNo] || 0) + 1;
+                if (_cardNoCount[cNo] === 2) _duplicates.push(cNo);
+            });
+            if (_duplicates.length > 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'u{26A0}u{FE0F} พบเลขที่บัตรซ้ำกัน',
+                    html: 'พบรายการที่ใช้เลขบัตรซ้ำกัน: <b>' + _duplicates.join(', ') + '</b><br><br>กรุณาแก้ไขเลขบัตรให้ไม่ซ้ำกันก่อนบันทึก',
+                    confirmButtonColor: '#f59e0b'
+                });
+                return;
+            }
+
             var limitVal = parseFloat(document.getElementById('budget-allocation-limit').value.replace(/,/g, '')) || 0;
             var spType1 = parseFloat(document.getElementById('sp-alloc-type1').value.replace(/,/g, '')) || 0;
             var spType2 = parseFloat(document.getElementById('sp-alloc-type2').value.replace(/,/g, '')) || 0;
@@ -10934,7 +10954,7 @@ function loadTrackingData() {
                     <td style="text-align:right; border:1px solid #cbd5e1; padding:10px; font-weight:bold; color:${transColor}; background:#f8fafc;">${transDisplay}</td>
 
                     <td style="padding:6px; border:1px solid #cbd5e1; background:#fef2f2; text-align:center;">
-                        <button type="button" onclick="openLedger('${item.cardNo}')" style="background:#fff; border:1px solid #ef4444; color:#dc2626; padding:8px; border-radius:4px; width:100%; cursor:pointer; font-weight:bold; font-size:13px; box-shadow:0 1px 2px rgba(0,0,0,0.05); transition:0.2s;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fff'" title="คลิกเพื่อบันทึกฎีกาเบิกจ่าย">
+                        <button type="button" onclick="openLedger('${item.cardNo}', '${item.itemName.replace(/'/g, "'")}')" style="background:#fff; border:1px solid #ef4444; color:#dc2626; padding:8px; border-radius:4px; width:100%; cursor:pointer; font-weight:bold; font-size:13px; box-shadow:0 1px 2px rgba(0,0,0,0.05); transition:0.2s;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fff'" title="คลิกเพื่อบันทึกฎีกาเบิกจ่าย">
                             ${used.toLocaleString(undefined,{minimumFractionDigits:2})} 📝
                         </button>
                         <input type="hidden" class="track-used" value="${used}">
@@ -10997,9 +11017,12 @@ var currentLedgerData = []; // เก็บข้อมูลตารางไ�
 var editingLedgerTxId = null; // ตัวแปรเช็คว่ากำลังแก้ไขอยู่หรือไม่
 
 // ฟังก์ชันเปิดหน้าต่างและโหลดข้อมูล
-function openLedger(cardNo) {
+function openLedger(cardNo, itemName) {
     activeLedgerCard = cardNo;
-    document.getElementById('ledger-card-no-title').innerText = cardNo;
+    // u{1F31F} [PILLAR 3] แสดงชื่อโครงการกำกับบนหัวสมุดคุมเงิน
+    var titleEl = document.getElementById('ledger-card-no-title');
+    var displayTitle = itemName ? ('บัตร ' + cardNo + ' — ' + itemName) : cardNo;
+    titleEl.innerText = displayTitle;
     document.getElementById('ledger-modal').style.display = 'flex';
     document.getElementById('ledger-modal').classList.remove('hidden');
     
