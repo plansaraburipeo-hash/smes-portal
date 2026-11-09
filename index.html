@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
+<head prefix="og: http://ogp.me/ns#">
   <meta charset="UTF-8">
   <title>S-MES : Strategic Management &amp; Evaluation System (ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์)</title>
   
@@ -1180,19 +1180,6 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
 
   <div class="overlay" id="mobile-overlay" onclick="toggleSidebar()"></div>
 
-  <div id="modal-transfer" class="modal hidden">
-    <div class="modal-content" style="max-width: 400px;">
-      <h3 style="margin-top: 0; color: #1e4a2d;">🔄 โอนย้ายโครงการ</h3>
-      <p style="color: #666; font-size: 14px;">เลือกผู้รับผิดชอบใหม่สำหรับโครงการ <b id="transfer-proj-name" style="color:#333;"></b></p>
-      <input type="hidden" id="transfer-proj-id">
-      <select id="transfer-user-select" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-top: 10px;"></select>
-      <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <button onclick="document.getElementById('modal-transfer').classList.add('hidden')" style="background: #f3f4f6; color: #333; margin: 0;">ยกเลิก</button>
-        <button onclick="doTransferProject()" style="background: #3b82f6; margin: 0;">ยืนยันการโอนย้าย</button>
-      </div>
-      <div id="transfer-msg" class="loading" style="margin-top:10px;"></div>
-    </div>
-  </div>
 
   <div id="auth-layout" class="auth-layout">
     <div id="login-section" class="card">
@@ -18940,6 +18927,19 @@ document.querySelectorAll(".auto-logo-img").forEach(e => e.src = APP_LOGO_B64);
     <p style="margin-top: 8px; color: #cbd5e1; font-size: 13px;">(เอกสารที่มีหลายหน้าอาจใช้เวลาเพิ่มขึ้น โปรดอย่าเพิ่งปิดหน้าต่างนี้ครับ)</p>
     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
   </div>
+
+  <div id="modal-transfer" class="modal hidden">
+    <div class="modal-content" style="max-width: 400px;">
+      <h3 style="margin-top: 0; color: #1e4a2d;">🔄 โอนย้ายโครงการ</h3>
+      <p style="color: #666; font-size: 14px;">เลือกผู้รับผิดชอบใหม่สำหรับโครงการ <b id="transfer-proj-name" style="color:#333;"></b></p>
+      <input type="hidden" id="transfer-proj-id">
+      <select id="transfer-user-select" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-top: 10px;"></select>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button onclick="document.getElementById('modal-transfer').classList.add('hidden')" style="background: #f3f4f6; color: #333; margin: 0;">ยกเลิก</button>
+        <button onclick="doTransferProject()" style="background: #3b82f6; margin: 0;">ยืนยันการโอนย้าย</button>
+      </div>
+      <div id="transfer-msg" class="loading" style="margin-top:10px;"></div>
+    </div>
 </body>
 </html>
 
