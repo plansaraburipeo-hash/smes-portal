@@ -1205,7 +1205,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
         <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
         สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
         <span style="font-size: 11px; opacity: 0.8;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.7.0 (Build 69)</small>
+        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.7.1 (Build 70)</small>
       </div>
     </div>
     
@@ -2278,7 +2278,8 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                         <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">รหัสบัญชีย่อย</label><input type="text" id="led-subaccount" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box;"></div>
                         <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">รหัสเจ้าของบัญชีย่อย</label><input type="text" id="led-subowner" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box;"></div>
                         <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">หมวดงบประมาณ</label><select id="led-budgettype" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white;"><option value="operating" selected>งบดำเนินงาน</option><option value="investment">งบลงทุน (ครุภัณฑ์ / ที่ดินและสิ่งก่อสร้าง)</option><option value="personnel">งบบุคลากร</option><option value="subsidy">งบเงินอุดหนุน</option><option value="other">งบรายจ่ายอื่น</option></select></div>
-                        <div style="grid-column: span 2;"><label style="font-size:12px; color:#1e4a2d; font-weight:bold; display:flex; align-items:center; gap:6px; margin-bottom:5px;"><span>🔗 ผูกโครงการที่รับผิดชอบบัตรนี้ (ถ้ามี)</span><span id="led-card-proj-badge" class="badge hidden" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; font-size:11px; font-weight:600; padding:2px 8px; border-radius:12px;"></span></label><select id="led-card-projectid" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white; font-size: 13px;"><option value="">-- ไม่ผูกโครงการ (งบดำเนินงานทั่วไป / งบส่วนกลาง) --</option></select></div>
+                        <div><label style="font-size:12px; color:#1e4a2d; font-weight:bold; display:block; margin-bottom:5px;">🏢 กลุ่มงานที่รับผิดชอบบัตร *</label><select id="led-card-group" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white; font-size: 13px;"><option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option><option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option><option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option><option value="กลุ่มพัฒนาการศึกษา">กลุ่มพัฒนาการศึกษา</option><option value="กลุ่มนิเทศ ติดตาม และประเมินผล">กลุ่มนิเทศ ติดตาม และประเมินผล</option><option value="กลุ่มส่งเสริมการศึกษาเอกชน">กลุ่มส่งเสริมการศึกษาเอกชน</option><option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option></select></div>
+                        <div><label style="font-size:12px; color:#1e4a2d; font-weight:bold; display:flex; align-items:center; gap:6px; margin-bottom:5px;"><span>🔗 ผูกโครงการที่รับผิดชอบบัตรนี้</span><span id="led-card-proj-badge" class="badge hidden" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; font-size:11px; font-weight:600; padding:2px 8px; border-radius:12px;"></span></label><select id="led-card-projectid" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white; font-size: 13px;"><option value="">-- ไม่ผูกโครงการ (งบดำเนินงานทั่วไป / งบสวัสดิการ) --</option></select></div>
                     </div>
                 </div>
 
@@ -4757,7 +4758,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
           สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
           <span style="font-size: 11px; color: #94a3b8; display: inline-block; margin-top: 5px;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.7.0 (Build 69)</small>
+          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.7.1 (Build 70)</small>
         </div>
       </div>
       <button id="btn-back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 9999; border: none; outline: none; background-color: #f59e0b; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s; width: 50px; height: 50px; align-items: center; justify-content: center;">
@@ -12377,6 +12378,20 @@ function reloadLedgerTable() {
             var bTypeVal = m.budgetType || "operating";
             if (bTypeVal === "policy") bTypeVal = "operating";
             if (document.getElementById('led-budgettype')) document.getElementById('led-budgettype').value = bTypeVal;
+            if (document.getElementById('led-card-group')) {
+                var cGroupVal = m.responsibleGroup || "";
+                if (!cGroupVal) {
+                    var cName = (res.cardInfo && res.cardInfo.itemName) ? res.cardInfo.itemName.toLowerCase() : "";
+                    if (cName.indexOf("เอกชน") > -1 || cName.indexOf("สวัสดิการ") > -1 || cName.indexOf("อุดหนุน") > -1) cGroupVal = "กลุ่มส่งเสริมการศึกษาเอกชน";
+                    else if (cName.indexOf("บุคคล") > -1 || cName.indexOf("เงินเดือน") > -1 || cName.indexOf("ค่าจ้าง") > -1 || cName.indexOf("ot") > -1) cGroupVal = "กลุ่มบริหารงานบุคคล";
+                    else if (cName.indexOf("แผน") > -1 || cName.indexOf("นโยบาย") > -1) cGroupVal = "กลุ่มนโยบายและแผน";
+                    else if (cName.indexOf("พัฒนาการศึกษา") > -1 || cName.indexOf("ทุน") > -1) cGroupVal = "กลุ่มพัฒนาการศึกษา";
+                    else if (cName.indexOf("นิเทศ") > -1) cGroupVal = "กลุ่มนิเทศ ติดตาม และประเมินผล";
+                    else if (cName.indexOf("ตรวจสอบภายใน") > -1) cGroupVal = "หน่วยตรวจสอบภายใน";
+                    else cGroupVal = "กลุ่มอำนวยการ";
+                }
+                document.getElementById('led-card-group').value = cGroupVal;
+            }
             populateCardProjectDropdown(activeLedgerCard, year, m.projectId || "");
 
             var ledgerTransferNet = 0;
@@ -12590,6 +12605,7 @@ function saveCardInfo() {
         subAccount: document.getElementById('led-subaccount').value,
         subOwner: document.getElementById('led-subowner').value,
         budgetType: document.getElementById('led-budgettype') ? document.getElementById('led-budgettype').value : "operating",
+        responsibleGroup: document.getElementById('led-card-group') ? document.getElementById('led-card-group').value : "กลุ่มอำนวยการ",
         projectId: document.getElementById('led-card-projectid') ? document.getElementById('led-card-projectid').value : ""
     };
     var year = document.getElementById('track-year').value;
