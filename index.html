@@ -435,10 +435,59 @@
   .gantt-group-header { background: rgba(255,255,255,0.6); font-weight: bold; color: #334155; }
   .gantt-cell { text-align: center; border-radius: 6px; margin: 2px; height: 20px; transition: transform 0.2s ease; }
   .gantt-cell:hover { transform: scale(1.05); }
-  .g-planned { background-color: rgba(226,232,240,0.85); } 
-  .g-ongoing { background-color: rgba(99,102,241,0.85); } 
+  .g-planned { background-color: #cbd5e1; border: 1.5px solid #64748b; box-shadow: 0 1px 2px rgba(100,116,139,0.25); } 
+  .g-ongoing { background-color: rgba(59,130,246,0.85); } 
   .g-delayed { background-color: rgba(239,68,68,0.85); } 
   .g-completed { background-color: rgba(34,197,94,0.85); } 
+  .g-postponed { background-color: rgba(245,158,11,0.85); }
+  .g-cancelled { background-color: rgba(100,116,139,0.7); position: relative; }
+  .g-cancelled::after { content: "✕"; color: white; font-size: 11px; font-weight: bold; line-height: 20px; display: block; }
+
+  /* GANTT TOOLTIP CARD */
+  .gantt-tooltip-card {
+    position: fixed;
+    z-index: 99999;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    font-size: 12px;
+    line-height: 1.5;
+    color: #1e293b;
+    min-width: 260px;
+    max-width: 340px;
+    pointer-events: none;
+    transition: opacity 0.12s ease-out, transform 0.12s ease-out;
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  .gantt-tooltip-card.active {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .gantt-tooltip-card .tt-title {
+    font-weight: 700;
+    color: #1e4a2d;
+    font-size: 13px;
+    margin-bottom: 6px;
+    word-break: break-word;
+  }
+  .gantt-tooltip-card .tt-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .gantt-tooltip-card .tt-meta {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 11px;
+    color: #64748b;
+  } 
 
   /* ------------------------------------------- */
   /* BADGES & ACTION BUTTONS */
@@ -891,7 +940,7 @@
   
   /* บังคับให้ SweetAlert และ Loading อยู่เหนือ Modal ทุกอัน */
   .swal2-container {
-      z-index: 9999 !important;
+      z-index: 99999 !important;
   }
 
   /* 🕒 ATTENDANCE (TIMESTAMP) SYSTEM CUSTOM STYLES */
@@ -1217,7 +1266,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
         <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
         สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
         <span style="font-size: 11px; opacity: 0.8;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.7.2 (Build 71)</small>
+        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.8.0 (Build 72)</small>
       </div>
     </div>
     
@@ -1627,7 +1676,9 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                 <span style="font-size: 10px; color: #94a3b8; background: #f8fafc; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-top: 4px; border: 1px solid #e2e8f0;">ฐานข้อมูล: สมุดคุมเงิน (Budgets)</span>
               </div>
               <div style="display: flex; flex-direction: column; border-right: 1px solid #f1f5f9; padding-right: 14px;">
-                <span id="fin-strip-disbursed-label" style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 4px;">💸 ผลเบิกจ่ายจริงสะสม (New GFMIS)</span>
+                <div id="fin-strip-disbursed-label" style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 4px;">
+                  <div>💸 ผลเบิกจ่ายจริงสะสม (New GFMIS)</div>
+                </div>
                 <span id="fin-strip-disbursed" style="font-size: 22px; font-weight: 700; color: #059669; letter-spacing: -0.5px;">฿0.00</span>
                 <span id="fin-strip-spent-percent" style="font-size: 11px; color: #059669; margin-top: 2px;">เบิกจ่ายไปแล้ว <b>0.0%</b> ของวงเงินสุทธิ</span>
                 <span style="font-size: 10px; color: #94a3b8; background: #f8fafc; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-top: 4px; border: 1px solid #e2e8f0;">ฐานข้อมูล: ฎีกาเบิกจริง (TransactionLedger)</span>
@@ -2290,7 +2341,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                         <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">รหัสบัญชีย่อย</label><input type="text" id="led-subaccount" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box;"></div>
                         <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">รหัสเจ้าของบัญชีย่อย</label><input type="text" id="led-subowner" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box;"></div>
                         <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">หมวดงบประมาณ</label><select id="led-budgettype" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white;"><option value="operating" selected>งบดำเนินงาน</option><option value="investment">งบลงทุน (ครุภัณฑ์ / ที่ดินและสิ่งก่อสร้าง)</option><option value="personnel">งบบุคลากร</option><option value="subsidy">งบเงินอุดหนุน</option><option value="other">งบรายจ่ายอื่น</option></select></div>
-                        <div><label style="font-size:12px; color:#1e4a2d; font-weight:bold; display:block; margin-bottom:5px;">🏢 กลุ่มงานที่รับผิดชอบบัตร *</label><select id="led-card-group" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white; font-size: 13px;"><option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option><option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option><option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option><option value="กลุ่มพัฒนาการศึกษา">กลุ่มพัฒนาการศึกษา</option><option value="กลุ่มนิเทศ ติดตาม และประเมินผล">กลุ่มนิเทศ ติดตาม และประเมินผล</option><option value="กลุ่มส่งเสริมการศึกษาเอกชน">กลุ่มส่งเสริมการศึกษาเอกชน</option><option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option></select></div>
+                        <div><label style="font-size:12px; color:#1e4a2d; font-weight:bold; display:block; margin-bottom:5px;">🏢 กลุ่มงานที่รับผิดชอบบัตร *</label><select id="led-card-group" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white; font-size: 13px;"><option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option><option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option><option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option><option value="กลุ่มพัฒนาการศึกษา">กลุ่มพัฒนาการศึกษา</option><option value="กลุ่มนิเทศ ติดตาม และประเมินผล">กลุ่มนิเทศ ติดตาม และประเมินผล</option><option value="กลุ่มส่งเสริมการศึกษาเอกชน">กลุ่มส่งเสริมการศึกษาเอกชน</option><option value="กลุ่มลูกเสือ ยุวกาชาด และกิจการนักเรียน">กลุ่มลูกเสือ ยุวกาชาด และกิจการนักเรียน</option><option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option></select></div>
                         <div><label style="font-size:12px; color:#1e4a2d; font-weight:bold; display:flex; align-items:center; gap:6px; margin-bottom:5px;"><span>🔗 ผูกโครงการที่รับผิดชอบบัตรนี้</span><span id="led-card-proj-badge" class="badge hidden" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; font-size:11px; font-weight:600; padding:2px 8px; border-radius:12px;"></span></label><select id="led-card-projectid" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white; font-size: 13px;"><option value="">-- ไม่ผูกโครงการ (งบดำเนินงานทั่วไป / งบสวัสดิการ) --</option></select></div>
                     </div>
                 </div>
@@ -2460,11 +2511,25 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                  <h3 style="margin:0; color:#1e4a2d;">📊 ตารางติดตามการดำเนินโครงการ (Gantt Chart)</h3>
                  <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">แสดงกิจกรรมของโครงการที่ได้รับอนุมัติแล้ว</p>
               </div>
-              <div style="display: flex; gap: 10px; font-size: 12px; background: #f8fafc; padding: 8px 15px; border-radius: 20px; border: 1px solid #e2e8f0;">
-                 <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; background:#22c55e; border-radius:2px;"></div> เสร็จสิ้น</span>
-                 <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; background:#6366f1; border-radius:2px;"></div> ตามแผน</span>
-                 <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; background:#ef4444; border-radius:2px;"></div> ล่าช้า/เลยกำหนด</span>
-                 <span style="display:flex; align-items:center; gap:5px;"><div style="width:12px; height:12px; background:#e2e8f0; border-radius:2px;"></div> ยังไม่ถึงกำหนด</span>
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 6px; background: #f0fdf4; padding: 6px 12px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                   <label for="gantt-quarter-filter" style="font-size: 12px; font-weight: bold; color: #166534; margin: 0;">🎯 มุมมองไตรมาส:</label>
+                   <select id="gantt-quarter-filter" onchange="renderGanttChart()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #86efac; font-size: 12px; background: white; color: #14532d; font-weight: 500; cursor: pointer;">
+                     <option value="latest">📊 ไตรมาสล่าสุด (สถานะจริง)</option>
+                     <option value="Q1">ไตรมาสที่ 1 (ต.ค. - ธ.ค.)</option>
+                     <option value="Q2">ไตรมาสที่ 2 (ม.ค. - มี.ค.)</option>
+                     <option value="Q3">ไตรมาสที่ 3 (เม.ย. - มิ.ย.)</option>
+                     <option value="Q4">ไตรมาสที่ 4 (ก.ค. - ก.ย.)</option>
+                   </select>
+                </div>
+                <div style="display: flex; gap: 8px; font-size: 11px; background: #f8fafc; padding: 6px 12px; border-radius: 20px; border: 1px solid #e2e8f0; flex-wrap: wrap;">
+                   <span style="display:flex; align-items:center; gap:4px;"><div style="width:10px; height:10px; background:#22c55e; border-radius:2px;"></div> เสร็จสิ้น</span>
+                   <span style="display:flex; align-items:center; gap:4px;"><div style="width:10px; height:10px; background:#3b82f6; border-radius:2px;"></div> กำลังทำ/ตามแผน</span>
+                   <span style="display:flex; align-items:center; gap:4px;"><div style="width:10px; height:10px; background:#cbd5e1; border-radius:2px; border:1.5px solid #64748b;"></div> ยังไม่ถึงกำหนด</span>
+                   <span style="display:flex; align-items:center; gap:4px;"><div style="width:10px; height:10px; background:#ef4444; border-radius:2px;"></div> ล่าช้า/เลยกำหนด</span>
+                   <span style="display:flex; align-items:center; gap:4px;"><div style="width:10px; height:10px; background:#f59e0b; border-radius:2px;"></div> เลื่อนแผน</span>
+                   <span style="display:flex; align-items:center; gap:4px;"><div style="width:10px; height:10px; background:#64748b; border-radius:2px;"></div> ยกเลิก</span>
+                </div>
               </div>
             </div>
             
@@ -4034,7 +4099,17 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
               </div>
             </div>
     
-    <div style="margin-bottom: 20px;"><h3 style="background: #f4f6f9; padding: 10px; border-left: 4px solid #1e4a2d;">2. ผลการดำเนินงานของกิจกรรม</h3><textarea id="rep-activity-result" rows="4"></textarea></div>
+    <div style="margin-bottom: 20px;">
+      <h3 style="background: #f4f6f9; padding: 10px; border-left: 4px solid #1e4a2d; display: flex; justify-content: space-between; align-items: center; margin-top:0;">
+        <span>2. ผลการดำเนินงานของกิจกรรมย่อย (รายไตรมาส)</span>
+        <span style="font-size: 12px; font-weight: normal; color: #64748b;">ระบุสถานะความก้าวหน้าของแต่ละกิจกรรม</span>
+      </h3>
+      <div id="rep-activities-checklist-wrapper" style="margin-bottom: 12px; overflow-x: auto;">
+        <div style="text-align: center; color: #94a3b8; padding: 15px; border: 1px dashed #cbd5e1; border-radius: 8px;">กำลังโหลดรายการกิจกรรม...</div>
+      </div>
+      <label style="font-size: 13px; font-weight: 600; color: #475569; margin-top: 8px; display: block;">💬 สรุปภาพรวมผลการดำเนินกิจกรรม (เพิ่มเติม):</label>
+      <textarea id="rep-activity-result" rows="3" placeholder="ระบุสรุปผลการดำเนินงานในภาพรวมเพิ่มเติม (ถ้ามี)..."></textarea>
+    </div>
     
     <div style="margin-bottom: 20px;"><h3 style="background: #f4f6f9; padding: 10px; border-left: 4px solid #1e4a2d;">3. ผลสัมฤทธิ์ตามตัวชี้วัด</h3><div style="display: flex; gap: 10px; flex-wrap:wrap;"><div style="flex: 1; min-width:250px;"><label>เชิงปริมาณ</label><textarea id="rep-kpi-quan" rows="2"></textarea></div><div style="flex: 1; min-width:250px;"><label>เชิงคุณภาพ</label><textarea id="rep-kpi-qual" rows="2"></textarea></div></div></div>
     
@@ -4438,13 +4513,15 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                 <label>กลุ่มงาน <span style="color:#dc2626;">*</span></label>
                 <select id="prof-group" disabled style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: 'Prompt', sans-serif; background: #f1f5f9; cursor: not-allowed; appearance: none; -webkit-appearance: none; -moz-appearance: none;">
                   <option value="">-- เลือกกลุ่มงาน --</option>
+                  <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
                   <option value="กลุ่มนโยบายและแผน">กลุ่มนโยบายและแผน</option>
                   <option value="กลุ่มบริหารงานบุคคล">กลุ่มบริหารงานบุคคล</option>
                   <option value="กลุ่มพัฒนาการศึกษา">กลุ่มพัฒนาการศึกษา</option>
                   <option value="กลุ่มนิเทศ ติดตาม และประเมินผล">กลุ่มนิเทศ ติดตาม และประเมินผล</option>
-                  <option value="กลุ่มอำนวยการ">กลุ่มอำนวยการ</option>
-                  <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
+                  <option value="กลุ่มส่งเสริมการศึกษาเอกชน">กลุ่มส่งเสริมการศึกษาเอกชน</option>
+                  <option value="กลุ่มลูกเสือ ยุวกาชาด และกิจการนักเรียน">กลุ่มลูกเสือ ยุวกาชาด และกิจการนักเรียน</option>
                   <option value="กลุ่มลูกเสือและยุวกาชาด">กลุ่มลูกเสือและยุวกาชาด</option>
+                  <option value="หน่วยตรวจสอบภายใน">หน่วยตรวจสอบภายใน</option>
                 </select>
               </div>
             </div>
@@ -4770,7 +4847,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
           สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
           <span style="font-size: 11px; color: #94a3b8; display: inline-block; margin-top: 5px;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.7.2 (Build 71)</small>
+          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.8.0 (Build 72)</small>
         </div>
       </div>
       <button id="btn-back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 9999; border: none; outline: none; background-color: #f59e0b; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s; width: 50px; height: 50px; align-items: center; justify-content: center;">
@@ -6649,7 +6726,8 @@ function updateFinancialDashboardUI(data) {
     var elDisTitle = document.getElementById('fin-strip-disbursed-label');
     if (elDisTitle) {
         var titleMain = isDiscrete ? '💸 ผลเบิกจ่ายจริงประจำงวด (New GFMIS)' : '💸 ผลเบิกจ่ายจริงสะสม (New GFMIS)';
-        elDisTitle.innerHTML = titleMain + ' <span style="font-size: 10px; color: ' + badgeColor + '; background: ' + badgeBg + '; padding: 1px 7px; border-radius: 10px; font-weight: 600; margin-left: 4px; border: 1px solid ' + badgeBorder + ';">' + qLabelText + '</span>';
+        elDisTitle.innerHTML = '<div>' + titleMain + '</div>' +
+            '<div style="margin-top: 3px; margin-bottom: 2px;"><span style="font-size: 10px; color: ' + badgeColor + '; background: ' + badgeBg + '; padding: 1px 8px; border-radius: 10px; font-weight: 600; border: 1px solid ' + badgeBorder + '; display: inline-block; white-space: nowrap;">' + qLabelText + '</span></div>';
     }
 
     var elDisbursed = document.getElementById('fin-strip-disbursed');
@@ -8484,6 +8562,11 @@ function editQuarterlyReport(projectId, projectName, quarterValue, forceDraft = 
            }
         }
         
+        // 🌟 6.1.1 เรนเดอร์ตารางตรวจสอบสถานะกิจกรรมย่อยรายไตรมาส (5 สถานะ)
+        window.currentReportMasterActivities = res.masterActivities || [];
+        var actStatusJson = (res.success && res.data && res.data.activityQuarterlyStatus) ? res.data.activityQuarterlyStatus : "";
+        renderQuarterlyActivitiesChecklist(res.masterActivities || [], actStatusJson, res.prevQuarterActivitiesStatus);
+
         // 🌟 6.2 โหลดข้อมูลเดิมเข้าฟอร์ม (เฉพาะกรณีที่เคยรายงานไตรมาสนี้ไปแล้ว)
         if(res.success && res.data) {
             var d = res.data; 
@@ -8606,7 +8689,43 @@ function viewQuarterlyReport(projectId, arg2, arg3) {
 
             // ข้อมูลส่วนเนื้อหา
             html += `<div class="detail-box"><div class="detail-title">1. สถานะโครงการ</div>${r.projStatus}</div>`;
-            html += `<div class="detail-box"><div class="detail-title">2. ผลการดำเนินกิจกรรม</div>${safeTxt(act.detail || r.activity)}</div>`;
+            
+            var actTableHtml = "";
+            if (r.activityQuarterlyStatus) {
+                try {
+                    var actList = JSON.parse(r.activityQuarterlyStatus);
+                    if (actList && actList.length > 0) {
+                        actTableHtml = `<div class="table-responsive" style="margin-top:8px; margin-bottom:12px;">
+                          <table style="width:100%; border-collapse:collapse; font-size:12px; background:white; border-radius:6px; overflow:hidden; border:1px solid #e2e8f0;">
+                            <thead>
+                              <tr style="background:#f1f5f9; color:#334155;">
+                                <th style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center; width:45px;">ที่</th>
+                                <th style="padding:8px 10px; border:1px solid #e2e8f0; text-align:left;">กิจกรรมย่อย</th>
+                                <th style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center; width:110px;">กรอบเวลา</th>
+                                <th style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center; width:140px;">สถานะ</th>
+                                <th style="padding:8px 10px; border:1px solid #e2e8f0; text-align:left;">หมายเหตุ/ความก้าวหน้า</th>
+                              </tr>
+                            </thead>
+                            <tbody>`;
+                        actList.forEach((it, idx) => {
+                            var bColor = '#94a3b8'; var bBg = '#f1f5f9';
+                            if (it.status === 'เสร็จสิ้น') { bColor = '#16a34a'; bBg = '#dcfce7'; }
+                            else if (it.status === 'อยู่ระหว่างดำเนินการ') { bColor = '#2563eb'; bBg = '#dbeafe'; }
+                            else if (it.status === 'เลื่อนการดำเนินงาน') { bColor = '#d97706'; bBg = '#fef3c7'; }
+                            else if (it.status === 'ยกเลิกกิจกรรม') { bColor = '#64748b'; bBg = '#f1f5f9'; }
+                            actTableHtml += `<tr>
+                              <td style="padding:6px 10px; border:1px solid #e2e8f0; text-align:center;">${idx+1}</td>
+                              <td style="padding:6px 10px; border:1px solid #e2e8f0; font-weight:600; color:#1e293b;">${safeTxt(it.name)}</td>
+                              <td style="padding:6px 10px; border:1px solid #e2e8f0; text-align:center; color:#64748b;">${safeTxt(it.duration || '-')}</td>
+                              <td style="padding:6px 10px; border:1px solid #e2e8f0; text-align:center;"><span style="display:inline-block; padding:3px 8px; border-radius:12px; font-weight:bold; font-size:11px; background:${bBg}; color:${bColor}; border:1px solid ${bColor};">${safeTxt(it.status || 'ยังไม่ได้ดำเนินการ')}</span></td>
+                              <td style="padding:6px 10px; border:1px solid #e2e8f0; color:#475569;">${safeTxt(it.note || '-')}</td>
+                            </tr>`;
+                        });
+                        actTableHtml += `</tbody></table></div>`;
+                    }
+                } catch(e) {}
+            }
+            html += `<div class="detail-box"><div class="detail-title">2. ผลการดำเนินกิจกรรม</div>${actTableHtml}${r.activity ? `<div><b>สรุปภาพรวม:</b> ${safeTxt(act.detail || r.activity)}</div>` : ''}</div>`;
             html += `<div class="detail-box"><div class="detail-title">3. ผลสัมฤทธิ์ตามตัวชี้วัด (KPI)</div><b>เชิงปริมาณ:</b><br>${safeTxt(kpi.quantitative)}<br><br><b>เชิงคุณภาพ:</b><br>${safeTxt(kpi.qualitative)}</div>`;
             html += `<div class="detail-box"><div class="detail-title">4. งบประมาณที่เบิกจ่ายในไตรมาสนี้</div><b style="color:#16a34a; font-size:16px;">฿${Number(r.budget).toLocaleString('th-TH')}</b></div>`;
             html += `<div class="detail-box"><div class="detail-title">5. ปัญหาและอุปสรรค</div><b>ด้านการดำเนินงาน:</b><br>${safeTxt(pOps.problem)}<br><i style="color:#64748b;">แนวทางแก้ไข: ${safeTxt(pOps.solution)}</i><br><br><b>ด้านงบประมาณ:</b><br>${safeTxt(pBud.problem)}<br><i style="color:#64748b;">แนวทางแก้ไข: ${safeTxt(pBud.solution)}</i></div>`;
@@ -8715,6 +8834,7 @@ function viewQuarterlyReport(projectId, arg2, arg3) {
             
             var repData = { 
                 projectId: projId, quarter: quarter, projStatus: statusText, activityResult: document.getElementById('rep-activity-result').value,
+                activityStatusJson: JSON.stringify(collectQuarterlyActivitiesPayload()),
                 kpiResult: { quantitative: document.getElementById('rep-kpi-quan').value, qualitative: document.getElementById('rep-kpi-qual').value }, 
                 budgetSpent: document.getElementById('rep-budget-spent').value,
                 probOps: { problem: document.getElementById('rep-prob-ops').value, solution: document.getElementById('rep-sol-ops').value }, 
@@ -9910,8 +10030,16 @@ function doSaveNewPassword() {
       google.script.run
         .withSuccessHandler(function(res) {
           hideLoading(); // 📌 ปิด Loading
-          if(res.success) { globalGanttData = res.data; renderGanttChart(); } 
-          else { document.getElementById('gantt-track-list').innerHTML = `<tr><td colspan='13' style='text-align:center; color:#ef4444;'>❌ เกิดข้อผิดพลาด: ${res.message}</td></tr>`; }
+          if(res && res.success) { 
+            globalGanttData = res.data || []; 
+            window.globalCurrentUser = res.currentUser || "";
+            window.globalCurrentUserRole = res.currentUserRole || "";
+            renderGanttChart(); 
+          } 
+          else { 
+            var msg = (res && res.message) ? res.message : "ไม่สามารถโหลดข้อมูลแผนงานได้";
+            document.getElementById('gantt-track-list').innerHTML = `<tr><td colspan='13' style='text-align:center; color:#ef4444;'>❌ เกิดข้อผิดพลาด: ${msg}</td></tr>`; 
+          }
         })
         .withFailureHandler(function(err) {
           hideLoading(); // 📌 ปิด Loading กรณีพัง
@@ -9919,11 +10047,433 @@ function doSaveNewPassword() {
         })
         .getGanttTrackingData(token);
     }
+
+    function getProjectActivityStatusForQuarter(project, actIdx, actName, quarterFilter) {
+      if (!project.quarterlyActivities) return {};
+      var qActs = project.quarterlyActivities;
+      
+      if (quarterFilter && quarterFilter !== 'latest') {
+        var qObj = qActs[quarterFilter];
+        if (qObj && Array.isArray(qObj.statusList)) {
+          for (var i = 0; i < qObj.statusList.length; i++) {
+            var it = qObj.statusList[i];
+            if (it.activityIndex === actIdx || it.name === actName) {
+              var res = Object.assign({}, it);
+              res.quarterKey = quarterFilter;
+              return res;
+            }
+          }
+        }
+        return {};
+      }
+
+      var qOrder = ['Q4', 'Q3', 'Q2', 'Q1'];
+      for (var q = 0; q < qOrder.length; q++) {
+        var key = qOrder[q];
+        var qData = qActs[key];
+        if (qData && Array.isArray(qData.statusList)) {
+          for (var j = 0; j < qData.statusList.length; j++) {
+            var item = qData.statusList[j];
+            if ((item.activityIndex === actIdx || item.name === actName) && item.status) {
+              var resLatest = Object.assign({}, item);
+              resLatest.quarterKey = key;
+              return resLatest;
+            }
+          }
+        }
+      }
+      return {};
+    }
+
+    function showGanttTooltip(event, el) {
+      var tip = document.getElementById('gantt-tooltip-card');
+      if (!tip) return;
+
+      var name = decodeURIComponent(el.getAttribute('data-act-name') || "");
+      var duration = decodeURIComponent(el.getAttribute('data-duration') || "");
+      var status = decodeURIComponent(el.getAttribute('data-status') || "");
+      var source = decodeURIComponent(el.getAttribute('data-source') || "");
+      var updatedAt = decodeURIComponent(el.getAttribute('data-updated-at') || "");
+      var updatedBy = decodeURIComponent(el.getAttribute('data-updated-by') || "");
+      var note = decodeURIComponent(el.getAttribute('data-note') || "");
+      var quarter = decodeURIComponent(el.getAttribute('data-quarter') || "");
+
+      var bColor = '#94a3b8'; var bBg = '#f1f5f9';
+      if (status === 'เสร็จสิ้น') { bColor = '#16a34a'; bBg = '#dcfce7'; }
+      else if (status === 'อยู่ระหว่างดำเนินการ' || status === 'ตามแผน' || status === 'ตามแผน/กำลังทำ') { bColor = '#2563eb'; bBg = '#dbeafe'; }
+      else if (status === 'เลื่อนการดำเนินงาน' || status.indexOf('เลื่อน') > -1) { bColor = '#d97706'; bBg = '#fef3c7'; }
+      else if (status === 'ยกเลิกกิจกรรม') { bColor = '#64748b'; bBg = '#f1f5f9'; }
+      else if (status === 'ล่าช้า/เลยกำหนด') { bColor = '#dc2626'; bBg = '#fee2e2'; }
+
+      var sourceLabel = "ระบบคำนวณอัตโนมัติ";
+      if (source === 'quick_modal') {
+        sourceLabel = "⚡ อัปเดตด่วนหน้างาน (Quick Modal)";
+      } else if (source === 'quarterly_report') {
+        sourceLabel = "📋 รายงานผลไตรมาส (ทางการ)";
+      }
+
+      var html = `<div class="tt-title">📌 ${safeTxt(name)}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:11px; color:#64748b;">📅 ห้วงเวลา: <b>${safeTxt(duration || '-')}</b></span>
+          <span class="tt-badge" style="background:${bBg}; color:${bColor}; border:1px solid ${bColor};">${safeTxt(status || 'ตามแผน')}</span>
+        </div>`;
+
+      if (note) {
+        html += `<div style="background:#f8fafc; padding:6px 8px; border-radius:6px; border:1px solid #e2e8f0; margin-top:4px; font-size:11px; color:#334155;">💬 <b>หมายเหตุ:</b> ${safeTxt(note)}</div>`;
+      }
+
+      html += `<div class="tt-meta">
+        <div>🏷️ <b>ที่มา:</b> ${sourceLabel} ${quarter ? `(${quarter})` : ''}</div>
+        ${updatedAt ? `<div>🕒 <b>อัปเดตเมื่อ:</b> ${updatedAt}</div>` : ''}
+        ${updatedBy ? `<div>👤 <b>ผู้บันทึก:</b> ${safeTxt(updatedBy)}</div>` : ''}
+      </div>
+      <div style="font-size:10px; color:#94a3b8; margin-top:6px; text-align:right;">💡 คลิกแถวเพื่อเปิดอัปเดตสถานะ</div>`;
+
+      tip.innerHTML = html;
+      tip.classList.add('active');
+
+      var x = event.clientX + 15;
+      var y = event.clientY + 15;
+      if (x + 330 > window.innerWidth) x = window.innerWidth - 340;
+      if (y + 180 > window.innerHeight) y = event.clientY - 190;
+
+      tip.style.left = x + 'px';
+      tip.style.top = y + 'px';
+    }
+
+    function hideGanttTooltip() {
+      var tip = document.getElementById('gantt-tooltip-card');
+      if (tip) tip.classList.remove('active');
+    }
+
+    window.currentQuickModalProjectId = null;
+    window.currentQuickModalProjectData = null;
+
+    function openQuickActivityModal(projectId, targetActIdx) {
+      var p = globalGanttData.find(item => item.id === projectId);
+      if (!p) {
+        showAlert("แจ้งเตือน", "ไม่พบข้อมูลโครงการ", "warning");
+        return;
+      }
+
+      window.currentQuickModalProjectId = projectId;
+      window.currentQuickModalProjectData = p;
+
+      var userEl = document.getElementById('sidebar-username');
+      var currentU = (window.globalCurrentUser || (userEl ? userEl.innerText : "")).toLowerCase().trim();
+      var isOwner = (p.owner && p.owner.toLowerCase().trim() === currentU);
+      var isAdmin = (window.globalCurrentUserRole === 'admin' || window.globalCurrentUserRole === 'superadmin' || (typeof userRole !== 'undefined' && (userRole === 'admin' || userRole === 'superadmin')));
+      var canEdit = (isOwner || isAdmin);
+
+      var modal = document.getElementById('modal-quick-activity');
+      var title = document.getElementById('quick-modal-title');
+      var subtitle = document.getElementById('quick-modal-subtitle');
+      var saveBtn = document.getElementById('quick-modal-save-btn');
+
+      if (title) title.innerHTML = canEdit ? '⚡ อัปเดตสถานะกิจกรรมย่อย (Quick Edit)' : '👁️ รายละเอียดสถานะกิจกรรมย่อย (View Only)';
+      if (subtitle) subtitle.innerText = `โครงการ: ${p.id} - ${p.name} (ผู้รับผิดชอบ: ${p.owner || '-'})`;
+      if (saveBtn) saveBtn.style.display = canEdit ? 'inline-block' : 'none';
+
+      var d = new Date();
+      var currentRealMonth = d.getMonth() + 1;
+      var defaultQuarter = "ไตรมาสที่ 1 (ต.ค. - ธ.ค.)";
+      if (currentRealMonth >= 10 || currentRealMonth <= 12) defaultQuarter = "ไตรมาสที่ 1 (ต.ค. - ธ.ค.)";
+      else if (currentRealMonth >= 1 && currentRealMonth <= 3) defaultQuarter = "ไตรมาสที่ 2 (ม.ค. - มี.ค.)";
+      else if (currentRealMonth >= 4 && currentRealMonth <= 6) defaultQuarter = "ไตรมาสที่ 3 (เม.ย. - มิ.ย.)";
+      else defaultQuarter = "ไตรมาสที่ 4 (ก.ค. - ก.ย.)";
+
+      var qFilterEl = document.getElementById('gantt-quarter-filter');
+      if (qFilterEl && qFilterEl.value !== 'latest') {
+        if (qFilterEl.value === 'Q1') defaultQuarter = "ไตรมาสที่ 1 (ต.ค. - ธ.ค.)";
+        else if (qFilterEl.value === 'Q2') defaultQuarter = "ไตรมาสที่ 2 (ม.ค. - มี.ค.)";
+        else if (qFilterEl.value === 'Q3') defaultQuarter = "ไตรมาสที่ 3 (เม.ย. - มิ.ย.)";
+        else if (qFilterEl.value === 'Q4') defaultQuarter = "ไตรมาสที่ 4 (ก.ค. - ก.ย.)";
+      }
+
+      var qSelect = document.getElementById('quick-modal-quarter-select');
+      if (qSelect) qSelect.value = defaultQuarter;
+
+      renderQuickModalActivitiesBody(targetActIdx);
+
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+    }
+
+    function closeQuickActivityModal() {
+      var modal = document.getElementById('modal-quick-activity');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+      }
+    }
+
+    function onQuickModalQuarterChange() {
+      renderQuickModalActivitiesBody();
+    }
+
+    function renderQuickModalActivitiesBody(highlightActIdx) {
+      var body = document.getElementById('quick-modal-body');
+      var lockBadge = document.getElementById('quick-modal-lock-badge');
+      var saveBtn = document.getElementById('quick-modal-save-btn');
+      var p = window.currentQuickModalProjectData;
+      if (!p || !body) return;
+
+      var qVal = document.getElementById('quick-modal-quarter-select').value;
+      var qNum = (qVal.match(/\d/) || [1])[0];
+      var qKey = 'Q' + qNum;
+
+      var qData = (p.quarterlyActivities && p.quarterlyActivities[qKey]) ? p.quarterlyActivities[qKey] : null;
+      var isApproved = (qData && qData.adminStatus === 'อนุมัติ');
+
+      var userEl = document.getElementById('sidebar-username');
+      var currentU = (window.globalCurrentUser || (userEl ? userEl.innerText : "")).toLowerCase().trim();
+      var isOwner = (p.owner && p.owner.toLowerCase().trim() === currentU);
+      var isAdmin = (window.globalCurrentUserRole === 'admin' || window.globalCurrentUserRole === 'superadmin' || (typeof userRole !== 'undefined' && (userRole === 'admin' || userRole === 'superadmin')));
+      var canEdit = (isOwner || isAdmin) && (!isApproved || isAdmin);
+
+      if (lockBadge) {
+        if (isApproved) {
+          lockBadge.style.display = 'block';
+          lockBadge.innerHTML = `<span style="background:#dcfce7; color:#166534; padding:4px 10px; border-radius:12px; font-weight:bold; border:1px solid #86efac;">🔒 รายงานไตรมาสนี้ได้รับการอนุมัติแล้ว</span>`;
+        } else {
+          lockBadge.style.display = 'none';
+        }
+      }
+
+      if (saveBtn) {
+        saveBtn.style.display = canEdit ? 'inline-block' : 'none';
+      }
+
+      var acts = [];
+      try {
+        var actObj = JSON.parse(p.activities);
+        if (actObj && actObj.activities) acts = actObj.activities;
+      } catch(e) {}
+
+      if (acts.length === 0) {
+        body.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:30px;">ไม่มีรายการกิจกรรมในโครงการนี้</div>`;
+        return;
+      }
+
+      var existingMap = {};
+      if (qData && Array.isArray(qData.statusList)) {
+        qData.statusList.forEach(item => {
+          existingMap[item.activityIndex] = item;
+          if (item.name) existingMap[item.name] = item;
+        });
+      }
+
+      var html = `<table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <thead>
+          <tr style="background:#f1f5f9; color:#334155; border-bottom:2px solid #cbd5e1;">
+            <th style="padding:10px; text-align:center; width:50px;">ที่</th>
+            <th style="padding:10px; text-align:left; width:38%;">กิจกรรมย่อย</th>
+            <th style="padding:10px; text-align:center; width:110px;">กรอบเวลา</th>
+            <th style="padding:10px; text-align:center; width:195px;">สถานะ</th>
+            <th style="padding:10px; text-align:left; width:auto;">หมายเหตุ/ความก้าวหน้า</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+      acts.forEach((a, idx) => {
+        var item = existingMap[idx] || existingMap[a.name] || {};
+        var currentStatus = item.status || "ยังไม่ได้ดำเนินการ";
+        var noteVal = item.note || "";
+        var isHighlight = (highlightActIdx !== undefined && idx === highlightActIdx);
+        var rowBg = isHighlight ? "#fef3c7" : (idx % 2 === 0 ? "#ffffff" : "#f8fafc");
+        var disabledAttr = canEdit ? "" : "disabled";
+
+        html += `<tr style="background:${rowBg}; border-bottom:1px solid #e2e8f0;">
+          <td style="padding:10px; text-align:center; font-weight:600; color:#64748b;">${idx+1}</td>
+          <td style="padding:10px; font-weight:600; color:#1e293b;">
+            ${safeTxt(a.name)}
+            ${item.updatedAt ? `<div style="font-size:10px; color:#94a3b8; font-weight:normal; margin-top:2px;">🕒 ล่าสุด: ${new Date(item.updatedAt).toLocaleDateString('th-TH')} (${item.source === 'quick_modal' ? '⚡ Quick' : '📋 รายงาน'})</div>` : ''}
+          </td>
+          <td style="padding:10px; text-align:center; color:#64748b; font-size:12px;">${safeTxt(a.duration || '-')}</td>
+          <td style="padding:10px; text-align:center;">
+            <select class="quick-act-status-select" data-act-idx="${idx}" ${disabledAttr} style="padding:6px 8px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px; width:100%; font-weight:600; background:white; cursor:pointer;">
+              <option value="ยังไม่ได้ดำเนินการ" ${currentStatus==='ยังไม่ได้ดำเนินการ'?'selected':''}>⚪ ยังไม่ได้ดำเนินการ</option>
+              <option value="อยู่ระหว่างดำเนินการ" ${currentStatus==='อยู่ระหว่างดำเนินการ'?'selected':''}>🔵 อยู่ระหว่างดำเนินการ</option>
+              <option value="เสร็จสิ้น" ${currentStatus==='เสร็จสิ้น'?'selected':''}>🟢 เสร็จสิ้น</option>
+              <option value="เลื่อนการดำเนินงาน" ${currentStatus==='เลื่อนการดำเนินงาน'?'selected':''}>🟠 เลื่อนการดำเนินงาน</option>
+              <option value="ยกเลิกกิจกรรม" ${currentStatus==='ยกเลิกกิจกรรม'?'selected':''}>⚫ ยกเลิกกิจกรรม</option>
+            </select>
+          </td>
+          <td style="padding:10px;">
+            <input type="text" class="quick-act-note-input" data-act-idx="${idx}" value="${safeTxt(noteVal)}" placeholder="หมายเหตุย่อ (ถ้ามี)..." ${disabledAttr} style="width:100%; padding:6px 10px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px; box-sizing:border-box;">
+          </td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>`;
+      body.innerHTML = html;
+    }
+
+    function saveQuickModalActivities() {
+      var p = window.currentQuickModalProjectData;
+      if (!p) return;
+
+      var qVal = document.getElementById('quick-modal-quarter-select').value;
+      var rows = document.getElementById('quick-modal-body').querySelectorAll('tbody tr');
+      var payload = [];
+
+      rows.forEach(tr => {
+        var sel = tr.querySelector('.quick-act-status-select');
+        var inp = tr.querySelector('.quick-act-note-input');
+        if (sel && inp) {
+          var actIdx = parseInt(sel.getAttribute('data-act-idx'));
+          payload.push({
+            activityIndex: actIdx,
+            status: sel.value,
+            note: inp.value.trim()
+          });
+        }
+      });
+
+      showLoading("กำลังบันทึกสถานะกิจกรรม...");
+      var token = sessionStorage.getItem('eMENSCR_Token');
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          hideLoading();
+          if (res && res.success) {
+            Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: res.message || 'บันทึกเรียบร้อยแล้ว', timer: 1500, showConfirmButton: false });
+            closeQuickActivityModal();
+            loadGanttTrackingData();
+          } else {
+            showAlert("เกิดข้อผิดพลาด", (res && res.message) ? res.message : "เกิดข้อผิดพลาดในการบันทึก", "error");
+          }
+        })
+        .withFailureHandler(function(err) {
+          hideLoading();
+          showAlert("ข้อผิดพลาดจากเซิร์ฟเวอร์", err.message, "error");
+        })
+        .saveQuickQuarterlyActivities(token, p.id, qVal, payload);
+    }
+
+    function renderQuarterlyActivitiesChecklist(masterActivities, existingStatusJson, prevQuarterActivitiesStatus) {
+      var container = document.getElementById('rep-activities-checklist-wrapper');
+      if (!container) return;
+
+      if (!masterActivities || masterActivities.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: #94a3b8; padding: 15px; border: 1px dashed #cbd5e1; border-radius: 8px;">ไม่มีรายการกิจกรรมในโครงการนี้</div>`;
+        return;
+      }
+
+      var existingMap = {};
+      if (existingStatusJson) {
+        try {
+          var parsed = JSON.parse(existingStatusJson);
+          if (Array.isArray(parsed)) {
+            parsed.forEach(item => {
+              existingMap[item.activityIndex] = item;
+              if (item.name) existingMap[item.name] = item;
+            });
+          }
+        } catch(e) {}
+      }
+
+      var prevMap = {};
+      if (prevQuarterActivitiesStatus && Array.isArray(prevQuarterActivitiesStatus)) {
+        prevQuarterActivitiesStatus.forEach(item => {
+          prevMap[item.activityIndex] = item;
+          if (item.name) prevMap[item.name] = item;
+        });
+      }
+
+      var html = `<table style="width:100%; border-collapse:collapse; font-size:13px; background:white; border-radius:8px; overflow:hidden; border:1px solid #e2e8f0;">
+        <thead>
+          <tr style="background:#f1f5f9; color:#334155; border-bottom:2px solid #cbd5e1;">
+            <th style="padding:10px; text-align:center; width:45px;">ที่</th>
+            <th style="padding:10px; text-align:left;">กิจกรรมย่อย</th>
+            <th style="padding:10px; text-align:center; width:110px;">กรอบเวลา</th>
+            <th style="padding:10px; text-align:center; width:170px;">สถานะความก้าวหน้า</th>
+            <th style="padding:10px; text-align:left;">หมายเหตุ/ความก้าวหน้าย่อย</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+      masterActivities.forEach((a, idx) => {
+        var cur = existingMap[idx] || existingMap[a.name];
+        var prev = prevMap[idx] || prevMap[a.name];
+
+        var defaultStatus = "ยังไม่ได้ดำเนินการ";
+        var defaultNote = "";
+
+        if (cur && cur.status) {
+          defaultStatus = cur.status;
+          defaultNote = cur.note || "";
+        } else if (prev && prev.status) {
+          defaultStatus = prev.status;
+          defaultNote = prev.note || "";
+        }
+
+        html += `<tr class="rep-activity-row" data-act-idx="${idx}" style="border-bottom:1px solid #e2e8f0;">
+          <td style="padding:10px; text-align:center; font-weight:600; color:#64748b;">${idx+1}</td>
+          <td style="padding:10px; font-weight:600; color:#1e293b;">
+            <span class="rep-act-name">${safeTxt(a.name)}</span>
+            ${prev && !cur ? `<div style="font-size:11px; color:#2563eb; font-weight:normal; margin-top:2px;">(ดึงค่าสถานะเดิมจากไตรมาสก่อน)</div>` : ''}
+          </td>
+          <td style="padding:10px; text-align:center; color:#64748b; font-size:12px;">
+            <span class="rep-act-duration">${safeTxt(a.duration || '-')}</span>
+          </td>
+          <td style="padding:10px; text-align:center;">
+            <select class="rep-act-status-select" style="padding:6px 10px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px; width:100%; font-weight:600; background:white; cursor:pointer;">
+              <option value="ยังไม่ได้ดำเนินการ" ${defaultStatus==='ยังไม่ได้ดำเนินการ'?'selected':''}>⚪ ยังไม่ได้ดำเนินการ</option>
+              <option value="อยู่ระหว่างดำเนินการ" ${defaultStatus==='อยู่ระหว่างดำเนินการ'?'selected':''}>🔵 อยู่ระหว่างดำเนินการ</option>
+              <option value="เสร็จสิ้น" ${defaultStatus==='เสร็จสิ้น'?'selected':''}>🟢 เสร็จสิ้น</option>
+              <option value="เลื่อนการดำเนินงาน" ${defaultStatus==='เลื่อนการดำเนินงาน'?'selected':''}>🟠 เลื่อนการดำเนินงาน</option>
+              <option value="ยกเลิกกิจกรรม" ${defaultStatus==='ยกเลิกกิจกรรม'?'selected':''}>⚫ ยกเลิกกิจกรรม</option>
+            </select>
+          </td>
+          <td style="padding:10px;">
+            <input type="text" class="rep-act-note-input" value="${safeTxt(defaultNote)}" placeholder="ระบุความคืบหน้าของกิจกรรมนี้ (ถ้ามี)..." style="width:100%; padding:6px 10px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px; box-sizing:border-box;">
+          </td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    }
+
+    function collectQuarterlyActivitiesPayload() {
+      var rows = document.querySelectorAll('#rep-activities-checklist-wrapper .rep-activity-row');
+      var payload = [];
+      var userEl = document.getElementById('sidebar-username');
+      var user = userEl ? userEl.innerText : "";
+      var nowIso = new Date().toISOString();
+
+      rows.forEach(tr => {
+        var idx = parseInt(tr.getAttribute('data-act-idx'));
+        var nameEl = tr.querySelector('.rep-act-name');
+        var durEl = tr.querySelector('.rep-act-duration');
+        var sel = tr.querySelector('.rep-act-status-select');
+        var inp = tr.querySelector('.rep-act-note-input');
+
+        if (sel) {
+          payload.push({
+            activityIndex: idx,
+            name: nameEl ? nameEl.innerText.trim() : "",
+            duration: durEl ? durEl.innerText.trim() : "",
+            status: sel.value,
+            note: inp ? inp.value.trim() : "",
+            updatedAt: nowIso,
+            updatedBy: user,
+            source: "quarterly_report"
+          });
+        }
+      });
+      return payload;
+    }
+
 function renderGanttChart() {
       var tbody = document.getElementById('gantt-track-list');
       tbody.innerHTML = "";
       var selectedYear = document.getElementById('global-year-filter').value;
       var selectedGroup = document.getElementById('global-group-filter').value;
+      var qFilterEl = document.getElementById('gantt-quarter-filter');
+      var selectedQuarter = qFilterEl ? qFilterEl.value : 'latest';
+
       var filteredData = globalGanttData.filter(p => {
         var matchYear = (selectedYear === "all" || p.year.toString() === selectedYear);
         var matchGroup = (selectedGroup === "all" || p.group === selectedGroup);
@@ -9937,6 +10487,7 @@ function renderGanttChart() {
       var currentRealMonth = d.getMonth() + 1; 
       var monthMapping = { 'ต.ค.':0, 'พ.ย.':1, 'ธ.ค.':2, 'ม.ค.':3, 'ก.พ.':4, 'มี.ค.':5, 'เม.ย.':6, 'พ.ค.':7, 'มิ.ย.':8, 'ก.ค.':9, 'ส.ค.':10, 'ก.ย.':11 };
       var currentFiscalIndex = currentRealMonth >= 10 ? (currentRealMonth - 10) : (currentRealMonth + 2);
+      
       // 📌 ลูกเล่นที่ 1: ไฮไลท์หัวตารางของ "เดือนปัจจุบัน" ให้เป็นสีส้มทอง
       var headers = document.querySelectorAll('.gantt-track-table thead tr:nth-child(2) th');
       headers.forEach((th, index) => {
@@ -9950,45 +10501,119 @@ function renderGanttChart() {
               th.style.setProperty('box-shadow', 'none', 'important');
           }
       });
+
+      var userEl = document.getElementById('sidebar-username');
+      var currentU = (window.globalCurrentUser || (userEl ? userEl.innerText : "")).toLowerCase().trim();
+
       filteredData.forEach(p => {
+        var isOwner = (p.owner && p.owner.toLowerCase().trim() === currentU);
+        var isAdmin = (window.globalCurrentUserRole === 'admin' || window.globalCurrentUserRole === 'superadmin' || (typeof userRole !== 'undefined' && (userRole === 'admin' || userRole === 'superadmin')));
+        var canEdit = (isOwner || isAdmin);
+
         var statColor = p.status === 'เสร็จสิ้น' ? '#16a34a' : '#2563eb';
+        var editBtnHtml = canEdit 
+          ? `<button onclick="event.stopPropagation(); openQuickActivityModal('${p.id}')" style="background:#1e4a2d; color:white; border:none; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer;">⚡ อัปเดตสถานะกิจกรรม</button>`
+          : `<button onclick="event.stopPropagation(); openQuickActivityModal('${p.id}')" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer;">👁️ ดูสถานะย่อย</button>`;
+
         tbody.innerHTML += `<tr class="gantt-group-header">
-            <td colspan="13" style="color: ${statColor}; border-top: 2px solid #cbd5e1; word-break: normal; overflow-wrap: break-word; white-space: normal; line-break: loose;">
-              📁 <b>${p.id} : ${p.name}</b> <span style="font-weight:normal; color:#666; font-size:11px;">(${p.group})</span>
+            <td colspan="13" style="color: ${statColor}; border-top: 2px solid #cbd5e1; word-break: normal; overflow-wrap: break-word; white-space: normal; line-break: loose; padding:8px 12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                <div>
+                  📁 <b>${p.id} : ${safeTxt(p.name)}</b> <span style="font-weight:normal; color:#666; font-size:11px;">(${p.group} | ผู้รับผิดชอบ: ${p.owner || '-'})</span>
+                </div>
+                <div>${editBtnHtml}</div>
+              </div>
             </td>
           </tr>`;
+
         var acts = [];
         try {
           var actData = JSON.parse(p.activities);
           if (actData && actData.activities) acts = actData.activities;
         } catch(e) {}
+
         if (acts.length === 0) {
           tbody.innerHTML += `<tr><td colspan="13" style="text-align:center; color:#cbd5e1;">- ไม่มีรายการกิจกรรม -</td></tr>`;
         } else {
-          acts.forEach(a => {
+          acts.forEach((a, actIdx) => {
             var pParts = (a.duration || "").split(" - ");
             var startIdx = monthMapping[pParts[0]];
             var endIdx = monthMapping[pParts[1]];
             if (startIdx !== undefined && endIdx === undefined) endIdx = startIdx;
             if (endIdx !== undefined && startIdx === undefined) startIdx = endIdx;
-            var rowHtml = `<tr><td style="padding-left: 20px; color: #4b5563; word-break: normal; overflow-wrap: break-word; white-space: normal; line-break: loose;">▫️ ${a.name}</td>`;
+
+            // ดึงสถานะกิจกรรมย่อยตามตัวกรองไตรมาส
+            var actStatusInfo = getProjectActivityStatusForQuarter(p, actIdx, a.name, selectedQuarter);
+            var statusName = actStatusInfo.status || "";
+            var sourceName = actStatusInfo.source || "";
+            var updateTime = actStatusInfo.updatedAt ? new Date(actStatusInfo.updatedAt).toLocaleString('th-TH') : "";
+            var updateBy = actStatusInfo.updatedBy || "";
+            var noteText = actStatusInfo.note || "";
+            var quarterFound = actStatusInfo.quarterKey || "";
+
+            // คำนวณ Class สี 5 สถานะ + Auto-delay
+            var cellClass = "";
+            var displayStatusLabel = statusName;
+            if (statusName === 'เสร็จสิ้น') {
+              cellClass = "g-completed";
+            } else if (statusName === 'อยู่ระหว่างดำเนินการ') {
+              cellClass = "g-ongoing";
+            } else if (statusName === 'เลื่อนการดำเนินงาน') {
+              cellClass = (currentFiscalIndex > endIdx) ? "g-delayed" : "g-postponed";
+              if (currentFiscalIndex > endIdx) displayStatusLabel = "เลื่อนแผน (เลยกำหนด)";
+            } else if (statusName === 'ยกเลิกกิจกรรม') {
+              cellClass = "g-cancelled";
+            } else if (statusName === 'ยังไม่ได้ดำเนินการ') {
+              cellClass = (currentFiscalIndex > endIdx) ? "g-delayed" : "g-planned";
+              if (currentFiscalIndex > endIdx) displayStatusLabel = "ล่าช้า/เลยกำหนด";
+            } else {
+              // กรณีไม่มีการระบุสถานะรายไตรมาส (ใช้ตรรกะเวลา)
+              if (p.status === 'เสร็จสิ้น') {
+                cellClass = "g-completed";
+                displayStatusLabel = "เสร็จสิ้น";
+              } else if (currentFiscalIndex > endIdx) {
+                cellClass = "g-delayed";
+                displayStatusLabel = "ล่าช้า/เลยกำหนด";
+              } else if (currentFiscalIndex >= startIdx && currentFiscalIndex <= endIdx) {
+                cellClass = "g-ongoing";
+                displayStatusLabel = "ตามแผน/กำลังทำ";
+              } else {
+                cellClass = "g-planned";
+                displayStatusLabel = "ยังไม่ถึงกำหนด";
+              }
+            }
+
+            var statusBadgeStyle = "";
+            if (statusName === 'เสร็จสิ้น') statusBadgeStyle = "color:#16a34a; background:#dcfce7; border:1px solid #86efac;";
+            else if (statusName === 'อยู่ระหว่างดำเนินการ') statusBadgeStyle = "color:#2563eb; background:#dbeafe; border:1px solid #93c5fd;";
+            else if (statusName === 'เลื่อนการดำเนินงาน') statusBadgeStyle = "color:#d97706; background:#fef3c7; border:1px solid #fcd34d;";
+            else if (statusName === 'ยกเลิกกิจกรรม') statusBadgeStyle = "color:#64748b; background:#f1f5f9; border:1px solid #cbd5e1;";
+            else if (statusName === 'ยังไม่ได้ดำเนินการ') statusBadgeStyle = "color:#475569; background:#f1f5f9; border:1px solid #cbd5e1;";
+            else if (cellClass === 'g-delayed') statusBadgeStyle = "color:#dc2626; background:#fee2e2; border:1px solid #fca5a5;";
+
+            var rowHtml = `<tr style="cursor:pointer;" onclick="openQuickActivityModal('${p.id}', ${actIdx})">
+              <td style="padding-left: 20px; color: #4b5563; word-break: normal; overflow-wrap: break-word; white-space: normal; line-break: loose;" title="คลิกเพื่อดูหรืออัปเดตสถานะ">
+                ▫️ ${safeTxt(a.name)}
+                ${statusName ? `<span style="font-size:10px; margin-left:6px; padding:2px 6px; border-radius:10px; font-weight:600; ${statusBadgeStyle}">${statusName}</span>` : ''}
+              </td>`;
+
             for (var i = 0; i < 12; i++) {
-              var cellClass = "";
-              // 📌 ลูกเล่นที่ 2: เทสีพื้นหลังคอลัมน์ของ "เดือนปัจจุบัน" ให้สว่างขึ้น
               var bgHighlight = (i === currentFiscalIndex) ? "background-color: #fef3c7; border-left: 2px solid #fcd34d; border-right: 2px solid #fcd34d;" : "";
               if (startIdx !== undefined && endIdx !== undefined && i >= startIdx && i <= endIdx) {
-                if (p.status === 'เสร็จสิ้น') {
-                  cellClass = "g-completed"; 
-                } else {
-                  if (currentFiscalIndex > endIdx) {
-                    cellClass = "g-delayed"; 
-                  } else if (currentFiscalIndex >= startIdx && currentFiscalIndex <= endIdx) {
-                    cellClass = "g-ongoing"; 
-                  } else {
-                    cellClass = "g-planned"; 
-                  }
-                }
-                rowHtml += `<td style="${bgHighlight}"><div class="gantt-cell ${cellClass}"></div></td>`;
+                rowHtml += `<td style="${bgHighlight}">
+                  <div class="gantt-cell ${cellClass}"
+                       data-act-name="${encodeURIComponent(a.name)}"
+                       data-duration="${encodeURIComponent(a.duration || '')}"
+                       data-status="${encodeURIComponent(displayStatusLabel)}"
+                       data-source="${encodeURIComponent(sourceName)}"
+                       data-updated-at="${encodeURIComponent(updateTime)}"
+                       data-updated-by="${encodeURIComponent(updateBy)}"
+                       data-note="${encodeURIComponent(noteText)}"
+                       data-quarter="${encodeURIComponent(quarterFound)}"
+                       onmouseenter="showGanttTooltip(event, this)"
+                       onmouseleave="hideGanttTooltip()">
+                  </div>
+                </td>`;
               } else {
                 rowHtml += `<td style="${bgHighlight}"></td>`;
               }
@@ -12401,6 +13026,7 @@ function reloadLedgerTable() {
                     if (cName.indexOf("เอกชน") > -1 || cName.indexOf("สวัสดิการ") > -1 || cName.indexOf("อุดหนุน") > -1) cGroupVal = "กลุ่มส่งเสริมการศึกษาเอกชน";
                     else if (cName.indexOf("บุคคล") > -1 || cName.indexOf("เงินเดือน") > -1 || cName.indexOf("ค่าจ้าง") > -1 || cName.indexOf("ot") > -1) cGroupVal = "กลุ่มบริหารงานบุคคล";
                     else if (cName.indexOf("แผน") > -1 || cName.indexOf("นโยบาย") > -1) cGroupVal = "กลุ่มนโยบายและแผน";
+                    else if (cName.indexOf("ลูกเสือ") > -1 || cName.indexOf("ยุวกาชาด") > -1 || cName.indexOf("กิจการนักเรียน") > -1) cGroupVal = "กลุ่มลูกเสือ ยุวกาชาด และกิจการนักเรียน";
                     else if (cName.indexOf("พัฒนาการศึกษา") > -1 || cName.indexOf("ทุน") > -1) cGroupVal = "กลุ่มพัฒนาการศึกษา";
                     else if (cName.indexOf("นิเทศ") > -1) cGroupVal = "กลุ่มนิเทศ ติดตาม และประเมินผล";
                     else if (cName.indexOf("ตรวจสอบภายใน") > -1) cGroupVal = "หน่วยตรวจสอบภายใน";
@@ -20415,6 +21041,47 @@ document.querySelectorAll(".auto-logo-img").forEach(e => e.src = APP_LOGO_B64);
     </div>
   </div>
 </div>
+<!-- ========================================== -->
+<!-- ⚡ Quick Modal: ติดตามและอัปเดตสถานะกิจกรรมย่อย (Gantt Quick View/Edit) -->
+<!-- ========================================== -->
+<div id="modal-quick-activity" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 9990; display: none; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box;" onclick="if(event.target === this) closeQuickActivityModal();">
+  <div style="background: white; width: 92vw; max-width: 1180px; max-height: 88vh; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; overflow: hidden;">
+    <div style="background: linear-gradient(135deg, #1e4a2d, #2d6a4f); color: white; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h3 id="quick-modal-title" style="margin: 0; font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+          ⚡ อัปเดตสถานะกิจกรรมย่อย (Quick Edit)
+        </h3>
+        <p id="quick-modal-subtitle" style="margin: 4px 0 0 0; font-size: 12px; color: #bbf7d0;">โครงการ: ...</p>
+      </div>
+      <button onclick="closeQuickActivityModal()" style="background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center;">✕</button>
+    </div>
+    <div style="padding: 14px 24px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <label for="quick-modal-quarter-select" style="font-size: 13px; font-weight: 700; color: #1e4a2d;">รอบไตรมาส:</label>
+        <select id="quick-modal-quarter-select" onchange="onQuickModalQuarterChange()" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; font-weight: 600; background: white; color: #1e293b; cursor: pointer;">
+          <option value="ไตรมาสที่ 1 (ต.ค. - ธ.ค.)">ไตรมาสที่ 1 (ต.ค. - ธ.ค.)</option>
+          <option value="ไตรมาสที่ 2 (ม.ค. - มี.ค.)">ไตรมาสที่ 2 (ม.ค. - มี.ค.)</option>
+          <option value="ไตรมาสที่ 3 (เม.ย. - มิ.ย.)">ไตรมาสที่ 3 (เม.ย. - มิ.ย.)</option>
+          <option value="ไตรมาสที่ 4 (ก.ค. - ก.ย.)">ไตรมาสที่ 4 (ก.ค. - ก.ย.)</option>
+        </select>
+      </div>
+      <div id="quick-modal-lock-badge" style="font-size: 12px;"></div>
+    </div>
+    <div id="quick-modal-body" style="padding: 20px 24px; overflow-y: auto; flex: 1;">
+      <!-- Table populated dynamically -->
+    </div>
+    <div style="padding: 14px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+      <span style="font-size: 11px; color: #64748b;">💡 การอัปเดตสถานะจะมีผลทันทีบน Gantt Chart และเชื่อมต่อกับรายงานไตรมาส</span>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="closeQuickActivityModal()" style="background: #e2e8f0; color: #475569; border: none; padding: 8px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px;">ปิด</button>
+        <button id="quick-modal-save-btn" onclick="saveQuickModalActivities()" style="background: #1e4a2d; color: white; border: none; padding: 8px 22px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px;">💾 บันทึกสถานะ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 💬 Gantt Tooltip Card Container -->
+<div id="gantt-tooltip-card" class="gantt-tooltip-card"></div>
 </body>
 </html>
 
