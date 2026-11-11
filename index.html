@@ -1205,7 +1205,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
         <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
         สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
         <span style="font-size: 11px; opacity: 0.8;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.6.0 (Build 68)</small>
+        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.7.0 (Build 69)</small>
       </div>
     </div>
     
@@ -1554,9 +1554,381 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
 </div>
 <!-- ================= จบส่วนปฏิทิน ================= -->
         <div id="app-overview" class="app-section">
-          <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-             <button onclick="window.print()" style="background-color: #10b981; color: white; width: auto; margin: 0; padding: 8px 20px; border: none; border-radius: 4px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">🖨️ พิมพ์หน้า Dashboard</button>
+          <!-- ========================================== -->
+          <!-- DUAL-VIEW SUB-VIEW SWITCHER BAR -->
+          <!-- ========================================== -->
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 14px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button id="tab-overview-finance" onclick="switchOverviewSubView('finance')" style="padding: 10px 22px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; border: 1px solid #1e4a2d; background: #1e4a2d; color: white; box-shadow: 0 2px 4px rgba(30,74,45,0.25); display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                <span>💰</span> <span>1. การบริหารงบประมาณและผลสัมฤทธิ์ภาพรวม</span>
+              </button>
+              <button id="tab-overview-projects" onclick="switchOverviewSubView('projects')" style="padding: 10px 22px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                <span>📋</span> <span>2. แดชบอร์ดติดตามโครงการและรายงานผล</span>
+              </button>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button onclick="window.print()" style="background-color: #10b981; color: white; width: auto; margin: 0; padding: 9px 18px; border: none; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px;">
+                🖨️ พิมพ์ Dashboard
+              </button>
+            </div>
           </div>
+
+          <!-- ========================================================================= -->
+          <!-- SUBVIEW 1: FINANCIAL MANAGEMENT & PERFORMANCE DASHBOARD -->
+          <!-- ========================================================================= -->
+          <div id="subview-finance-container">
+
+            <!-- Quick Filter & Action Bar -->
+            <div style="background: white; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <div>
+                  <label style="font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 4px; text-transform: uppercase;">งวด / ไตรมาส</label>
+                  <select id="fin-filter-quarter" onchange="loadFinancialDashboardData(true)" style="padding: 7px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; background: white; color: #1e293b; outline: none; font-weight: 600;">
+                    <option value="all" selected>ทั้งปีงบประมาณ</option>
+                    <option value="Q1">ไตรมาส 1 (ต.ค. - ธ.ค.)</option>
+                    <option value="Q2">ไตรมาส 2 (ม.ค. - มี.ค.)</option>
+                    <option value="Q3">ไตรมาส 3 (เม.ย. - มิ.ย.)</option>
+                    <option value="Q4">ไตรมาส 4 (ก.ค. - ก.ย.)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size: 11px; font-weight: 700; color: #1e40af; display: block; margin-bottom: 4px; text-transform: uppercase;">รูปแบบยอดเงิน</label>
+                  <select id="fin-filter-mode" onchange="loadFinancialDashboardData(true)" style="padding: 7px 12px; font-size: 13px; border: 1px solid #bfdbfe; border-radius: 6px; background: #eff6ff; color: #1e40af; outline: none; font-weight: 600;">
+                    <option value="cumulative" selected>📈 ยอดสะสมถึงสิ้นงวด (Cumulative - ตามเกณฑ์ ก.พ.ร.)</option>
+                    <option value="discrete">📊 ยอดเฉพาะงวดนี้ (Discrete - ประจำไตรมาส)</option>
+                  </select>
+                </div>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <button type="button" onclick="loadFinancialDashboardData(true)" style="background: #1e4a2d; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                  🔄 รีเฟรชข้อมูล
+                </button>
+              </div>
+            </div>
+
+            <!-- Financial Totals Strip -->
+            <div style="background: white; border-radius: 10px; padding: 18px 22px; border: 1px solid #e2e8f0; margin-bottom: 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+              <div style="display: flex; flex-direction: column; border-right: 1px solid #f1f5f9; padding-right: 14px;">
+                <span style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 4px;">💰 วงเงินสุทธิหลังโอนเปลี่ยนแปลง</span>
+                <span id="fin-strip-net-budget" style="font-size: 22px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px;">฿0.00</span>
+                <span id="fin-strip-net-desc" style="font-size: 11px; color: #2563eb; margin-top: 2px;">จัดสรรตั้งต้น ฿0 (โอนสุทธิ ฿0)</span>
+                <span style="font-size: 10px; color: #94a3b8; background: #f8fafc; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-top: 4px; border: 1px solid #e2e8f0;">ฐานข้อมูล: สมุดคุมเงิน (Budgets)</span>
+              </div>
+              <div style="display: flex; flex-direction: column; border-right: 1px solid #f1f5f9; padding-right: 14px;">
+                <span id="fin-strip-disbursed-label" style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 4px;">💸 ผลเบิกจ่ายจริงสะสม (New GFMIS)</span>
+                <span id="fin-strip-disbursed" style="font-size: 22px; font-weight: 700; color: #059669; letter-spacing: -0.5px;">฿0.00</span>
+                <span id="fin-strip-spent-percent" style="font-size: 11px; color: #059669; margin-top: 2px;">เบิกจ่ายไปแล้ว <b>0.0%</b> ของวงเงินสุทธิ</span>
+                <span style="font-size: 10px; color: #94a3b8; background: #f8fafc; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-top: 4px; border: 1px solid #e2e8f0;">ฐานข้อมูล: ฎีกาเบิกจริง (TransactionLedger)</span>
+              </div>
+              <div style="display: flex; flex-direction: column; border-right: 1px solid #f1f5f9; padding-right: 14px;">
+                <span style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 4px;">⚖️ งบประมาณคงเหลือพร้อมใช้</span>
+                <span id="fin-strip-balance" style="font-size: 22px; font-weight: 700; color: #d97706; letter-spacing: -0.5px;">฿0.00</span>
+                <span id="fin-strip-balance-desc" style="font-size: 11px; color: #64748b; margin-top: 2px;">คงเหลือ 0.0% ของวงเงินสุทธิ</span>
+                <span style="font-size: 10px; color: #94a3b8; background: #f8fafc; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-top: 4px; border: 1px solid #e2e8f0;">คำนวณ: วงเงินสุทธิ - ยอดเบิกจ่าย</span>
+              </div>
+              <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 4px;">🎯 ดัชนีประสิทธิภาพงบประมาณรวม</span>
+                <span id="fin-strip-kps-score" style="font-size: 22px; font-weight: 700; color: #1e4a2d; letter-spacing: -0.5px;">0.00%</span>
+                <span id="fin-strip-kps-level" style="font-size: 11px; background: #d1fae5; color: #059669; padding: 2px 8px; border-radius: 12px; width: fit-content; font-weight: 600; margin-top: 2px;">
+                  สถานะ: รอการประมวลผล
+                </span>
+                <span style="font-size: 10px; color: #94a3b8; background: #f8fafc; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-top: 4px; border: 1px solid #e2e8f0;">สอดคล้องตามเกณฑ์คำรับรองฯ</span>
+              </div>
+            </div>
+
+            <!-- Scorecards: 4 Core Financial & Performance Pillars -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+              <div style="font-size: 15px; font-weight: 700; color: #1e4a2d; display: flex; align-items: center; gap: 8px;">
+                <span>🎯 ตัวชี้วัดประสิทธิภาพการใช้จ่ายงบประมาณและผลสัมฤทธิ์โครงการ</span>
+                <span style="background: #dbeafe; color: #1d4ed8; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600;">4 มิติการบริหารหลัก</span>
+              </div>
+              <div style="font-size: 12px; color: #64748b;">
+                คลิกที่ <span onclick="openFinFormulaModal('overview')" style="color: #2563eb; font-weight: 600; cursor: pointer; text-decoration: underline;">[ดูสูตรและเกณฑ์ ℹ️]</span> เพื่อดูรายละเอียด
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 22px;">
+              <!-- Pillar 1: Overall Disbursement -->
+              <div style="background: white; border-radius: 10px; padding: 18px 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #059669;"></div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                      <div style="font-size: 13px; font-weight: 700; color: #1e293b; line-height: 1.3;">1. อัตราการเบิกจ่ายงบประมาณภาพรวม</div>
+                      <small style="color: #64748b; font-size: 11px;">Overall Budget Disbursement Rate</small>
+                    </div>
+                    <span style="background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px;">เกณฑ์คำรับรองฯ</span>
+                  </div>
+                  <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px;">
+                    <span id="fin-val-overall" style="font-size: 30px; font-weight: 700; color: #059669; letter-spacing: -0.5px;">0.0%</span>
+                    <span id="fin-badge-overall" style="font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: #f1f5f9; color: #64748b;">รอประมวลผล</span>
+                  </div>
+                  <div style="background: #f1f5f9; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                    <div id="fin-bar-overall" style="height: 100%; width: 0%; background: #059669; border-radius: 4px; transition: width 0.6s ease;"></div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b;">
+                    <span style="text-align: center;">เป้าขั้นต้น<br><b id="fin-tgt-overall-min">55%</b></span>
+                    <span style="text-align: center;">เป้ามาตรฐาน<br><b id="fin-tgt-overall-std" style="color: #059669;">74%</b></span>
+                    <span style="text-align: center;">เป้าขั้นสูง<br><b id="fin-tgt-overall-high">93%</b></span>
+                  </div>
+                </div>
+                <div style="margin-top: 12px; font-size: 11px; color: #64748b; border-top: 1px dashed #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                  <span>ฐาน: เบิกจ่ายจริง / วงเงินสุทธิ</span>
+                  <span onclick="openFinFormulaModal('overall')" style="color: #2563eb; cursor: pointer; text-decoration: underline; font-weight: 600;">ดูสูตรและเกณฑ์ ℹ️</span>
+                </div>
+              </div>
+
+              <!-- Pillar 2: Capital / Investment Expenditure -->
+              <div id="fin-card-investment" style="background: white; border-radius: 10px; padding: 18px 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+                <div id="fin-capex-accent" style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #2563eb;"></div>
+                <!-- Sub-Block: Has Investment Budget -->
+                <div id="fin-capex-active-box">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                      <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #1e293b; line-height: 1.3;">2. การเบิกจ่ายงบลงทุน (ครุภัณฑ์/ที่ดิน)</div>
+                        <small style="color: #64748b; font-size: 11px;">Capital Expenditure (CapEx)</small>
+                      </div>
+                      <span style="background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px;">เกณฑ์คำรับรองฯ</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px;">
+                      <span id="fin-val-investment" style="font-size: 30px; font-weight: 700; color: #2563eb; letter-spacing: -0.5px;">0.0%</span>
+                      <span id="fin-badge-investment" style="font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: #f1f5f9; color: #64748b;">รอประมวลผล</span>
+                    </div>
+                    <div style="background: #f1f5f9; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                      <div id="fin-bar-investment" style="height: 100%; width: 0%; background: #2563eb; border-radius: 4px; transition: width 0.6s ease;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b;">
+                      <span style="text-align: center;">เป้าขั้นต้น<br><b id="fin-tgt-inv-min">38%</b></span>
+                      <span style="text-align: center;">เป้ามาตรฐาน<br><b id="fin-tgt-inv-std" style="color: #2563eb;">56.5%</b></span>
+                      <span style="text-align: center;">เป้าขั้นสูง<br><b id="fin-tgt-inv-high">75%</b></span>
+                    </div>
+                  </div>
+                  <div style="margin-top: 12px; font-size: 11px; color: #64748b; border-top: 1px dashed #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span id="fin-capex-summary-txt">งบลงทุนสุทธิ ฿0.00</span>
+                    <span onclick="openFinFormulaModal('investment')" style="color: #2563eb; cursor: pointer; text-decoration: underline; font-weight: 600;">ดูสูตรและเกณฑ์ ℹ️</span>
+                  </div>
+                </div>
+                <!-- Sub-Block: No Investment Budget (N/A) -->
+                <div id="fin-capex-na-box" style="display: none;">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                      <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #64748b; line-height: 1.3;">2. การเบิกจ่ายงบลงทุน (ครุภัณฑ์/ที่ดิน)</div>
+                        <small style="color: #94a3b8; font-size: 11px;">Capital Expenditure (CapEx)</small>
+                      </div>
+                      <span style="background: #e2e8f0; color: #64748b; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px;">ไม่มีจัดสรร (N/A)</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px;">
+                      <span style="font-size: 24px; font-weight: 700; color: #94a3b8;">ไม่มีงบลงทุน</span>
+                      <span style="font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1;">⚪ ยกเว้นการประเมิน</span>
+                    </div>
+                    <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                      <div style="height: 100%; width: 100%; background: #cbd5e1; border-radius: 4px;"></div>
+                    </div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 6px;">
+                      ปีงบประมาณนี้ไม่ได้รับจัดสรรงบลงทุน ระบบปรับข้ามตัวชี้วัดนี้โดยไม่นำมาคิดเป็นคะแนน 0
+                    </div>
+                  </div>
+                  <div style="margin-top: 12px; font-size: 11px; color: #64748b; border-top: 1px dashed #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>สถานะ: ยกเว้นการประเมิน (N/A)</span>
+                    <span onclick="openFinFormulaModal('investment_na')" style="color: #2563eb; cursor: pointer; text-decoration: underline; font-weight: 600;">เกณฑ์ ก.พ.ร. ℹ️</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pillar 3: Policy & Strategic Projects -->
+              <div style="background: white; border-radius: 10px; padding: 18px 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #d97706;"></div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                      <div style="font-size: 13px; font-weight: 700; color: #1e293b; line-height: 1.3;">3. ความสำเร็จโครงการตามนโยบาย/แลกเป้า</div>
+                      <small style="color: #64748b; font-size: 11px;">Policy & Strategic Projects</small>
+                    </div>
+                    <span style="background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px;">เกณฑ์คำรับรองฯ</span>
+                  </div>
+                  <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px;">
+                    <span id="fin-val-policy" style="font-size: 30px; font-weight: 700; color: #d97706; letter-spacing: -0.5px;">100%</span>
+                    <span id="fin-badge-policy" style="font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: #fef3c7; color: #d97706;">🌟 บรรลุตามเป้าหมาย</span>
+                  </div>
+                  <div style="background: #f1f5f9; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                    <div id="fin-bar-policy" style="height: 100%; width: 100%; background: #d97706; border-radius: 4px; transition: width 0.6s ease;"></div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b;">
+                    <span style="text-align: center;">เป้าขั้นต้น<br><b>-</b></span>
+                    <span style="text-align: center;">เป้ามาตรฐาน<br><b id="fin-tgt-pol-std">80%</b></span>
+                    <span style="text-align: center;">เป้าขั้นสูง<br><b id="fin-tgt-pol-high" style="color: #d97706;">100%</b></span>
+                  </div>
+                </div>
+                <div style="margin-top: 12px; font-size: 11px; color: #64748b; border-top: 1px dashed #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                  <span id="fin-policy-summary-txt">โครงการตามนโยบายสำเร็จ 0/0</span>
+                  <span onclick="openFinFormulaModal('policy')" style="color: #2563eb; cursor: pointer; text-decoration: underline; font-weight: 600;">วิธีคำนวณสำเร็จ ℹ️</span>
+                </div>
+              </div>
+
+              <!-- Pillar 4: Action Plan Projects -->
+              <div style="background: white; border-radius: 10px; padding: 18px 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #1e4a2d;"></div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                      <div style="font-size: 13px; font-weight: 700; color: #1e293b; line-height: 1.3;">4. ความสำเร็จโครงการตามแผนปฏิบัติราชการ</div>
+                      <small style="color: #64748b; font-size: 11px;">Action Plan Projects Completion</small>
+                    </div>
+                    <span style="background: #f1f5f9; color: #475569; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px;">เกณฑ์คำรับรองฯ</span>
+                  </div>
+                  <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px;">
+                    <span id="fin-val-action" style="font-size: 30px; font-weight: 700; color: #1e4a2d; letter-spacing: -0.5px;">0.0%</span>
+                    <span id="fin-badge-action" style="font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: #f1f5f9; color: #64748b;">รอประมวลผล</span>
+                  </div>
+                  <div style="background: #f1f5f9; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;">
+                    <div id="fin-bar-action" style="height: 100%; width: 0%; background: #1e4a2d; border-radius: 4px; transition: width 0.6s ease;"></div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b;">
+                    <span style="text-align: center;">เป้าขั้นต้น<br><b>-</b></span>
+                    <span style="text-align: center;">เป้ามาตรฐาน<br><b id="fin-tgt-act-std" style="color: #1e4a2d;">90%</b></span>
+                    <span style="text-align: center;">เป้าขั้นสูง<br><b id="fin-tgt-act-high">100%</b></span>
+                  </div>
+                </div>
+                <div style="margin-top: 12px; font-size: 11px; color: #64748b; border-top: 1px dashed #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                  <span id="fin-action-summary-txt">โครงการตามแผนฯ เสร็จสิ้น 0/0</span>
+                  <span onclick="openFinFormulaModal('actionPlan')" style="color: #2563eb; cursor: pointer; text-decoration: underline; font-weight: 600;">วิธีคำนวณสำเร็จ ℹ️</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Two-Column Grid: S-Curve Chart & Sub-Tables Breakdown -->
+            <div style="display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px; margin-bottom: 24px;">
+              <!-- S-Curve Chart Card -->
+              <div style="background: white; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; min-width: 0;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                      <div style="font-size: 15px; font-weight: 700; color: #1e4a2d; margin-bottom: 2px;">
+                        📈 ไทม์ไลน์การเบิกจ่ายงบประมาณสะสม (Disbursement S-Curve)
+                      </div>
+                      <p style="font-size: 12px; color: #64748b; margin: 0;">
+                        เปรียบเทียบ "แผนการใช้จ่ายสะสม (เส้นประ)" กับ "ผลเบิกจ่ายจริง New GFMIS Thai (เส้นทึบสีเขียว)"
+                      </p>
+                    </div>
+                    <div style="display: flex; gap: 14px; font-size: 12px;">
+                      <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #94a3b8;"></span>
+                        <span style="color: #475569;">แผนสะสม</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #059669;"></span>
+                        <span style="color: #059669; font-weight: 600;">เบิกจ่ายจริง New GFMIS</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="position: relative; height: 320px; width: 100%;">
+                    <canvas id="financialSCurveCanvas"></canvas>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px;">
+                  <!-- Q1 Box -->
+                  <div id="scurve-box-q1" style="padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-weight:700; font-size:12px; color:#1e293b;">📌 สิ้น Q1 (31 ธ.ค.)</span>
+                      <span id="scurve-badge-q1" style="font-size:10px; padding:2px 8px; border-radius:10px; background:#f1f5f9; color:#64748b; font-weight:600;">รอประมวลผล</span>
+                    </div>
+                    <div style="font-size:11px; color:#64748b; margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+                      <span>เป้าหมายสะสม: <b id="scurve-tgt-q1" style="color:#1e293b;">20%</b></span>
+                      <span>เบิกจริง: <b id="scurve-act-q1" style="color:#059669;">-</b></span>
+                    </div>
+                  </div>
+                  <!-- Q2 Box -->
+                  <div id="scurve-box-q2" style="padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-weight:700; font-size:12px; color:#1e293b;">📌 สิ้น Q2 (31 มี.ค.)</span>
+                      <span id="scurve-badge-q2" style="font-size:10px; padding:2px 8px; border-radius:10px; background:#f1f5f9; color:#64748b; font-weight:600;">รอประมวลผล</span>
+                    </div>
+                    <div style="font-size:11px; color:#64748b; margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+                      <span>เป้าหมายสะสม: <b id="scurve-tgt-q2" style="color:#1e293b;">50%</b></span>
+                      <span>เบิกจริง: <b id="scurve-act-q2" style="color:#059669;">-</b></span>
+                    </div>
+                  </div>
+                  <!-- Q3 Box -->
+                  <div id="scurve-box-q3" style="padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-weight:700; font-size:12px; color:#1e293b;">📌 สิ้น Q3 (30 มิ.ย.)</span>
+                      <span id="scurve-badge-q3" style="font-size:10px; padding:2px 8px; border-radius:10px; background:#f1f5f9; color:#64748b; font-weight:600;">รอประมวลผล</span>
+                    </div>
+                    <div style="font-size:11px; color:#64748b; margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+                      <span>เป้าหมายสะสม: <b id="scurve-tgt-q3" style="color:#1e293b;">74%</b></span>
+                      <span>เบิกจริง: <b id="scurve-act-q3" style="color:#059669;">-</b></span>
+                    </div>
+                  </div>
+                  <!-- Q4 Box -->
+                  <div id="scurve-box-q4" style="padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-weight:700; font-size:12px; color:#1e293b;">🏁 ปิดงบ Q4 (30 ก.ย.)</span>
+                      <span id="scurve-badge-q4" style="font-size:10px; padding:2px 8px; border-radius:10px; background:#f1f5f9; color:#64748b; font-weight:600;">รอประมวลผล</span>
+                    </div>
+                    <div style="font-size:11px; color:#64748b; margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+                      <span>เป้าหมายสะสม: <b id="scurve-tgt-q4" style="color:#1e293b;">93%+</b></span>
+                      <span>เบิกจริง: <b id="scurve-act-q4" style="color:#059669;">-</b></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Group Breakdown & Policy Targets Card -->
+              <div style="background: white; border-radius: 10px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; min-width: 0;">
+                <div style="font-size: 15px; font-weight: 700; color: #1e4a2d; margin-bottom: 12px;">
+                  🏢 สรุปข้อมูลผลการเบิกจ่ายและนโยบาย
+                </div>
+                <!-- Sub-Tabs Navigation -->
+                <div style="display: flex; gap: 6px; margin-bottom: 14px; background: #f1f5f9; padding: 4px; border-radius: 8px;">
+                  <button id="subtab-fin-group-btn" onclick="switchFinSubTab('group')" style="flex: 1; padding: 7px 6px; font-size: 12px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: white; color: #1e4a2d; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s; white-space: nowrap; text-align: center;">
+                    จำแนกรายกลุ่มงาน
+                  </button>
+                  <button id="subtab-fin-policy-btn" onclick="switchFinSubTab('policy')" style="flex: 1; padding: 7px 6px; font-size: 12px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; background: transparent; color: #64748b; transition: 0.2s; white-space: nowrap; text-align: center;">
+                    โครงการตามนโยบาย/งบแลกเป้า
+                  </button>
+                </div>
+                <!-- Sub-Tab Content 1: Group Breakdown -->
+                <div id="subtab-fin-group-content" style="flex: 1; overflow-x: auto; min-width: 0;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 11.5px; text-align: left; table-layout: fixed;">
+                    <thead>
+                      <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                        <th style="padding: 8px 6px; color: #475569; font-weight: 600; width: 36%;">กลุ่มงาน</th>
+                        <th style="padding: 8px 6px; text-align: right; color: #475569; font-weight: 600; width: 24%;">วงเงินสุทธิ</th>
+                        <th style="padding: 8px 6px; text-align: right; color: #475569; font-weight: 600; width: 24%;">เบิกจ่ายจริง</th>
+                        <th style="padding: 8px 4px; text-align: center; color: #475569; font-weight: 600; width: 16%;">% เบิกจ่าย</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fin-tbody-group">
+                      <tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 30px 10px;">กำลังโหลดข้อมูลกลุ่มงาน...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- Sub-Tab Content 2: Policy Projects -->
+                <div id="subtab-fin-policy-content" style="display: none; flex: 1; overflow-x: auto; min-width: 0;">
+                  <table style="width: 100%; border-collapse: collapse; font-size: 11.5px; text-align: left; table-layout: fixed;">
+                    <thead>
+                      <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                        <th style="padding: 8px 6px; color: #475569; font-weight: 600; width: 55%;">รหัส / ชื่อโครงการ</th>
+                        <th style="padding: 8px 6px; text-align: right; color: #475569; font-weight: 600; width: 27%;">งบประมาณ</th>
+                        <th style="padding: 8px 4px; text-align: center; color: #475569; font-weight: 600; width: 18%;">สถานะ</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fin-tbody-policy">
+                      <tr><td colspan="3" style="text-align: center; color: #94a3b8; padding: 30px 10px;">ไม่มีโครงการตามนโยบาย/งบแลกเป้า</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ========================================================================= -->
+          <!-- SUBVIEW 2: EXISTING PROJECT DASHBOARD (WRAPPED) -->
+          <!-- ========================================================================= -->
+          <div id="subview-projects-container" class="hidden">
           
           <div class="summary-grid">
             <div class="sum-card c-purple"><div class="title">โครงการทั้งหมด</div><div class="value" id="dash-total-proj">0</div></div>
@@ -1641,6 +2013,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
              <h3 style="margin-top:0; color:#1d4ed8;">📊 สรุปผลสัมฤทธิ์ตามตัวชี้วัด (KPIs) จากรายงานล่าสุด</h3>
              <div class="table-responsive"><table style="margin-top:0; font-size:13px;"><thead><tr><th style="width:25%">รหัส / ชื่อโครงการ</th><th style="width:35%">เป้าหมายตัวชี้วัด (แผนตั้งต้น)</th><th style="width:40%">ผลการดำเนินงานจริง (ไตรมาสล่าสุด)</th></tr></thead><tbody id="dash-kpi-list"></tbody></table></div>
           </div>
+          </div> <!-- End subview-projects-container -->
         </div>
 
 <div id="app-budget-allocation" class="app-section hidden">
@@ -1904,11 +2277,18 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                         <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">เลขที่เอกสาร</label><input type="text" id="led-metadoc" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box;"></div>
                         <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">รหัสบัญชีย่อย</label><input type="text" id="led-subaccount" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box;"></div>
                         <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">รหัสเจ้าของบัญชีย่อย</label><input type="text" id="led-subowner" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box;"></div>
+                        <div><label style="font-size:12px; color:#475569; font-weight:bold; display:block; margin-bottom:5px;">หมวดงบประมาณ</label><select id="led-budgettype" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white;"><option value="operating" selected>งบดำเนินงาน</option><option value="investment">งบลงทุน (ครุภัณฑ์ / ที่ดินและสิ่งก่อสร้าง)</option><option value="personnel">งบบุคลากร</option><option value="subsidy">งบเงินอุดหนุน</option><option value="other">งบรายจ่ายอื่น</option></select></div>
+                        <div style="grid-column: span 2;"><label style="font-size:12px; color:#1e4a2d; font-weight:bold; display:flex; align-items:center; gap:6px; margin-bottom:5px;"><span>🔗 ผูกโครงการที่รับผิดชอบบัตรนี้ (ถ้ามี)</span><span id="led-card-proj-badge" class="badge hidden" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; font-size:11px; font-weight:600; padding:2px 8px; border-radius:12px;"></span></label><select id="led-card-projectid" class="led-meta" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; outline:none; box-sizing: border-box; background: white; font-size: 13px;"><option value="">-- ไม่ผูกโครงการ (งบดำเนินงานทั่วไป / งบส่วนกลาง) --</option></select></div>
                     </div>
                 </div>
 
                 <div class="admin-only-ui" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                    <h4 style="margin-top: 0; color: #0ea5e9; border-bottom: 2px solid #e0f2fe; padding-bottom: 10px; margin-bottom: 15px;">📝 บันทึกรายการเบิกจ่าย / รับเงินงวดเพิ่ม</h4>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #e0f2fe; padding-bottom: 10px; margin-bottom: 15px;">
+                        <h4 style="margin: 0; color: #0ea5e9;">📝 บันทึกรายการเบิกจ่าย / รับเงินงวดเพิ่ม</h4>
+                        <div id="led-tx-proj-info" style="display:none; font-size: 12px; color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 6px; font-weight: 500;">
+                            🎯 <b>โครงการประจำบัตร:</b> <span id="led-tx-proj-name">-</span>
+                        </div>
+                    </div>
                     
                     <div class="ledger-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px;">
                         <div><label style="font-size: 12px; font-weight: bold; color: #475569; display:block; margin-bottom:5px;">วันที่ทำรายการ *</label><input type="date" id="led-date" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;"></div>
@@ -2943,6 +3323,38 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
 </div>
 
 
+              <!-- ▼ [KPS DASHBOARD] เกณฑ์คำรับรองการปฏิบัติราชการและตัวชี้วัดงบประมาณ (KPS Benchmarks) -->
+<div style="margin-bottom:20px;padding:15px;border:1px solid #bbf7d0;border-radius:8px;background:#f0fdf4;border-left:5px solid #16a34a;">
+  <h4 style="margin-top:0;color:#166534;display:flex;align-items:center;justify-content:space-between;">
+    <span>🎯 เกณฑ์คำรับรองการปฏิบัติราชการและตัวชี้วัดงบประมาณ (KPS Benchmarks)</span>
+    <span style="font-size:12px; font-weight:normal; background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:12px;">ก.พ.ร. / สป.ศธ.</span>
+  </h4>
+  <p style="font-size:13px;color:#475569;margin:0 0 12px;">กำหนดเกณฑ์คะแนนเป้าหมายสำหรับการประเมินสถานะ 4 มิติบนแดชบอร์ดบริหารงบประมาณ (คั่นตัวเลขด้วยเครื่องหมายลูกน้ำ)</p>
+  
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:15px;">
+    <div>
+      <label style="font-size:13px; font-weight:bold; color:#166534;">1. อัตราเบิกจ่ายภาพรวม (ขั้นต่ำ, มาตรฐาน, ขั้นสูง %)</label>
+      <input type="text" id="sys-kps-overall" placeholder="เช่น 55, 74, 93" style="width:100%;margin-top:5px;padding:8px;border:1px solid #86efac;border-radius:4px;font-size:14px;box-sizing:border-box;">
+      <small style="color:#64748b; font-size:11px;">ค่าตั้งต้น: 55, 74, 93 (%)</small>
+    </div>
+    <div>
+      <label style="font-size:13px; font-weight:bold; color:#166534;">2. อัตราเบิกจ่ายงบลงทุน CapEx (ขั้นต่ำ, มาตรฐาน, ขั้นสูง %)</label>
+      <input type="text" id="sys-kps-investment" placeholder="เช่น 38, 56.5, 75" style="width:100%;margin-top:5px;padding:8px;border:1px solid #86efac;border-radius:4px;font-size:14px;box-sizing:border-box;">
+      <small style="color:#64748b; font-size:11px;">ค่าตั้งต้น: 38, 56.5, 75 (%)</small>
+    </div>
+    <div>
+      <label style="font-size:13px; font-weight:bold; color:#166534;">3. โครงการตามนโยบายเร่งด่วน/แลกเป้า (มาตรฐาน, ขั้นสูง %)</label>
+      <input type="text" id="sys-kps-policy" placeholder="เช่น 80, 100" style="width:100%;margin-top:5px;padding:8px;border:1px solid #86efac;border-radius:4px;font-size:14px;box-sizing:border-box;">
+      <small style="color:#64748b; font-size:11px;">ค่าตั้งต้น: 80, 100 (%)</small>
+    </div>
+    <div>
+      <label style="font-size:13px; font-weight:bold; color:#166534;">4. โครงการตามแผนปฏิบัติการ (มาตรฐาน, ขั้นสูง %)</label>
+      <input type="text" id="sys-kps-action-plan" placeholder="เช่น 90, 100" style="width:100%;margin-top:5px;padding:8px;border:1px solid #86efac;border-radius:4px;font-size:14px;box-sizing:border-box;">
+      <small style="color:#64748b; font-size:11px;">ค่าตั้งต้น: 90, 100 (%)</small>
+    </div>
+  </div>
+</div>
+
               <button onclick="saveAdminSystemConfig()" style="background: #1e4a2d; color: white; border: none; padding: 12px 30px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 15px; display: block; margin: 0 auto;">💾 บันทึกการตั้งค่าทั้งหมด</button>
             </div>
           </div>
@@ -3412,10 +3824,10 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                 <div style="display: flex; gap: 10px; flex-wrap:wrap;">
                     <div style="flex: 1; min-width:200px;">
                         <label>ประเภท</label>
-                        <select id="form-budget-source">
-                            <option value="งบบุคลากร">งบบุคลากร</option>
+                        <select id="form-budget-source" onchange="handleBudgetSourceChange(this.value)">
                             <option value="งบดำเนินงาน" selected>งบดำเนินงาน</option>
-                            <option value="งบลงทุน">งบลงทุน</option>
+                            <option value="งบลงทุน">งบลงทุน (ครุภัณฑ์ / ที่ดินสิ่งก่อสร้าง)</option>
+                            <option value="งบบุคลากร">งบบุคลากร</option>
                             <option value="งบเงินอุดหนุน">งบเงินอุดหนุน</option>
                             <option value="งบรายจ่ายอื่น">งบรายจ่ายอื่น</option>
                             <option value="ไม่ใช้งบประมาณ">ไม่ใช้งบประมาณ</option>
@@ -3425,6 +3837,19 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
                     <div style="flex: 2; min-width:250px;">
                         <label>รายละเอียดเพิ่มเติม</label>
                         <input type="text" id="form-budget-detail">
+                    </div>
+                </div>
+                <div style="margin-top: 14px; padding: 14px 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;">
+                    <div style="font-weight: 700; font-size: 13px; color: #166534; margin-bottom: 8px;">🏷️ การจำแนกประเภทเชิงกลยุทธ์และการเงิน (Financial & Strategic Tags)</div>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; margin: 0; color: #1e293b;">
+                            <input type="checkbox" id="form-proj-is-investment" style="width: auto; margin: 0;">
+                            <span>🏢 โครงการจัดซื้อหมวดงบลงทุน (CapEx / ครุภัณฑ์ / ที่ดินสิ่งก่อสร้าง)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; margin: 0; color: #1e293b;">
+                            <input type="checkbox" id="form-proj-is-target" style="width: auto; margin: 0;">
+                            <span>🎯 โครงการตามนโยบายเร่งด่วน / งบแลกเป้าหมาย</span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -4332,7 +4757,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
           สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
           <span style="font-size: 11px; color: #94a3b8; display: inline-block; margin-top: 5px;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.6.0 (Build 68)</small>
+          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.7.0 (Build 69)</small>
         </div>
       </div>
       <button id="btn-back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 9999; border: none; outline: none; background-color: #f59e0b; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s; width: 50px; height: 50px; align-items: center; justify-content: center;">
@@ -4556,7 +4981,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
     </div>
   </div>
 
-  ﻿<script>
+  <script>
     // ==========================================
     // 0. Universal RPC Bridge for S-MES
     // Enables decoupled execution (GitHub Pages, External Web Server)
@@ -5104,8 +5529,13 @@ function switchAppSection(section) {
     
     if(section === 'overview') { 
         var bt = document.getElementById('breadcrumb-text'); if(bt) bt.innerText = "หน้าแรก / ภาพรวม"; 
-        var pt = document.getElementById('page-title-text'); if(pt) pt.innerText = "ภาพรวมการรายงาน"; 
-        loadOverviewData(); 
+        var pt = document.getElementById('page-title-text'); 
+        if (pt) pt.innerText = (currentOverviewSubView === 'finance') ? "การบริหารงบประมาณและผลสัมฤทธิ์ภาพรวม" : "ภาพรวมการรายงาน"; 
+        if (currentOverviewSubView === 'finance') { 
+            loadFinancialDashboardData(); 
+        } else { 
+            loadOverviewData(); 
+        } 
     } 
     else if (section === 'gantt') { 
         var bt = document.getElementById('breadcrumb-text'); if(bt) bt.innerText = "หน้าแรก / ติดตามแผนงาน"; 
@@ -5370,6 +5800,18 @@ function loadAdminSystemConfigUI() {
                     }
                     if (document.getElementById('sys-line-access-token')) {
                         document.getElementById('sys-line-access-token').value = adminConf.lineAccessToken || '';
+                    }
+                    if (document.getElementById('sys-kps-overall')) {
+                        document.getElementById('sys-kps-overall').value = (adminConf.kpsOverall || [55, 74, 93]).join(', ');
+                    }
+                    if (document.getElementById('sys-kps-investment')) {
+                        document.getElementById('sys-kps-investment').value = (adminConf.kpsInvestment || [38, 56.5, 75]).join(', ');
+                    }
+                    if (document.getElementById('sys-kps-policy')) {
+                        document.getElementById('sys-kps-policy').value = (adminConf.kpsPolicy || [80, 100]).join(', ');
+                    }
+                    if (document.getElementById('sys-kps-action-plan')) {
+                        document.getElementById('sys-kps-action-plan').value = (adminConf.kpsActionPlan || [90, 100]).join(', ');
                     }
                 }
 
@@ -5746,7 +6188,11 @@ function saveAdminSystemConfig() {
         
         lineNotifyOpen: document.getElementById('sys-line-notify-open') ? (document.getElementById('sys-line-notify-open').value === 'true') : true,
         lineChannelSecret: document.getElementById('sys-line-channel-secret') ? document.getElementById('sys-line-channel-secret').value.trim() : '',
-        lineAccessToken: document.getElementById('sys-line-access-token') ? document.getElementById('sys-line-access-token').value.trim() : ''
+        lineAccessToken: document.getElementById('sys-line-access-token') ? document.getElementById('sys-line-access-token').value.trim() : '',
+        kpsOverall: document.getElementById('sys-kps-overall') ? document.getElementById('sys-kps-overall').value.trim() : '55, 74, 93',
+        kpsInvestment: document.getElementById('sys-kps-investment') ? document.getElementById('sys-kps-investment').value.trim() : '38, 56.5, 75',
+        kpsPolicy: document.getElementById('sys-kps-policy') ? document.getElementById('sys-kps-policy').value.trim() : '80, 100',
+        kpsActionPlan: document.getElementById('sys-kps-action-plan') ? document.getElementById('sys-kps-action-plan').value.trim() : '90, 100'
     };
     
     showLoading('กำลังบันทึกการตั้งค่า...');
@@ -5761,6 +6207,10 @@ function saveAdminSystemConfig() {
               systemConfig.lineNotifyOpen = conf.lineNotifyOpen;
               systemConfig.lineChannelSecret = conf.lineChannelSecret;
               systemConfig.lineAccessToken = conf.lineAccessToken;
+              if (conf.kpsOverall) systemConfig.kpsOverall = conf.kpsOverall.split(',').map(function(s){return parseFloat(s.trim())||0;});
+              if (conf.kpsInvestment) systemConfig.kpsInvestment = conf.kpsInvestment.split(',').map(function(s){return parseFloat(s.trim())||0;});
+              if (conf.kpsPolicy) systemConfig.kpsPolicy = conf.kpsPolicy.split(',').map(function(s){return parseFloat(s.trim())||0;});
+              if (conf.kpsActionPlan) systemConfig.kpsActionPlan = conf.kpsActionPlan.split(',').map(function(s){return parseFloat(s.trim())||0;});
           } else { 
               Swal.fire('ข้อผิดพลาด', res.message, 'error'); 
           }
@@ -6029,6 +6479,705 @@ function checkAndRestoreReportDraft(draftKey, forceRestore = false) {
     // ==========================================
     // 7. Dashboard Overview 
     // ==========================================
+// ====================================================
+// 6.5 แดชบอร์ดบริหารงบประมาณและผลสัมฤทธิ์ภาพรวม (Financial Dashboard Controller)
+// ====================================================
+var currentOverviewSubView = 'finance';
+var financialSCurveChart = null;
+var lastFinancialDashboardData = null;
+
+function switchOverviewSubView(viewType) {
+    currentOverviewSubView = viewType;
+    var btnFinance = document.getElementById('tab-overview-finance');
+    var btnProjects = document.getElementById('tab-overview-projects');
+    var subFinance = document.getElementById('subview-finance-container');
+    var subProjects = document.getElementById('subview-projects-container');
+    var pt = document.getElementById('page-title-text');
+
+    if (viewType === 'finance') {
+        if (subFinance) subFinance.classList.remove('hidden');
+        if (subProjects) subProjects.classList.add('hidden');
+        if (btnFinance) {
+            btnFinance.style.background = '#1e4a2d';
+            btnFinance.style.borderColor = '#1e4a2d';
+            btnFinance.style.color = '#ffffff';
+            btnFinance.style.boxShadow = '0 2px 4px rgba(30,74,45,0.25)';
+            btnFinance.style.fontWeight = '700';
+        }
+        if (btnProjects) {
+            btnProjects.style.background = '#ffffff';
+            btnProjects.style.borderColor = '#cbd5e1';
+            btnProjects.style.color = '#475569';
+            btnProjects.style.boxShadow = 'none';
+            btnProjects.style.fontWeight = '600';
+        }
+        if (pt) pt.innerText = "การบริหารงบประมาณและผลสัมฤทธิ์ภาพรวม";
+        loadFinancialDashboardData();
+    } else {
+        if (subFinance) subFinance.classList.add('hidden');
+        if (subProjects) subProjects.classList.remove('hidden');
+        if (btnProjects) {
+            btnProjects.style.background = '#1e4a2d';
+            btnProjects.style.borderColor = '#1e4a2d';
+            btnProjects.style.color = '#ffffff';
+            btnProjects.style.boxShadow = '0 2px 4px rgba(30,74,45,0.25)';
+            btnProjects.style.fontWeight = '700';
+        }
+        if (btnFinance) {
+            btnFinance.style.background = '#ffffff';
+            btnFinance.style.borderColor = '#cbd5e1';
+            btnFinance.style.color = '#475569';
+            btnFinance.style.boxShadow = 'none';
+            btnFinance.style.fontWeight = '600';
+        }
+        if (pt) pt.innerText = "ภาพรวมการรายงานและติดตามโครงการ";
+        loadOverviewData();
+    }
+}
+
+function loadFinancialDashboardData(forceRefresh) {
+    var token = sessionStorage.getItem('eMENSCR_Token');
+    var yearEl = document.getElementById('global-year-filter');
+    var year = yearEl ? yearEl.value : "2570";
+    var groupEl = document.getElementById('global-group-filter');
+    var group = groupEl ? groupEl.value : "all";
+    var quarterEl = document.getElementById('fin-filter-quarter');
+    var quarter = quarterEl ? quarterEl.value : "all";
+    var modeEl = document.getElementById('fin-filter-mode');
+    var mode = modeEl ? modeEl.value : "cumulative";
+
+    var isFilterChanged = !lastFinancialDashboardData || 
+                          lastFinancialDashboardData.year !== year || 
+                          lastFinancialDashboardData.quarter !== quarter || 
+                          lastFinancialDashboardData.mode !== mode || 
+                          lastFinancialDashboardData.group !== group;
+
+    if (!isFilterChanged && !forceRefresh) {
+        updateFinancialDashboardUI(lastFinancialDashboardData);
+        return;
+    }
+
+    var qLabelMap = {
+        'all': 'ทั้งปีงบประมาณ',
+        'Q1': 'ไตรมาส 1 (ต.ค. - ธ.ค.)',
+        'Q2': 'ไตรมาส 2 (ม.ค. - มี.ค.)',
+        'Q3': 'ไตรมาส 3 (เม.ย. - มิ.ย.)',
+        'Q4': 'ไตรมาส 4 (ก.ค. - ก.ย.)'
+    };
+    var qText = qLabelMap[quarter] || quarter;
+    var modeText = (mode === 'discrete') ? 'เฉพาะงวด' : 'ยอดสะสม';
+    showLoading("กำลังประมวลผลข้อมูลการเงิน (" + qText + " - " + modeText + ")...");
+
+    var safetyTimer = setTimeout(function() {
+        hideLoading();
+    }, 10000);
+
+    google.script.run.withSuccessHandler(function(res) {
+        clearTimeout(safetyTimer);
+        hideLoading();
+        if (!res.success) {
+            if (!lastFinancialDashboardData) {
+                Swal.fire('แจ้งเตือน', res.message || 'ไม่สามารถโหลดข้อมูลการเงินได้', 'error');
+            }
+            return;
+        }
+        res.data.year = year;
+        res.data.quarter = quarter;
+        res.data.mode = mode;
+        res.data.group = group;
+        lastFinancialDashboardData = res.data;
+        updateFinancialDashboardUI(res.data);
+    }).withFailureHandler(function(err) {
+        clearTimeout(safetyTimer);
+        hideLoading();
+        if (!lastFinancialDashboardData) {
+            Swal.fire('Error', 'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์: ' + err.message, 'error');
+        }
+    }).getFinancialDashboardData(token, year, quarter, group, mode);
+}
+
+function updateFinancialDashboardUI(data) {
+    if (!data) return;
+
+    // 1. Update Financial Strip
+    var totals = data.totals || {};
+    var netBudget = totals.netBudget || 0;
+    var disbursed = totals.disbursed || 0;
+    var balance = totals.balance != null ? totals.balance : (netBudget - disbursed);
+    var spentPercent = totals.spentPercent || 0;
+    var allocated = totals.allocated || 0;
+    var transferred = totals.transferred || 0;
+
+    var elNet = document.getElementById('fin-strip-net-budget');
+    if (elNet) elNet.innerText = '฿' + Number(netBudget).toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    var elNetDesc = document.getElementById('fin-strip-net-desc');
+    if (elNetDesc) {
+        var sign = transferred >= 0 ? '+' : '';
+        elNetDesc.innerText = 'จัดสรรตั้งต้น ฿' + Number(allocated).toLocaleString('th-TH') + ' (' + sign + 'โอนสุทธิ ฿' + Number(transferred).toLocaleString('th-TH') + ')';
+    }
+
+    var isDiscrete = (data.mode === 'discrete');
+    var activeQ = data.quarter || 'all';
+
+    var modePrefix = isDiscrete ? 'เฉพาะ ' : 'สะสม ';
+    var badgeColor = isDiscrete ? '#1d4ed8' : '#047857';
+    var badgeBg = isDiscrete ? '#eff6ff' : '#d1fae5';
+    var badgeBorder = isDiscrete ? '#bfdbfe' : '#a7f3d0';
+
+    var qLabelMap = {
+        'all': isDiscrete ? 'ภาพรวมทั้งปี' : 'ทั้งปีงบประมาณ',
+        'Q1': modePrefix + 'Q1 (ต.ค. - ธ.ค.)',
+        'Q2': modePrefix + 'Q2 (ม.ค. - มี.ค.)',
+        'Q3': modePrefix + 'Q3 (เม.ย. - มิ.ย.)',
+        'Q4': modePrefix + 'Q4 (ก.ค. - ก.ย.)'
+    };
+    var qLabelText = qLabelMap[activeQ] || activeQ;
+    var elDisTitle = document.getElementById('fin-strip-disbursed-label');
+    if (elDisTitle) {
+        var titleMain = isDiscrete ? '💸 ผลเบิกจ่ายจริงประจำงวด (New GFMIS)' : '💸 ผลเบิกจ่ายจริงสะสม (New GFMIS)';
+        elDisTitle.innerHTML = titleMain + ' <span style="font-size: 10px; color: ' + badgeColor + '; background: ' + badgeBg + '; padding: 1px 7px; border-radius: 10px; font-weight: 600; margin-left: 4px; border: 1px solid ' + badgeBorder + ';">' + qLabelText + '</span>';
+    }
+
+    var elDisbursed = document.getElementById('fin-strip-disbursed');
+    if (elDisbursed) elDisbursed.innerText = '฿' + Number(disbursed).toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    var elSpentPct = document.getElementById('fin-strip-spent-percent');
+    if (elSpentPct) elSpentPct.innerHTML = 'เบิกจ่ายไปแล้ว <b>' + spentPercent + '%</b> ของวงเงินสุทธิ';
+
+    var elBalance = document.getElementById('fin-strip-balance');
+    if (elBalance) elBalance.innerText = '฿' + Number(balance).toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    var elBalDesc = document.getElementById('fin-strip-balance-desc');
+    if (elBalDesc) {
+        var balPct = netBudget > 0 ? ((balance / netBudget) * 100).toFixed(1) : 0;
+        elBalDesc.innerText = 'คงเหลือ ' + balPct + '% ของวงเงินสุทธิ';
+    }
+
+    // 2. Benchmarks (Dynamic from SystemConfig)
+    var bm = data.benchmarks || { overall: [55, 74, 93], investment: [38, 56.5, 75], policy: [80, 100], actionPlan: [90, 100] };
+    if (document.getElementById('fin-tgt-overall-min')) document.getElementById('fin-tgt-overall-min').innerText = bm.overall[0] + '%';
+    if (document.getElementById('fin-tgt-overall-std')) document.getElementById('fin-tgt-overall-std').innerText = bm.overall[1] + '%';
+    if (document.getElementById('fin-tgt-overall-high')) document.getElementById('fin-tgt-overall-high').innerText = bm.overall[2] + '%';
+
+    if (document.getElementById('fin-tgt-inv-min')) document.getElementById('fin-tgt-inv-min').innerText = bm.investment[0] + '%';
+    if (document.getElementById('fin-tgt-inv-std')) document.getElementById('fin-tgt-inv-std').innerText = bm.investment[1] + '%';
+    if (document.getElementById('fin-tgt-inv-high')) document.getElementById('fin-tgt-inv-high').innerText = bm.investment[2] + '%';
+
+    if (document.getElementById('fin-tgt-pol-std')) document.getElementById('fin-tgt-pol-std').innerText = bm.policy[0] + '%';
+    if (document.getElementById('fin-tgt-pol-high')) document.getElementById('fin-tgt-pol-high').innerText = bm.policy[1] + '%';
+
+    if (document.getElementById('fin-tgt-act-std')) document.getElementById('fin-tgt-act-std').innerText = bm.actionPlan[0] + '%';
+    if (document.getElementById('fin-tgt-act-high')) document.getElementById('fin-tgt-act-high').innerText = bm.actionPlan[1] + '%';
+
+    // 3. Pillar 1: Overall
+    var indOverall = (data.indicators && data.indicators.overall) ? data.indicators.overall : {};
+    var rOverall = indOverall.rate != null ? indOverall.rate : spentPercent;
+    if (document.getElementById('fin-val-overall')) document.getElementById('fin-val-overall').innerText = rOverall + '%';
+    if (document.getElementById('fin-bar-overall')) document.getElementById('fin-bar-overall').style.width = Math.min(100, rOverall) + '%';
+    var bOverall = document.getElementById('fin-badge-overall');
+    if (bOverall) {
+        if (rOverall >= bm.overall[2]) {
+            bOverall.innerText = '🌟 ขั้นสูง (Excellent)';
+            bOverall.style.background = '#d1fae5';
+            bOverall.style.color = '#059669';
+        } else if (rOverall >= bm.overall[1]) {
+            bOverall.innerText = '⭐ ผ่านเกณฑ์มาตรฐาน';
+            bOverall.style.background = '#dbeafe';
+            bOverall.style.color = '#1d4ed8';
+        } else if (rOverall >= bm.overall[0]) {
+            bOverall.innerText = '⚠️ ขั้นต่ำ (Fair)';
+            bOverall.style.background = '#fef3c7';
+            bOverall.style.color = '#d97706';
+        } else {
+            bOverall.innerText = (isDiscrete && rOverall === 0) ? '⏳ ยังไม่มีเบิกจ่ายในงวดนี้' : '🚨 ต่ำกว่าเกณฑ์';
+            bOverall.style.background = (isDiscrete && rOverall === 0) ? '#f1f5f9' : '#fee2e2';
+            bOverall.style.color = (isDiscrete && rOverall === 0) ? '#64748b' : '#dc2626';
+        }
+    }
+
+    // 4. Pillar 2: CapEx (Investment Budget)
+    var isNoInv = (data.investment && data.investment.isNoInvestment != null) ? data.investment.isNoInvestment : true;
+    if (data.investment && data.investment.netBudget > 0) isNoInv = false;
+
+    var activeBox = document.getElementById('fin-capex-active-box');
+    var naBox = document.getElementById('fin-capex-na-box');
+    var cardInv = document.getElementById('fin-card-investment');
+    var accentInv = document.getElementById('fin-capex-accent');
+
+    if (isNoInv) {
+        if (activeBox) activeBox.style.display = 'none';
+        if (naBox) naBox.style.display = 'block';
+        if (cardInv) {
+            cardInv.style.background = '#f8fafc';
+            cardInv.style.borderColor = '#cbd5e1';
+        }
+        if (accentInv) accentInv.style.background = '#94a3b8';
+    } else {
+        if (activeBox) activeBox.style.display = 'block';
+        if (naBox) naBox.style.display = 'none';
+        if (cardInv) {
+            cardInv.style.background = '#ffffff';
+            cardInv.style.borderColor = '#e2e8f0';
+        }
+        if (accentInv) accentInv.style.background = '#2563eb';
+
+        var invSpent = data.investment ? data.investment.disbursed : 0;
+        var invNet = data.investment ? data.investment.netBudget : 0;
+        var rInv = data.investment ? data.investment.spentPercent : 0;
+        if (document.getElementById('fin-val-investment')) document.getElementById('fin-val-investment').innerText = rInv + '%';
+        if (document.getElementById('fin-bar-investment')) document.getElementById('fin-bar-investment').style.width = Math.min(100, rInv) + '%';
+        if (document.getElementById('fin-capex-summary-txt')) {
+            document.getElementById('fin-capex-summary-txt').innerText = 'งบลงทุนสุทธิ ฿' + Number(invNet).toLocaleString('th-TH') + ' (เบิกจริง ฿' + Number(invSpent).toLocaleString('th-TH') + ')';
+        }
+
+        var bInv = document.getElementById('fin-badge-investment');
+        if (bInv) {
+            if (rInv >= bm.investment[2]) {
+                bInv.innerText = '🌟 ขั้นสูง (Excellent)';
+                bInv.style.background = '#d1fae5';
+                bInv.style.color = '#059669';
+            } else if (rInv >= bm.investment[1]) {
+                bInv.innerText = '⭐ ผ่านเกณฑ์มาตรฐาน';
+                bInv.style.background = '#dbeafe';
+                bInv.style.color = '#1d4ed8';
+            } else if (rInv >= bm.investment[0]) {
+                bInv.innerText = '⚠️ ขั้นต่ำ';
+                bInv.style.background = '#fef3c7';
+                bInv.style.color = '#d97706';
+            } else {
+                bInv.innerText = '🚨 ต่ำกว่าเกณฑ์';
+                bInv.style.background = '#fee2e2';
+                bInv.style.color = '#dc2626';
+            }
+        }
+    }
+
+    // 5. Pillar 3: Policy Projects
+    var indPolicy = (data.indicators && data.indicators.policy) ? data.indicators.policy : {};
+    var rPolicy = indPolicy.rate != null ? indPolicy.rate : 100;
+    var polTotal = indPolicy.total || 0;
+    var polCompleted = indPolicy.completed || 0;
+
+    if (document.getElementById('fin-val-policy')) document.getElementById('fin-val-policy').innerText = rPolicy + '%';
+    if (document.getElementById('fin-bar-policy')) document.getElementById('fin-bar-policy').style.width = Math.min(100, rPolicy) + '%';
+    if (document.getElementById('fin-policy-summary-txt')) {
+        document.getElementById('fin-policy-summary-txt').innerText = 'โครงการตามนโยบายสำเร็จ ' + polCompleted + '/' + polTotal + ' โครงการ';
+    }
+    var bPolicy = document.getElementById('fin-badge-policy');
+    if (bPolicy) {
+        if (rPolicy >= bm.policy[1]) {
+            bPolicy.innerText = '🌟 บรรลุตามเป้าหมาย (100%)';
+            bPolicy.style.background = '#d1fae5';
+            bPolicy.style.color = '#059669';
+        } else if (rPolicy >= bm.policy[0]) {
+            bPolicy.innerText = '⭐ ผ่านเกณฑ์มาตรฐาน';
+            bPolicy.style.background = '#fef3c7';
+            bPolicy.style.color = '#d97706';
+        } else {
+            bPolicy.innerText = '⚠️ ยังไม่บรรลุเป้าหมาย';
+            bPolicy.style.background = '#fee2e2';
+            bPolicy.style.color = '#dc2626';
+        }
+    }
+
+    // 6. Pillar 4: Action Plan Projects
+    var indAction = (data.indicators && data.indicators.actionPlan) ? data.indicators.actionPlan : {};
+    var rAction = indAction.rate != null ? indAction.rate : 0;
+    var actTotal = indAction.total || 0;
+    var actCompleted = indAction.completed || 0;
+
+    if (document.getElementById('fin-val-action')) document.getElementById('fin-val-action').innerText = rAction + '%';
+    if (document.getElementById('fin-bar-action')) document.getElementById('fin-bar-action').style.width = Math.min(100, rAction) + '%';
+    if (document.getElementById('fin-action-summary-txt')) {
+        document.getElementById('fin-action-summary-txt').innerText = 'โครงการตามแผนฯ เสร็จสิ้น ' + actCompleted + '/' + actTotal + ' โครงการ';
+    }
+    var bAction = document.getElementById('fin-badge-action');
+    if (bAction) {
+        if (rAction >= bm.actionPlan[1]) {
+            bAction.innerText = '🌟 บรรลุเป้าหมาย (100%)';
+            bAction.style.background = '#d1fae5';
+            bAction.style.color = '#059669';
+        } else if (rAction >= bm.actionPlan[0]) {
+            bAction.innerText = '⭐ ผ่านเกณฑ์มาตรฐาน';
+            bAction.style.background = '#dbeafe';
+            bAction.style.color = '#1d4ed8';
+        } else {
+            bAction.innerText = '⚠️ กำลังดำเนินการ';
+            bAction.style.background = '#fef3c7';
+            bAction.style.color = '#d97706';
+        }
+    }
+
+    // 7. Executive Performance Index Calculation
+    var perfScore = 0;
+    var countPillars = 0;
+    perfScore += rOverall; countPillars++;
+    if (!isNoInv) { perfScore += rInv; countPillars++; }
+    perfScore += rPolicy; countPillars++;
+    perfScore += rAction; countPillars++;
+    var avgScore = countPillars > 0 ? (perfScore / countPillars).toFixed(2) : "0.00";
+
+    var elScore = document.getElementById('fin-strip-kps-score');
+    if (elScore) elScore.innerText = avgScore + '%';
+
+    var elLevel = document.getElementById('fin-strip-kps-level');
+    if (elLevel) {
+        if (avgScore >= 85) {
+            elLevel.innerText = 'สถานะ: เป็นไปตามเป้าหมาย (On-Track)';
+            elLevel.style.background = '#d1fae5';
+            elLevel.style.color = '#059669';
+        } else if (avgScore >= 70) {
+            elLevel.innerText = 'สถานะ: เฝ้าระวัง / เร่งรัด (Moderate)';
+            elLevel.style.background = '#fef3c7';
+            elLevel.style.color = '#d97706';
+        } else {
+            elLevel.innerText = 'สถานะ: ต้องเร่งรัดการเบิกจ่ายเร่งด่วน';
+            elLevel.style.background = '#fee2e2';
+            elLevel.style.color = '#dc2626';
+        }
+    }
+
+    // 8. S-Curve Chart & Dynamic Quarterly Legend
+    if (data.sCurve) {
+        renderFinancialSCurve(data.sCurve);
+        updateSCurveQuarterlyLegend(data.sCurve, data.benchmarks);
+    }
+
+    // 9. Tables: Group Breakdown & Policy Projects
+    populateFinGroupTable(data.groupBreakdown || []);
+    populateFinPolicyTable(data.policyProjects || []);
+}
+
+function updateSCurveQuarterlyLegend(sCurveData, benchmarks) {
+    if (!sCurveData) return;
+    var plan = sCurveData.plan || [5, 12, 20, 28, 38, 50, 60, 68, 74, 82, 90, 100];
+    var actual = sCurveData.actual || [];
+    var bm = benchmarks || { overall: [55, 74, 93] };
+
+    // Target Benchmarks
+    var tgtQ1 = (plan && plan[2] != null) ? plan[2] : 20;
+    var tgtQ2 = (plan && plan[5] != null) ? plan[5] : 50;
+    var tgtQ3 = (bm.overall && bm.overall[1] != null) ? bm.overall[1] : ((plan && plan[8] != null) ? plan[8] : 74);
+    var tgtQ4 = (bm.overall && bm.overall[2] != null) ? bm.overall[2] : ((plan && plan[11] != null) ? plan[11] : 93);
+
+    var quarters = [
+        { id: 'q1', tgt: tgtQ1, tgtText: tgtQ1 + '%', months: [0, 1, 2], name: 'Q1' },
+        { id: 'q2', tgt: tgtQ2, tgtText: tgtQ2 + '%', months: [3, 4, 5], name: 'Q2' },
+        { id: 'q3', tgt: tgtQ3, tgtText: tgtQ3 + '%', months: [6, 7, 8], name: 'Q3' },
+        { id: 'q4', tgt: tgtQ4, tgtText: tgtQ4 + '%+', months: [9, 10, 11], name: 'Q4' }
+    ];
+
+    quarters.forEach(function(q) {
+        var elTgt = document.getElementById('scurve-tgt-' + q.id);
+        var elAct = document.getElementById('scurve-act-' + q.id);
+        var elBadge = document.getElementById('scurve-badge-' + q.id);
+        var elBox = document.getElementById('scurve-box-' + q.id);
+
+        if (elTgt) elTgt.innerText = q.tgtText;
+
+        // Check latest non-null actual in this quarter
+        var qActual = null;
+        for (var i = q.months.length - 1; i >= 0; i--) {
+            var mIdx = q.months[i];
+            if (actual[mIdx] !== null && actual[mIdx] !== undefined) {
+                qActual = actual[mIdx];
+                break;
+            }
+        }
+
+        if (qActual !== null) {
+            if (elAct) elAct.innerText = Number(qActual).toFixed(1) + '%';
+            if (elBadge && elBox) {
+                if (qActual >= q.tgt) {
+                    elBadge.innerText = '🟢 ผ่านเป้า';
+                    elBadge.style.background = '#d1fae5';
+                    elBadge.style.color = '#059669';
+                    elBox.style.borderColor = '#86efac';
+                    elBox.style.background = '#f0fdf4';
+                } else {
+                    elBadge.innerText = '🔴 ต้องเร่งรัด';
+                    elBadge.style.background = '#fee2e2';
+                    elBadge.style.color = '#dc2626';
+                    elBox.style.borderColor = '#fca5a5';
+                    elBox.style.background = '#fef2f2';
+                }
+            }
+        } else {
+            if (elAct) elAct.innerText = '-';
+            if (elBadge && elBox) {
+                elBadge.innerText = '⏳ รอรอบประเมิน';
+                elBadge.style.background = '#f1f5f9';
+                elBadge.style.color = '#64748b';
+                elBox.style.borderColor = '#e2e8f0';
+                elBox.style.background = '#f8fafc';
+            }
+        }
+    });
+}
+
+function renderFinancialSCurve(sCurveData) {
+    if (typeof Chart === 'undefined') {
+        console.warn("Chart.js is not yet loaded");
+        return;
+    }
+    var canvas = document.getElementById('financialSCurveCanvas');
+    if (!canvas) return;
+
+    try {
+        if (financialSCurveChart && typeof financialSCurveChart.destroy === 'function') {
+            financialSCurveChart.destroy();
+        }
+
+        var ctx = canvas.getContext('2d');
+        var labels = sCurveData.labels || ['ต.ค.', 'พ.ย.', 'ธ.ค. (Q1)', 'ม.ค.', 'ก.พ.', 'มี.ค. (Q2)', 'เม.ย.', 'พ.ค.', 'มิ.ย. (Q3)', 'ก.ค.', 'ส.ค.', 'ก.ย. (Q4)'];
+        var planData = sCurveData.plan || [5, 12, 20, 28, 38, 50, 60, 68, 74, 82, 90, 100];
+        var actualData = sCurveData.actual || [];
+
+        financialSCurveChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'แผนการใช้จ่ายสะสม (Planned S-Curve)',
+                        data: planData,
+                        borderColor: '#94a3b8',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointBackgroundColor: '#94a3b8',
+                        pointRadius: 3,
+                        fill: false,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'ผลเบิกจ่ายจริง New GFMIS Thai (Actual)',
+                        data: actualData,
+                        borderColor: '#059669',
+                        borderWidth: 3,
+                        backgroundColor: 'rgba(5, 150, 105, 0.08)',
+                        pointBackgroundColor: '#059669',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var val = context.parsed.y;
+                                return (context.dataset.label || '') + ': ' + (val != null ? val.toFixed(1) + '%' : '-');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) { return value + '%'; },
+                            stepSize: 20
+                        },
+                        grid: {
+                            color: '#f1f5f9'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    } catch (err) {
+        console.error("renderFinancialSCurve error:", err);
+    }
+}
+
+function switchFinSubTab(tabName) {
+    var groupBtn = document.getElementById('subtab-fin-group-btn');
+    var policyBtn = document.getElementById('subtab-fin-policy-btn');
+    var groupContent = document.getElementById('subtab-fin-group-content');
+    var policyContent = document.getElementById('subtab-fin-policy-content');
+
+    if (tabName === 'group') {
+        if (groupContent) groupContent.style.display = 'block';
+        if (policyContent) policyContent.style.display = 'none';
+        if (groupBtn) {
+            groupBtn.style.background = '#ffffff';
+            groupBtn.style.color = '#1e4a2d';
+            groupBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+        }
+        if (policyBtn) {
+            policyBtn.style.background = 'transparent';
+            policyBtn.style.color = '#64748b';
+            policyBtn.style.boxShadow = 'none';
+        }
+    } else {
+        if (groupContent) groupContent.style.display = 'none';
+        if (policyContent) policyContent.style.display = 'block';
+        if (policyBtn) {
+            policyBtn.style.background = '#ffffff';
+            policyBtn.style.color = '#1e4a2d';
+            policyBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+        }
+        if (groupBtn) {
+            groupBtn.style.background = 'transparent';
+            groupBtn.style.color = '#64748b';
+            groupBtn.style.boxShadow = 'none';
+        }
+    }
+}
+
+function populateFinGroupTable(groups) {
+    var tbody = document.getElementById('fin-tbody-group');
+    if (!tbody) return;
+
+    if (!groups || groups.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 25px 10px;">ไม่มีข้อมูลกลุ่มงานสำหรับปีงบประมาณนี้</td></tr>';
+        return;
+    }
+
+    var html = '';
+    groups.forEach(function(g) {
+        var badgeClass = 'background: #dbeafe; color: #1d4ed8;';
+        if (g.rate >= 80) badgeClass = 'background: #d1fae5; color: #059669;';
+        else if (g.rate < 60) badgeClass = 'background: #fee2e2; color: #dc2626;';
+
+        html += '<tr style="border-bottom: 1px solid #f1f5f9;">' +
+            '<td style="padding: 8px 6px; font-weight: 600; color: #1e293b; word-break: break-word; overflow-wrap: break-word; line-height: 1.3;">' + safeTxt(g.name) + '</td>' +
+            '<td style="padding: 8px 6px; text-align: right; color: #475569; font-size: 11px; white-space: nowrap;">฿' + Number(g.budget || 0).toLocaleString('th-TH') + '</td>' +
+            '<td style="padding: 8px 6px; text-align: right; color: #059669; font-weight: 600; font-size: 11px; white-space: nowrap;">฿' + Number(g.spent || 0).toLocaleString('th-TH') + '</td>' +
+            '<td style="padding: 8px 4px; text-align: center;"><span style="display: inline-block; padding: 2px 6px; border-radius: 12px; font-size: 10.5px; font-weight: bold; ' + badgeClass + '">' + g.rate + '%</span></td>' +
+            '</tr>';
+    });
+    tbody.innerHTML = html;
+}
+
+function populateFinPolicyTable(projects) {
+    var tbody = document.getElementById('fin-tbody-policy');
+    if (!tbody) return;
+
+    if (!projects || projects.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #94a3b8; padding: 25px 10px;">ไม่มีโครงการที่ติดแท็ก "ตามนโยบาย/งบแลกเป้า" ในปีนี้</td></tr>';
+        return;
+    }
+
+    var html = '';
+    projects.forEach(function(p) {
+        var statusHtml = p.isAchieved 
+            ? '<span style="background: #d1fae5; color: #059669; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">✓ สำเร็จ 100%</span>'
+            : '<span style="background: #fef3c7; color: #d97706; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">⏳ กำลังดำเนินการ</span>';
+
+        html += '<tr style="border-bottom: 1px solid #f1f5f9;">' +
+            '<td style="padding: 8px 6px; word-break: break-word; overflow-wrap: break-word; line-height: 1.3;"><div style="font-weight: 600; color: #1e293b; font-size: 11.5px;">' + safeTxt(p.id) + '</div><div style="font-size: 11px; color: #64748b;">' + safeTxt(p.name) + ' (' + safeTxt(p.group || 'ไม่ระบุกลุ่มงาน') + ')</div></td>' +
+            '<td style="padding: 8px 6px; text-align: right; color: #475569; font-weight: 600; font-size: 11px; white-space: nowrap;">฿' + Number(p.budget || 0).toLocaleString('th-TH') + '</td>' +
+            '<td style="padding: 8px 4px; text-align: center;">' + statusHtml + '</td>' +
+            '</tr>';
+    });
+    tbody.innerHTML = html;
+}
+
+function openFinFormulaModal(topic) {
+    var modal = document.getElementById('fin-formula-modal');
+    var container = document.getElementById('fin-formula-content');
+    if (!modal || !container) return;
+
+    var sys = (lastFinancialDashboardData && lastFinancialDashboardData.benchmarks) ? lastFinancialDashboardData.benchmarks : { overall: [55, 74, 93], investment: [38, 56.5, 75], policy: [80, 100], actionPlan: [90, 100] };
+
+    var contentMap = {
+        overall: '<h4 style="margin-top:0; color:#059669; font-size:15px;">📐 สูตรการคำนวณ: อัตราการเบิกจ่ายงบประมาณภาพรวม</h4>' +
+            '<div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:12px;">' +
+            '<b>สูตร:</b> (ผลการเบิกจ่ายเงินสะสมในระบบ New GFMIS Thai ÷ งบประมาณรายจ่ายสุทธิหลังโอนเปลี่ยนแปลง) × 100' +
+            '</div>' +
+            '<h5 style="margin:12px 0 6px 0; color:#1e293b;">🎯 เกณฑ์การประเมิน (กำหนดใน SystemConfig):</h5>' +
+            '<ul style="margin-left:20px; line-height:1.7;">' +
+            '<li><b>ระดับต่ำกว่าเกณฑ์:</b> น้อยกว่า ' + sys.overall[0] + '%' + '</li>' +
+            '<li><b>ระดับขั้นต้น:</b> ' + sys.overall[0] + '% ขึ้นไป</li>' +
+            '<li><b>ระดับมาตรฐาน (ผ่านเกณฑ์):</b> ' + sys.overall[1] + '% ขึ้นไป</li>' +
+            '<li><b>ระดับขั้นสูง (เป้าหมายสูงสุด):</b> ' + sys.overall[2] + '% ขึ้นไป</li>' +
+            '</ul>',
+
+        investment: '<h4 style="margin-top:0; color:#2563eb; font-size:15px;">📐 สูตรการคำนวณ: การเบิกจ่ายงบลงทุน (CapEx)</h4>' +
+            '<div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:12px;">' +
+            '<b>สูตร:</b> (ผลการเบิกจ่ายงบลงทุนจริง ÷ งบลงทุนสุทธิหลังโอนเปลี่ยนแปลง) × 100' +
+            '</div>' +
+            '<h5 style="margin:12px 0 6px 0; color:#1e293b;">🎯 เกณฑ์การประเมิน (กำหนดใน SystemConfig):</h5>' +
+            '<ul style="margin-left:20px; line-height:1.7;">' +
+            '<li><b>ระดับขั้นต้น:</b> ' + sys.investment[0] + '% ขึ้นไป</li>' +
+            '<li><b>ระดับมาตรฐาน (ผ่านเกณฑ์):</b> ' + sys.investment[1] + '% ขึ้นไป</li>' +
+            '<li><b>ระดับขั้นสูง (เป้าหมายสูงสุด):</b> ' + sys.investment[2] + '% ขึ้นไป</li>' +
+            '</ul>' +
+            '<p style="margin-top:10px; font-size:12px; color:#64748b;">* ครอบคลุมเฉพาะหมวดงบลงทุน (ครุภัณฑ์, ที่ดิน และสิ่งก่อสร้าง)</p>',
+
+        investment_na: '<h4 style="margin-top:0; color:#64748b; font-size:15px;">🏛️ เกณฑ์ ก.พ.ร. กรณีหน่วยงานไม่มีการจัดสรรงบลงทุน (N/A)</h4>' +
+            '<div style="background:#eff6ff; padding:14px; border-radius:6px; border:1px solid #bfdbfe; margin-bottom:14px; color:#1e40af;">' +
+            '<b>ระเบียบและมาตรฐานการประเมินผล:</b><br>' +
+            'ในกรณีที่สำนักงานศึกษาธิการจังหวัดไม่ได้รับจัดสรรงบประมาณในหมวดงบลงทุนในปีงบประมาณนั้นๆ เกณฑ์ ก.พ.ร. และ สป.ศธ. กำหนดให้ <b>ยกเว้นการประเมิน (N/A)</b> โดยไม่นำมาตัดคะแนนเป็น 0' +
+            '</div>' +
+            '<p style="font-size:13px; color:#334155;">ระบบจะปรับน้ำหนักการประเมินไปคิดจากตัวชี้วัดด้านงบประมาณภาพรวมและผลสัมฤทธิ์โครงการแทนโดยอัตโนมัติ เพื่อรักษาความเป็นธรรมและความถูกต้องตามหลักเกณฑ์การบริหารราชการแผ่นดิน</p>',
+
+        policy: '<h4 style="margin-top:0; color:#d97706; font-size:15px;">📐 ความสำเร็จโครงการตามนโยบาย / งบแลกเป้า</h4>' +
+            '<div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:12px;">' +
+            '<b>สูตร:</b> (จำนวนโครงการตามนโยบายที่สำเร็จครบถ้วน ÷ จำนวนโครงการตามนโยบายทั้งหมดที่ได้รับอนุมัติ) × 100' +
+            '</div>' +
+            '<h5 style="margin:12px 0 6px 0; color:#1e293b;">เกณฑ์ตัดสินโครงการสำเร็จ:</h5>' +
+            '<ul style="margin-left:20px; line-height:1.7;">' +
+            '<li>1. ดำเนินกิจกรรมและเบิกจ่ายเงินงบประมาณครบ 100%</li>' +
+            '<li>2. ส่งรายงานผลการดำเนินงานและผลสัมฤทธิ์ตามตัวชี้วัดโครงการเรียบร้อย</li>' +
+            '<li>3. บรรลุเป้าหมายตามเกณฑ์มาตรฐาน ' + sys.policy[0] + '% และขั้นสูง ' + sys.policy[1] + '%</li>' +
+            '</ul>',
+
+        actionPlan: '<h4 style="margin-top:0; color:#1e4a2d; font-size:15px;">📐 ความสำเร็จโครงการตามแผนปฏิบัติราชการประจำปี</h4>' +
+            '<div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:12px;">' +
+            '<b>สูตร:</b> (จำนวนโครงการตามแผนฯ ที่เสร็จสิ้น ÷ จำนวนโครงการตามแผนฯ ทั้งหมดที่ได้รับอนุมัติ) × 100' +
+            '</div>' +
+            '<h5 style="margin:12px 0 6px 0; color:#1e293b;">เกณฑ์ตัดสินโครงการเสร็จสิ้น:</h5>' +
+            '<ul style="margin-left:20px; line-height:1.7;">' +
+            '<li>1. มีการเบิกจ่ายงบประมาณไม่น้อยกว่า 95% ของงบประมาณที่ได้รับอนุมัติ</li>' +
+            '<li>2. ส่งรายงานผลการดำเนินงานครบตามไตรมาสที่กำหนดในแผนงาน</li>' +
+            '<li>3. เป้าหมายมาตรฐาน ' + sys.actionPlan[0] + '% และขั้นสูง ' + sys.actionPlan[1] + '%</li>' +
+            '</ul>',
+
+        overview: '<h4 style="margin-top:0; color:#1e4a2d; font-size:15px;">🏛️ ภาพรวมเกณฑ์การประเมินประสิทธิภาพงบประมาณ (KPS Financial Framework)</h4>' +
+            '<p style="color:#475569;">แดชบอร์ดบริหารงบประมาณฉบับปรับปรุงนี้ พัฒนาขึ้นโดยใช้คำศัพท์ทางการเงินสากล (Universal Financial Terminology) เพื่อให้หน่วยงานสามารถใช้งานได้อย่างต่อเนื่องในทุกปีงบประมาณ โดยเชื่อมโยงฐานข้อมูล New GFMIS Thai และสมุดคุมเงินงบประมาณ</p>' +
+            '<div style="background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; margin-top:10px;">' +
+            '<b>เกณฑ์ปัจจุบันที่ตั้งค่าไว้ในระบบ:</b><br>' +
+            '• อัตราการเบิกจ่ายภาพรวม: ขั้นสูง ≥ ' + sys.overall[2] + '% (มาตรฐาน ≥ ' + sys.overall[1] + '%)<br>' +
+            '• งบลงทุน (CapEx): ขั้นสูง ≥ ' + sys.investment[2] + '% (มาตรฐาน ≥ ' + sys.investment[1] + '%)<br>' +
+            '• โครงการตามนโยบาย: ขั้นสูง = ' + sys.policy[1] + '% (มาตรฐาน ≥ ' + sys.policy[0] + '%)<br>' +
+            '• โครงการตามแผนฯ: ขั้นสูง = ' + sys.actionPlan[1] + '% (มาตรฐาน ≥ ' + sys.actionPlan[0] + '%)' +
+            '</div>'
+    };
+
+    container.innerHTML = contentMap[topic] || contentMap.overview;
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+}
+
+function closeFinFormulaModal() {
+    var modal = document.getElementById('fin-formula-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
+}
+
 function isRealIssue(txt) { if (!txt) return false; var t = txt.toString().replace(/[\s\-\.]/g, '').toLowerCase(); if (t === "" || t === "ไม่มี" || t === "ปกติ") return false; return true; }
 
 function loadOverviewData() {
@@ -6429,6 +7578,8 @@ function viewProjectDetails(projectId, scrollToId) {
         hideLoading(); 
         if(res.success) {
           var p = res.data; 
+          window.currentViewingProject = p;
+          window.currentViewingProject = p;
           var safeName = p.name ? p.name.replace(/"/g, '&quot;') : '';
           
           // เริ่มสร้างหน้าจอ
@@ -6469,7 +7620,19 @@ function viewProjectDetails(projectId, scrollToId) {
             // 📌 ส่วนงบประมาณ 
             html += `<div class="detail-box"><div class="detail-title">10. งบประมาณ (รวม ฿${Number(p.budget).toLocaleString()})</div><ul>`; 
             if(act.activities) { act.activities.forEach(a => html += `<li>${a.name} (${a.duration}) - ฿${Number(a.budget).toLocaleString()}</li>`); }
-            html += `</ul><br><b>11. แหล่งงบประมาณ:</b> ${act.budgetSource ? act.budgetSource.source + (act.budgetSource.detail ? " (" + act.budgetSource.detail + ")" : "") : "" }</div>`; 
+            var tagsHtml = '';
+            if (p.isInvestmentBudget) tagsHtml += `<span class="badge" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-size:12px; font-weight:700;">🏢 งบลงทุน (CapEx)</span> `;
+            if (p.isTargetExchange) tagsHtml += `<span class="badge" style="background:#fef3c7; color:#b45309; border:1px solid #fde68a; font-size:12px; font-weight:700;">🎯 งบแลกเป้าหมาย</span> `;
+            else tagsHtml += `<span class="badge" style="background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; font-size:12px;">📋 โครงการตามแผนฯ</span> `;
+
+            var cardBadge = p.budgetCardNo ? `<span class="badge" style="background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; font-size:12px; font-weight:700;">💳 บัตร ${safeTxt(p.budgetCardNo)}</span>` : `<span style="color:#94a3b8; font-size:12px;">(ยังไม่ระบุบัตร)</span>`;
+            var currentUser = sessionStorage.getItem('eMENSCR_User') || (document.getElementById('sidebar-username') ? document.getElementById('sidebar-username').innerText.trim() : '');
+            var currentRole = sessionStorage.getItem('eMENSCR_Role') || '';
+            var currentGroup = document.getElementById('sidebar-user-group') ? document.getElementById('sidebar-user-group').innerText.trim() : '';
+            var canLinkBudgetCard = (currentRole === 'Admin') || (currentRole === 'Executive') || (currentRole === 'Finance') || (currentGroup.indexOf('การเงิน') > -1) || (currentGroup.indexOf('อำนวยการ') > -1);
+            var cardActionBtn = canLinkBudgetCard ? `<button onclick="promptLinkBudgetCard('${p.id}', '${p.year || '2569'}', '${p.budgetCardNo || ''}')" style="background:#0284c7; color:white; border:none; padding:4px 10px; font-size:11px; border-radius:4px; cursor:pointer; margin-left:8px; font-weight:600;">⚙️ ผูก/เปลี่ยนบัตร</button>` : '';
+
+            html += `</ul><br><b>11. แหล่งงบประมาณ:</b> ${act.budgetSource ? act.budgetSource.source + (act.budgetSource.detail ? " (" + act.budgetSource.detail + ")" : "") : "" }<br><div style="margin-top:8px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;"><b>การจำแนกประเภท:</b> ${tagsHtml} &nbsp;|&nbsp; <b>บัตรงบประมาณ:</b> ${cardBadge} ${cardActionBtn}</div></div>`; 
           } 
           if(p.risks) { 
             var rsk = JSON.parse(p.risks); 
@@ -6593,7 +7756,7 @@ function viewProjectDetails(projectId, scrollToId) {
               <div class="admin-only-ui" style="margin-top:20px; padding:20px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; text-align:center;">
                   <h4 style="margin-top:0; color:#1e4a2d; margin-bottom:15px; font-size:16px;">⚙️ จัดการสถานะโครงการ (เฉพาะ Admin)</h4>
                   <div style="display:flex; flex-direction:column; gap:10px;">
-                      <button onclick="updateProjectStatus('${p.id}', 'อนุมัติ')" style="background:#22c55e; color:white; border:none; padding:12px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:14px; width:100%;">✅ อนุมัติโครงการ</button>
+                      <button onclick="updateProjectStatus('${p.id}', 'อนุมัติ', '${p.year || ''}')" style="background:#22c55e; color:white; border:none; padding:12px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:14px; width:100%;">✅ อนุมัติโครงการ</button>
                       <button onclick="updateProjectStatus('${p.id}', 'ส่งกลับแก้ไข')" style="background:#eab308; color:white; border:none; padding:12px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:14px; width:100%;">⚠️ ส่งกลับแก้ไข</button>
                   </div>
               </div>`;
@@ -6637,9 +7800,36 @@ function viewProjectDetails(projectId, scrollToId) {
       }).getProjectById(sessionStorage.getItem('eMENSCR_Token'), projectId); 
 }
 // ==========================================
+// 🌟 ฟังก์ชันระบุปีงบประมาณของโครงการอัจฉริยะ (Smart Year Resolver)
+// ==========================================
+function resolveProjectYear(projectId, hintYear) {
+    if (hintYear && String(hintYear).trim() !== "" && String(hintYear).trim() !== "undefined" && String(hintYear).trim() !== "null") {
+        return String(hintYear).trim();
+    }
+    if (window.currentViewingProject && window.currentViewingProject.id === projectId && window.currentViewingProject.year) {
+        return String(window.currentViewingProject.year).trim();
+    }
+    if (Array.isArray(globalAdminProjects)) {
+        var found = globalAdminProjects.find(function(p) { return p.id === projectId; });
+        if (found && found.year) return String(found.year).trim();
+    }
+    if (projectId) {
+        var match = String(projectId).match(/(?:PRJ-)?(25\d{2})/i);
+        if (match && match[1]) return match[1];
+    }
+    var adminFilterYear = document.getElementById('admin-filter-year') ? document.getElementById('admin-filter-year').value : '';
+    if (adminFilterYear && adminFilterYear !== 'all') return adminFilterYear;
+    var globalYear = document.getElementById('global-year-filter') ? document.getElementById('global-year-filter').value : '';
+    if (globalYear && globalYear !== 'all') return globalYear;
+    var trackYear = document.getElementById('track-year') ? document.getElementById('track-year').value : '';
+    if (trackYear && trackYear !== 'all') return trackYear;
+    return "2570";
+}
+
+// ==========================================
 // ฟังก์ชันจัดการสถานะโครงการ (เฉพาะ Admin) - รูปแบบ SweetAlert2
 // ==========================================
-function updateProjectStatus(projectId, newStatus) {
+function updateProjectStatus(projectId, newStatus, projectYear) {
     if (newStatus === "ส่งกลับแก้ไข") { 
         Swal.fire({
           title: 'ระบุเหตุผลการส่งกลับแก้ไข',
@@ -6651,8 +7841,59 @@ function updateProjectStatus(projectId, newStatus) {
           confirmButtonColor: '#eab308',
           inputValidator: (value) => { if (!value) return 'กรุณาระบุเหตุผลให้ผู้เสนอโครงการทราบ!' }
         }).then((result) => {
-          if (result.isConfirmed) { processUpdateProjectStatus(projectId, newStatus, result.value); }
+          if (result.isConfirmed) { processUpdateProjectStatus(projectId, newStatus, result.value, ""); }
         });
+    } else if (newStatus === "อนุมัติ") {
+        showLoading("กำลังโหลดข้อมูลบัตรงบประมาณ...");
+        var token = sessionStorage.getItem('eMENSCR_Token');
+        var resolvedYear = resolveProjectYear(projectId, projectYear);
+        google.script.run.withSuccessHandler(function(res) {
+            hideLoading();
+            var cards = (res && res.success && res.data) ? res.data : [];
+            var cardOpts = '<option value="">-- ไม่ระบุบัตรในตอนนี้ (กำหนดภายหลังได้) --</option>';
+            cards.forEach(function(c) {
+                var balStr = Number(c.balance || 0).toLocaleString();
+                var balLabel = (c.balance <= 0) ? ' (⚠️ งบเต็ม/คงเหลือ ฿0)' : ` (คงเหลือ ฿${balStr})`;
+                cardOpts += `<option value="${c.cardNo}" ${(c.balance <= 0) ? 'style="color:#94a3b8;"' : ''}>บัตร ${c.cardNo}: ${c.itemName}${balLabel}</option>`;
+            });
+            
+            Swal.fire({
+              title: 'ยืนยันการอนุมัติโครงการ?',
+              html: `
+                <p style="font-size:13px; color:#475569; margin-bottom:12px; text-align:left;">
+                  โครงการนี้จะได้รับการอนุมัติ ท่านสามารถเลือกผูกกับ <b>บัตรงบประมาณ (Budget Card)</b> ที่จะใช้ตัดยอดเบิกจ่ายได้ทันที:
+                </p>
+                <div style="text-align:left; margin-bottom:6px;">
+                  <label style="font-size:12px; font-weight:700; color:#1e293b;">💳 เลือกบัตรงบประมาณที่จะตัดเงิน (ประจำปีงบประมาณ ${resolvedYear}):</label>
+                  <select id="swal-approval-card" class="swal2-input" style="font-size:13px; width:100%; box-sizing:border-box; margin:6px 0 0 0; padding:8px;">
+                    ${cardOpts}
+                  </select>
+                </div>
+              `,
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonText: 'ยืนยันอนุมัติ',
+              cancelButtonText: 'ยกเลิก',
+              confirmButtonColor: '#16a34a'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                var selCard = document.getElementById('swal-approval-card') ? document.getElementById('swal-approval-card').value : "";
+                processUpdateProjectStatus(projectId, newStatus, "", selCard);
+              }
+            });
+        }).withFailureHandler(function() {
+            hideLoading();
+            Swal.fire({
+              title: 'ยืนยันการอนุมัติโครงการนี้?',
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonText: 'ยืนยัน',
+              cancelButtonText: 'ยกเลิก',
+              confirmButtonColor: '#16a34a'
+            }).then((result) => {
+              if (result.isConfirmed) { processUpdateProjectStatus(projectId, newStatus, "", ""); }
+            });
+        }).getActiveBudgetCards(token, resolvedYear);
     } else { 
         Swal.fire({
           title: `ยืนยันการ${newStatus}โครงการนี้?`,
@@ -6662,15 +7903,15 @@ function updateProjectStatus(projectId, newStatus) {
           cancelButtonText: 'ยกเลิก',
           confirmButtonColor: '#16a34a'
         }).then((result) => {
-          if (result.isConfirmed) { processUpdateProjectStatus(projectId, newStatus, ""); }
+          if (result.isConfirmed) { processUpdateProjectStatus(projectId, newStatus, "", ""); }
         });
     } 
 }
 
 // ==========================================
-// ฟังก์ชันหลังบ้านสำหรับบันทึกค่าสถานะ (ส่งค่า Comment ไปให้ Code.gs)
+// ฟังก์ชันหลังบ้านสำหรับบันทึกค่าสถานะ (ส่งค่า Comment และ cardNo ไปให้ Code.gs)
 // ==========================================
-function processUpdateProjectStatus(projectId, newStatus, comment) {
+function processUpdateProjectStatus(projectId, newStatus, comment, cardNo) {
     var token = sessionStorage.getItem('eMENSCR_Token');
     showLoading("กำลังบันทึกสถานะใหม่..."); // เด้งหน้าจอโหลดเต็มจอ
     google.script.run.withSuccessHandler(function(res) {
@@ -6679,14 +7920,67 @@ function processUpdateProjectStatus(projectId, newStatus, comment) {
             Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: `บันทึกสถานะโครงการเป็น '${newStatus}' เรียบร้อยแล้ว!`, timer: 2000, showConfirmButton: false });
             viewProjectDetails(projectId); // รีโหลดหน้ารายละเอียดปัจจุบัน
             
-            // ป้องกัน Error ถ้าหน้าที่กำลังอยู่ไม่ได้โหลดตารางนั้นๆ ไว้
             if (typeof loadAdminData === 'function') loadAdminData();
             if (typeof loadProjectsData === 'function') loadProjectsData();
             if (typeof fetchNotifications === 'function') fetchNotifications();
         } else {
             showAlert('เกิดข้อผิดพลาด', res.message, 'error');
         }
-    }).adminUpdateProjectStatus(token, projectId, newStatus, comment); // 🌟 เรียกชื่อตรงกับใน Code.gs และส่ง Comment
+    }).adminUpdateProjectStatus(token, projectId, newStatus, comment, cardNo || "");
+}
+
+// 🌟 ฟังก์ชันกำหนด/เปลี่ยนบัตรงบประมาณของโครงการ
+function promptLinkBudgetCard(projectId, year, currentCardNo) {
+    var token = sessionStorage.getItem('eMENSCR_Token');
+    var resolvedYear = resolveProjectYear(projectId, year);
+    showLoading("กำลังโหลดข้อมูลบัตร...");
+    google.script.run.withSuccessHandler(function(res) {
+        hideLoading();
+        var cards = (res && res.success && res.data) ? res.data : [];
+        var cardOpts = `<option value="" ${!currentCardNo ? 'selected' : ''}>-- ไม่ผูกบัตร (ยกเลิกการผูก) --</option>`;
+        cards.forEach(function(c) {
+            var isSel = (String(c.cardNo).trim() === String(currentCardNo).trim()) ? 'selected' : '';
+            var balStr = Number(c.balance || 0).toLocaleString();
+            var balLabel = (c.balance <= 0) ? ' (⚠️ งบเต็ม/คงเหลือ ฿0)' : ` (คงเหลือ ฿${balStr})`;
+            cardOpts += `<option value="${c.cardNo}" ${isSel} ${(c.balance <= 0) ? 'style="color:#94a3b8;"' : ''}>บัตร ${c.cardNo}: ${c.itemName}${balLabel}</option>`;
+        });
+
+        Swal.fire({
+            title: `กำหนดบัตรงบประมาณของโครงการ (ปี ${resolvedYear})`,
+            html: `
+                <p style="font-size:13px; color:#475569; margin-bottom:12px; text-align:left;">
+                    ระบุบัตรที่จะใช้ในการเบิกจ่ายสำหรับโครงการ <b>${projectId}</b>:
+                </p>
+                <div style="text-align:left;">
+                    <select id="swal-link-card-select" class="swal2-input" style="font-size:13px; width:100%; box-sizing:border-box; margin:6px 0 0 0; padding:8px;">
+                        ${cardOpts}
+                    </select>
+                </div>
+            `,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'บันทึกการผูกบัตร',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#0284c7'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var selCard = document.getElementById('swal-link-card-select') ? document.getElementById('swal-link-card-select').value : "";
+                showLoading("กำลังบันทึกการผูกบัตร...");
+                google.script.run.withSuccessHandler(function(saveRes) {
+                    hideLoading();
+                    if (saveRes.success) {
+                        Swal.fire({ icon: 'success', title: 'สำเร็จ', text: saveRes.message, timer: 1500, showConfirmButton: false });
+                        viewProjectDetails(projectId);
+                    } else {
+                        showAlert('ผิดพลาด', saveRes.message, 'error');
+                    }
+                }).updateProjectBudgetCard(token, projectId, selCard);
+            }
+        });
+    }).withFailureHandler(function(err) {
+        hideLoading();
+        showAlert('ผิดพลาด', 'ไม่สามารถโหลดข้อมูลบัตรงบประมาณได้', 'error');
+    }).getActiveBudgetCards(token, resolvedYear);
 }
     // 📌 สคริปต์สำหรับกดพื้นหลังแล้วปิดหน้าต่างกระดิ่งแจ้งเตือน
     document.addEventListener('click', function(event) {
@@ -6705,7 +7999,10 @@ function processUpdateProjectStatus(projectId, newStatus, comment) {
     });
 function openProjectForm(forceDraft = false) {
       switchAppSection('project-form'); document.getElementById('breadcrumb-text').innerText = "หน้าแรก / โครงการ / เสนอโครงการ"; document.getElementById('page-title-text').innerText = "ฟอร์มเสนอโครงการ"; 
-      setVal('form-proj-id', ""); setVal('form-proj-name', ""); setVal('form-rationale', "");setVal('form-objective', ""); setVal('form-output', ""); setVal('form-outcome', "");setVal('form-expected-result', ""); setVal('kpi-quan', ""); setVal('kpi-qual', ""); setVal('form-target', ""); setVal('form-risk', ""); setVal('form-risk-manage', ""); setVal('form-budget-detail', ""); 
+      setVal('form-proj-id', ""); setVal('form-proj-name', ""); setVal('form-rationale', "");setVal('form-objective', ""); setVal('form-output', ""); setVal('form-outcome', "");setVal('form-expected-result', ""); setVal('kpi-quan', ""); setVal('kpi-qual', ""); setVal('form-target', ""); setVal('form-risk', ""); setVal('form-risk-manage', ""); setVal('form-budget-detail', "");
+      if (document.getElementById('form-proj-is-investment')) document.getElementById('form-proj-is-investment').checked = false;
+      if (document.getElementById('form-proj-is-target')) document.getElementById('form-proj-is-target').checked = false;
+      if (document.getElementById('form-proj-source-fund')) document.getElementById('form-proj-source-fund').value = "งบประมาณแผ่นดิน"; 
       document.getElementById('form-file-word').value = ""; document.getElementById('existing-file-word').innerHTML = ""; document.getElementById('form-file-pdf').value = "";  document.getElementById('existing-file-pdf').innerHTML = ""; 
       document.getElementById('activity-table-body').innerHTML = ""; activityCount = 0; currentTotalBudget = 0; calculateTotalBudget(); addActivityRow(); 
       document.getElementById('amendment-table-body').innerHTML = ""; 
@@ -6789,6 +8086,9 @@ function openEditProjectForm(projectId) {
             if(p.activitiesAndBudget) { 
                 var actBudgData = JSON.parse(p.activitiesAndBudget); 
                 if(actBudgData.budgetSource) { setVal('form-budget-source', actBudgData.budgetSource.source || "งบดำเนินงาน"); setVal('form-budget-detail', actBudgData.budgetSource.detail || ""); } 
+            if (document.getElementById('form-proj-is-investment')) document.getElementById('form-proj-is-investment').checked = !!p.isInvestmentBudget;
+            if (document.getElementById('form-proj-is-target')) document.getElementById('form-proj-is-target').checked = !!p.isTargetExchange;
+            if (document.getElementById('form-proj-source-fund')) document.getElementById('form-proj-source-fund').value = p.sourceOfFund || "งบประมาณแผ่นดิน";
                 if(actBudgData.activities && actBudgData.activities.length > 0) { 
                     actBudgData.activities.forEach(function(act) { 
                         addActivityRow(); var row = document.getElementById('act-row-' + activityCount); 
@@ -7017,7 +8317,13 @@ function openEditProjectForm(projectId) {
       pData.strategies = strats; 
       var acts = []; document.getElementById('activity-table-body').querySelectorAll('tr').forEach(function(row) { var aN = row.querySelector('.act-name').value; var mStart = row.querySelector('.act-start-month').value; var mEnd = row.querySelector('.act-end-month').value; var durationTxt = (mStart || mEnd) ? (mStart + " - " + mEnd) : ""; if(aN) acts.push({ name: aN, duration: durationTxt, budget: Number(row.querySelector('.act-budget').value) }); }); 
       if(acts.length === 0) { hideLoading(); showAlert("แจ้งเตือน", "ระบุอย่างน้อย 1 กิจกรรม", "warning"); return; } 
-      pData.activities = acts; pData.budgetSource = { source: document.getElementById('form-budget-source') ? document.getElementById('form-budget-source').value : "งบดำเนินงาน", detail: document.getElementById('form-budget-detail') ? document.getElementById('form-budget-detail').value : "" }; pData.kpis = { quantitative: document.getElementById('kpi-quan').value, qualitative: document.getElementById('kpi-qual').value }; pData.risks = { risk: document.getElementById('form-risk').value, management: document.getElementById('form-risk-manage').value }; 
+      pData.activities = acts;
+      pData.budgetSource = { source: document.getElementById('form-budget-source') ? document.getElementById('form-budget-source').value : "งบดำเนินงาน", detail: document.getElementById('form-budget-detail') ? document.getElementById('form-budget-detail').value : "" };
+      pData.isInvestmentBudget = document.getElementById('form-proj-is-investment') ? document.getElementById('form-proj-is-investment').checked : false;
+      pData.isTargetExchange = document.getElementById('form-proj-is-target') ? document.getElementById('form-proj-is-target').checked : false;
+      pData.sourceOfFund = document.getElementById('form-proj-source-fund') ? document.getElementById('form-proj-source-fund').value : "งบประมาณแผ่นดิน";
+      pData.kpis = { quantitative: document.getElementById('kpi-quan').value, qualitative: document.getElementById('kpi-qual').value };
+      pData.risks = { risk: document.getElementById('form-risk').value, management: document.getElementById('form-risk-manage').value }; 
       var handleSuccess = function(res) {
         hideLoading(); // 📌 ปิดหน้าจอโหลด
         if(res.success) { 
@@ -7523,7 +8829,7 @@ function renderAdminTables() {
         var chkBox = role === "Admin" ? `<input type="checkbox" class="chk-bulk-proj" value="${p.id}">` : ``;
         var actionBtns = `<div style="display:flex; flex-direction:column; gap:5px; align-items:center; width:100%; min-width:80px;">`;
         if(role === "Admin" && p.status === 'รออนุมัติ') { 
-            actionBtns += `<button onclick="updateProjectStatus('${p.id}', 'อนุมัติ')" style="background:#16a34a; color:white; padding:6px; font-size:12px; border:none; border-radius:4px; width:100%; margin:0; cursor:pointer;">✅ อนุมัติ</button>`;
+            actionBtns += `<button onclick="updateProjectStatus('${p.id}', 'อนุมัติ', '${p.year || ''}')" style="background:#16a34a; color:white; padding:6px; font-size:12px; border:none; border-radius:4px; width:100%; margin:0; cursor:pointer;">✅ อนุมัติ</button>`;
             actionBtns += `<button onclick="updateProjectStatus('${p.id}', 'ส่งกลับแก้ไข')" style="background:#eab308; color:white; padding:6px; font-size:12px; border:none; border-radius:4px; width:100%; margin:0; cursor:pointer;">⚠️ ส่งกลับแก้ไข</button>`; 
         }
         actionBtns += `<button onclick="viewProjectDetails('${p.id}')" style="background:#f3f4f6; color:#333; padding:6px; font-size:12px; border:1px solid #ddd; border-radius:4px; width:100%; margin:0; cursor:pointer;">🔍 ดูข้อมูล</button>`;
@@ -11030,6 +12336,7 @@ function openLedger(cardNo, itemName) {
     document.getElementById('led-date').valueAsDate = new Date();
     
     cancelEditLedger(); // เคลียร์โหมดแก้ไขทุกครั้งที่เปิดใหม่
+    populateCardProjectDropdown(cardNo, document.getElementById('track-year') ? document.getElementById('track-year').value : '');
     reloadLedgerTable();
 }
 
@@ -11067,6 +12374,10 @@ function reloadLedgerTable() {
             document.getElementById('led-metadoc').value = m.metaDoc || ""; 
             document.getElementById('led-subaccount').value = m.subAccount || "";
             document.getElementById('led-subowner').value = m.subOwner || "";
+            var bTypeVal = m.budgetType || "operating";
+            if (bTypeVal === "policy") bTypeVal = "operating";
+            if (document.getElementById('led-budgettype')) document.getElementById('led-budgettype').value = bTypeVal;
+            populateCardProjectDropdown(activeLedgerCard, year, m.projectId || "");
 
             var ledgerTransferNet = 0;
             res.data.forEach(function(tx) {
@@ -11191,6 +12502,7 @@ function editLedgerTx(txId) {
     document.getElementById('led-desc').value = tx.description || "";
     document.getElementById('led-type').value = tx.type;
     document.getElementById('led-amount').value = tx.amount.toLocaleString(undefined, {minimumFractionDigits:2});
+    if (document.getElementById('led-projectid')) document.getElementById('led-projectid').value = tx.projectId || "";
     
     editingLedgerTxId = txId; // ล็อกเป้าหมายที่กำลังแก้
     
@@ -11228,6 +12540,7 @@ function cancelEditLedger() {
     editingLedgerTxId = null;
     document.getElementById('led-desc').value = ""; 
     document.getElementById('led-amount').value = "";
+    if (document.getElementById('led-projectid')) document.getElementById('led-projectid').value = "";
     
     // คืนค่าปุ่มกลับเป็นสีเขียว
     var btn = document.querySelector('button[onclick="submitLedgerTransaction()"]');
@@ -11275,7 +12588,9 @@ function saveCardInfo() {
         fundSource: document.getElementById('led-fundsource').value,
         metaDoc: document.getElementById('led-metadoc').value,
         subAccount: document.getElementById('led-subaccount').value,
-        subOwner: document.getElementById('led-subowner').value
+        subOwner: document.getElementById('led-subowner').value,
+        budgetType: document.getElementById('led-budgettype') ? document.getElementById('led-budgettype').value : "operating",
+        projectId: document.getElementById('led-card-projectid') ? document.getElementById('led-card-projectid').value : ""
     };
     var year = document.getElementById('track-year').value;
     showLoading("กำลังบันทึกข้อมูลบัตร...");
@@ -11299,7 +12614,8 @@ function submitLedgerTransaction() {
     var payload = {
         cardNo: activeLedgerCard, year: document.getElementById('track-year').value,
         date: date, month: document.getElementById('led-month').value, docNo: docNo, dikaNo: document.getElementById('led-dikano').value.trim(),
-        description: desc, type: document.getElementById('led-type').value, amount: amount
+        description: desc, type: document.getElementById('led-type').value, amount: amount,
+        projectId: document.getElementById('led-card-projectid') ? document.getElementById('led-card-projectid').value.trim() : ""
     };
 
     var titleTxt = editingLedgerTxId ? 'ยืนยันการแก้ไขรายการ?' : 'ยืนยันการบันทึกรายการ?';
@@ -12319,8 +13635,8 @@ if (oitIsAdmin) {
     
     if (item.webUrl && (item.status === 'ตรวจเรียบร้อยแล้ว' || item.status === 'สมบูรณ์-ขึ้นเว็บแล้ว' || item.status === 'ผ่าน/ขึ้นเว็บแล้ว')) {
         let safeUrl = item.webUrl;
-if (safeUrl && !safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) {
-    safeUrl = 'https://' + safeUrl;
+if (safeUrl && !safeUrl.startsWith('http:\x2F\x2F') && !safeUrl.startsWith('https:\x2F\x2F')) {
+    safeUrl = 'https:\x2F\x2F' + safeUrl;
 }
 actionBtn += `<a href="${safeUrl}" target="_blank" style="display:block; width:100%; text-align:center; text-decoration:none; background:#6366f1; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:bold; box-shadow:0 1px 2px rgba(0,0,0,0.1); box-sizing:border-box; margin-top:5px;">🌐 เปิดหน้าเว็บ</a>`;
     }
@@ -12862,7 +14178,7 @@ function openOitViewModal(oitId) {
     let urlBox = document.getElementById('vw-url-box');
     if (item.webUrl) {
         let safeUrl = item.webUrl;
-        if (!safeUrl.startsWith('http://') && !safeUrl.startsWith('https://')) safeUrl = 'https://' + safeUrl;
+        if (!safeUrl.startsWith('http:\x2F\x2F') && !safeUrl.startsWith('https:\x2F\x2F')) safeUrl = 'https:\x2F\x2F' + safeUrl;
         document.getElementById('vw-url-link').href = safeUrl;
 try {
     document.getElementById('vw-url-link').innerText = decodeURIComponent(safeUrl);
@@ -13033,8 +14349,8 @@ function doReviewOitTask() {
     let publishStatus = document.getElementById('mdl-rev-publish') ? document.getElementById('mdl-rev-publish').value : "ยังไม่ได้เผยแพร่บนเว็บไซต์";
         // ✅ ใหม่ — auto เติม https:// ถ้าลืมใส่
     let url = document.getElementById('mdl-rev-url').value.trim();
-    if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
-        url = 'https://' + url;
+    if (url && !url.startsWith('http:\x2F\x2F') && !url.startsWith('https:\x2F\x2F')) {
+        url = 'https:\x2F\x2F' + url;
     }
     let comment = document.getElementById('mdl-rev-comment').value;
 
@@ -18884,6 +20200,89 @@ function refreshEisIframe() {
         }
     }
 }
+
+// 🌟 ฟังก์ชันโหลดตัวเลือกโครงการสำหรับใส่ในช่องข้อมูลกำกับบัตร (Custom Styled Dropdown)
+function populateCardProjectDropdown(cardNo, currentYear, selectedProjectId) {
+    var selectEl = document.getElementById('led-card-projectid');
+    if (!selectEl) return;
+    
+    var token = sessionStorage.getItem('eMENSCR_Token');
+    var cYear = currentYear || (document.getElementById('track-year') ? document.getElementById('track-year').value : "2570");
+    
+    google.script.run.withSuccessHandler(function(res) {
+        var projs = (res && res.success && res.data) ? res.data : (Array.isArray(res) ? res : []);
+        var yearProjs = projs.filter(function(p) { return !p.year || String(p.year) === String(cYear); });
+        
+        var targetPid = selectedProjectId || "";
+        if (!targetPid) {
+            var linked = yearProjs.find(function(p) { return String(p.budgetCardNo || '').trim() === String(cardNo).trim(); });
+            if (linked) targetPid = linked.id;
+        }
+
+        var html = '<option value="">-- ไม่ผูกโครงการ (งบดำเนินงานทั่วไป / งบส่วนกลาง) --</option>';
+        var activeProjName = "";
+        
+        yearProjs.forEach(function(p) {
+            var isSel = (p.id === targetPid);
+            if (isSel) activeProjName = p.name;
+            var isCardLinked = (String(p.budgetCardNo || '').trim() === String(cardNo).trim());
+            var star = isCardLinked ? '⭐ ' : '';
+            html += '<option value="' + p.id + '" ' + (isSel ? 'selected' : '') + '>' + star + '[' + p.id + '] ' + p.name + '</option>';
+        });
+        selectEl.innerHTML = html;
+
+        updateLedgerCardProjectBadge(targetPid, activeProjName);
+    }).getPublicProjects(token);
+}
+
+function updateLedgerCardProjectBadge(projectId, projectName) {
+    var badge = document.getElementById('led-card-proj-badge');
+    var txInfo = document.getElementById('led-tx-proj-info');
+    var txName = document.getElementById('led-tx-proj-name');
+    
+    if (projectId) {
+        if (badge) {
+            badge.innerText = projectId;
+            badge.classList.remove('hidden');
+        }
+        if (txInfo && txName) {
+            txName.innerText = projectName ? ('[' + projectId + '] ' + projectName) : projectId;
+            txInfo.style.display = 'block';
+        }
+    } else {
+        if (badge) {
+            badge.innerText = '';
+            badge.classList.add('hidden');
+        }
+        if (txInfo) {
+            txInfo.style.display = 'none';
+        }
+    }
+}
+
+// ผูกอีเวนต์เปลี่ยนค่าใน Dropdown ผูกโครงการ ให้ Badge อัปเดตทันที
+document.addEventListener('change', function(e) {
+    if (e.target && e.target.id === 'led-card-projectid') {
+        var selOpt = e.target.options[e.target.selectedIndex];
+        var pid = e.target.value;
+        var pname = pid ? (selOpt ? selOpt.text.replace(/^[⭐\s]*\[[^\]]+\]\s*/, '') : '') : '';
+        updateLedgerCardProjectBadge(pid, pname);
+    }
+});
+
+// Backward-compatible shim
+function populateLedgerProjectDatalist(cardNo) {
+    var cYear = document.getElementById('track-year') ? document.getElementById('track-year').value : "2570";
+    populateCardProjectDropdown(cardNo, cYear);
+}
+
+function handleBudgetSourceChange(val) {
+    var invCheckbox = document.getElementById('form-proj-is-investment');
+    if (!invCheckbox) return;
+    if (val === 'งบลงทุน' || (val && val.indexOf('งบลงทุน') > -1)) {
+        invCheckbox.checked = true;
+    }
+}
 </script>
 
 
@@ -18963,6 +20362,27 @@ document.querySelectorAll(".auto-logo-img").forEach(e => e.src = APP_LOGO_B64);
       </div>
       <div id="transfer-msg" class="loading" style="margin-top:10px;"></div>
     </div>
+  </div>
+
+<!-- ========================================== -->
+<!-- MODAL: FORMULA & BENCHMARKS CRITERIA -->
+<!-- ========================================== -->
+<div id="fin-formula-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px;" onclick="if(event.target === this) closeFinFormulaModal();">
+  <div style="background: white; width: 100%; max-width: 680px; max-height: 85vh; border-radius: 10px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); display: flex; flex-direction: column;">
+    <div style="background: #1e4a2d; color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="margin: 0; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        ℹ️ สูตรการคำนวณและเกณฑ์การประเมินผลสัมฤทธิ์
+      </h3>
+      <button onclick="closeFinFormulaModal()" style="background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center;">✕</button>
+    </div>
+    <div id="fin-formula-content" style="padding: 24px; overflow-y: auto; font-size: 13px; color: #334155; line-height: 1.6;">
+      <!-- Content populated dynamically -->
+    </div>
+    <div style="padding: 12px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end;">
+      <button onclick="closeFinFormulaModal()" style="background: #64748b; color: white; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px;">ปิดหน้าต่าง</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 
