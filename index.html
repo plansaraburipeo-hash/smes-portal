@@ -1266,7 +1266,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
         <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
         สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
         <span style="font-size: 11px; opacity: 0.8;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.8.0 (Build 72)</small>
+        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.8.1 (Build 73)</small>
       </div>
     </div>
     
@@ -3350,7 +3350,6 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
       <textarea id="sys-line-access-token" rows="3" placeholder="กรอก Long-lived Access Token" style="width:100%;padding:8px;border:1px solid #93c5fd;border-radius:4px;font-size:12px;box-sizing:border-box;font-family:monospace;"></textarea>
     </div>
   </div>
-</div>
 
   <!-- Inline LINE Logs Panel -->
   <div id="line-logs-panel" style="display:none; margin-top:20px; border-top:1px dashed #93c5fd; padding-top:15px;">
@@ -4847,7 +4846,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
           สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
           <span style="font-size: 11px; color: #94a3b8; display: inline-block; margin-top: 5px;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.8.0 (Build 72)</small>
+          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.8.1 (Build 73)</small>
         </div>
       </div>
       <button id="btn-back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 9999; border: none; outline: none; background-color: #f59e0b; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s; width: 50px; height: 50px; align-items: center; justify-content: center;">
@@ -12655,7 +12654,24 @@ function saveBudgetAllocation(statusMode) {
             showLoading("กำลังบันทึก...");
             google.script.run.withSuccessHandler(function(res) {
                 hideLoading();
-                if(res.success) { Swal.fire('สำเร็จ', 'บันทึกเรียบร้อย', 'success').then(() => { loadBudgetPlanningData(); }); }
+                if(res && res.success) { 
+                    Swal.fire('สำเร็จ', 'บันทึกเรียบร้อย', 'success').then(() => { loadBudgetPlanningData(); }); 
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ไม่สามารถบันทึกได้',
+                        html: (res && res.message) ? res.message : 'เกิดข้อผิดพลาดในการบันทึกข้อมูลจัดสรรงบประมาณ',
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            }).withFailureHandler(function(err) {
+                hideLoading();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'การเชื่อมต่อขัดข้อง',
+                    text: (err && err.message) ? err.message : 'เกิดข้อผิดพลาดจากเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง',
+                    confirmButtonColor: '#ef4444'
+                });
             }).saveBudgetPlanningData(sessionStorage.getItem('eMENSCR_Token'), payload);
         }
     });
