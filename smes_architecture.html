@@ -2185,6 +2185,66 @@
     var el = document.getElementById('zoom-container');
     if (el) el.style.transform = 'scale(1)';
   }
+
+  function switchViewMode(mode) {
+    var archLayers = document.getElementById('section-arch-layers');
+    var workflowSection = document.getElementById('section-workflow-orchestration');
+    var btnAll = document.getElementById('btn-view-all');
+    var btnArch = document.getElementById('btn-view-arch');
+    var btnFlow = document.getElementById('btn-view-flow');
+
+    if (btnAll) btnAll.classList.remove('active', 'primary');
+    if (btnArch) btnArch.classList.remove('active', 'primary');
+    if (btnFlow) btnFlow.classList.remove('active', 'primary');
+
+    if (mode === 'all') {
+      if (archLayers) archLayers.style.display = '';
+      if (workflowSection) workflowSection.style.display = '';
+      if (btnAll) btnAll.classList.add('active');
+    } else if (mode === 'arch') {
+      if (archLayers) archLayers.style.display = '';
+      if (workflowSection) workflowSection.style.display = 'none';
+      if (btnArch) btnArch.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (mode === 'flow') {
+      if (archLayers) archLayers.style.display = 'none';
+      if (workflowSection) workflowSection.style.display = '';
+      if (btnFlow) btnFlow.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function filterWorkflowModule(moduleId) {
+    var tabs = ['tab-all', 'tab-orch', 'tab-ext', 'tab-policy', 'tab-hr', 'tab-admin', 'tab-support'];
+    tabs.forEach(function(t) {
+      var el = document.getElementById(t);
+      if (el) el.classList.remove('active');
+    });
+
+    var activeBtn = document.getElementById('tab-' + moduleId);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    var sections = {
+      'orch': document.getElementById('sec-orch'),
+      'ext': document.getElementById('sec-ext'),
+      'policy': document.getElementById('sec-policy'),
+      'hr': document.getElementById('sec-hr'),
+      'admin': document.getElementById('sec-admin'),
+      'support': document.getElementById('sec-support')
+    };
+
+    if (moduleId === 'all') {
+      Object.keys(sections).forEach(function(k) {
+        if (sections[k]) sections[k].style.display = 'block';
+      });
+    } else {
+      Object.keys(sections).forEach(function(k) {
+        if (sections[k]) {
+          sections[k].style.display = (k === moduleId) ? 'block' : 'none';
+        }
+      });
+    }
+  }
 </script>
 </body>
 </html>
