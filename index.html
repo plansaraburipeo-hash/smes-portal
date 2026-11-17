@@ -1367,13 +1367,44 @@
   }
 
   /* ------------------------------------------- */
+  /* 🔄 SWEETALERT2 LOADER & KEYFRAMES           */
+  /* ------------------------------------------- */
+  div:where(.swal2-container) .swal2-loader,
+  .swal2-loader {
+      -webkit-animation: swal2-rotate-loading 1.5s linear infinite !important;
+      animation: swal2-rotate-loading 1.5s linear infinite !important;
+      will-change: transform !important;
+      -webkit-transform: translateZ(0) !important;
+      transform: translateZ(0) !important;
+  }
+
+  @keyframes swal2-rotate-loading {
+      0% {
+          transform: rotate(0deg);
+          -webkit-transform: rotate(0deg);
+      }
+      100% {
+          transform: rotate(360deg);
+          -webkit-transform: rotate(360deg);
+      }
+  }
+  @-webkit-keyframes swal2-rotate-loading {
+      0% {
+          -webkit-transform: rotate(0deg);
+      }
+      100% {
+          -webkit-transform: rotate(360deg);
+      }
+  }
+
+  /* ------------------------------------------- */
   /* ♿ ACCESSIBILITY & BATTERY EFFICIENCY       */
   /* ------------------------------------------- */
   @media (prefers-reduced-motion: reduce) {
       /* ปิดหรือลดความเคลื่อนไหวสำหรับ Decorative Motion (การเลื่อน, การขยาย, ทรานซิชันทั่วไป) */
-      *:not(.swal2-loader):not(.swal2-loader *):not([class*="spin"]):not([class*="spinner"]):not([class*="loader"]):not(.smes-spinning),
-      *:not(.swal2-loader):not(.swal2-loader *):not([class*="spin"]):not([class*="spinner"]):not([class*="loader"]):not(.smes-spinning)::before,
-      *:not(.swal2-loader):not(.swal2-loader *):not([class*="spin"]):not([class*="spinner"]):not([class*="loader"]):not(.smes-spinning)::after {
+      *:not(.swal2-container):not(.swal2-container *):not(.swal2-loader):not(.swal2-loader *):not([class*="spin"]):not([class*="spinner"]):not([class*="loader"]):not(.smes-spinning),
+      *:not(.swal2-container):not(.swal2-container *):not(.swal2-loader):not(.swal2-loader *):not([class*="spin"]):not([class*="spinner"]):not([class*="loader"]):not(.smes-spinning)::before,
+      *:not(.swal2-container):not(.swal2-container *):not(.swal2-loader):not(.swal2-loader *):not([class*="spin"]):not([class*="spinner"]):not([class*="loader"]):not(.smes-spinning)::after {
           animation-duration: 0.01ms !important;
           animation-iteration-count: 1 !important;
           transition-duration: 0.01ms !important;
@@ -1387,22 +1418,44 @@
           animation: none !important;
       }
 
-      /* 🛡️ FUNCTIONAL LOADING INDICATORS EXEMPTION (วงล้อหมุนต้องทำงานต่อเนื่องเสมอ) */
-      div:where(.swal2-container) div:where(.swal2-loader),
-      .swal2-loader,
-      .smes-spinning,
-      [class*="spin"],
-      [class*="spinner"],
-      [class*="loader"] {
-          animation-duration: initial !important;
+      /* 🛡️ FUNCTIONAL LOADING INDICATORS EXEMPTION (วงล้อหมุนต้องทำงานต่อเนื่องเสมอ ทั้ง iOS/Safari และทุกเบราว์เซอร์) */
+      div:where(.swal2-container) .swal2-loader,
+      .swal2-loader {
+          display: flex !important;
+          animation: swal2-rotate-loading 1.5s linear infinite !important;
+          -webkit-animation: swal2-rotate-loading 1.5s linear infinite !important;
+          animation-duration: 1.5s !important;
+          -webkit-animation-duration: 1.5s !important;
           animation-iteration-count: infinite !important;
+          -webkit-animation-iteration-count: infinite !important;
           animation-play-state: running !important;
+          -webkit-animation-play-state: running !important;
+          will-change: transform !important;
+          transform: translateZ(0) !important;
+          -webkit-transform: translateZ(0) !important;
       }
+
       .smes-spinning {
           animation: smesSpin 0.8s ease-in-out infinite !important;
+          -webkit-animation: smesSpin 0.8s ease-in-out infinite !important;
+          will-change: transform !important;
+          transform: translateZ(0) !important;
+          -webkit-transform: translateZ(0) !important;
       }
+
       .loading {
           animation: pulseLoading 1.5s ease-in-out infinite !important;
+          -webkit-animation: pulseLoading 1.5s ease-in-out infinite !important;
+      }
+
+      [class*="spinner"],
+      [class*="spin"],
+      [class*="loader"]:not(.swal2-loader) {
+          animation-iteration-count: infinite !important;
+          -webkit-animation-iteration-count: infinite !important;
+          animation-play-state: running !important;
+          -webkit-animation-play-state: running !important;
+          will-change: transform !important;
       }
   }
 </style>
@@ -1440,7 +1493,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
         <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
         สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
         <span style="font-size: 11px; opacity: 0.8;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.10.3 (Build 79)</small>
+        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.10.4 (Build 80)</small>
       </div>
     </div>
     
@@ -5048,7 +5101,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
           สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
           <span style="font-size: 11px; color: #94a3b8; display: inline-block; margin-top: 5px;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.10.3 (Build 79)</small>
+          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.10.4 (Build 80)</small>
         </div>
       </div>
       <button id="btn-back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 9999; border: none; outline: none; background-color: #f59e0b; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s; width: 50px; height: 50px; align-items: center; justify-content: center;">
