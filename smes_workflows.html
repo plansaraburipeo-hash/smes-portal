@@ -945,6 +945,45 @@
           <text x="1040" y="136" fill="#9333ea" font-size="9" font-weight="700" text-anchor="middle">Admin อนุมัติ ➔ คืนยอดเดิม</text>
         </svg>
       </div>
+
+      <!-- คำอธิบายกระบวนการ 1.2: Financial Integrity Guard (v2.11.0) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-4 text-xs">
+        <div class="p-3.5 rounded-xl border border-sky-500/30 bg-sky-500/10 flex flex-col gap-1.5">
+          <div class="font-bold text-sky-600 dark:text-sky-300 text-sm flex items-center gap-1.5">
+            <span>🛡️</span> 1. Pre-Transaction Guard
+          </div>
+          <div class="text-slate-600 dark:text-slate-300">
+            สกัดกั้นงบติดลบ 100% ที่ระดับ Backend: ตรวจสอบ Balance ก่อนหักเงินใน saveLedgerTransaction และ saveBudgetTransferBatch พร้อมดักจับรายการเบิกจ่ายซ้ำซ้อนภายใน 10 นาที
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex flex-col gap-1.5">
+          <div class="font-bold text-emerald-600 dark:text-emerald-300 text-sm flex items-center gap-1.5">
+            <span>🔍</span> 2. Continuous Reconciliation
+          </div>
+          <div class="text-slate-600 dark:text-slate-300">
+            ยึด TransactionLedger เป็น Single Source of Truth (SSOT) ตรวจสอบความสอดคล้องกับชีท Budgets ทั้งยอดเบิกสะสมและคงเหลือ คำนวณผลต่าง (Discrepancy) แบบ Real-time
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 flex flex-col gap-1.5">
+          <div class="font-bold text-amber-600 dark:text-amber-300 text-sm flex items-center gap-1.5">
+            <span>⚡</span> 3. 1-Click Self-Healing Tool
+          </div>
+          <div class="text-slate-600 dark:text-slate-300">
+            เครื่องมือปรับยอดย้อนกลับอัตโนมัติ: มี Pre-flight Checklist สรุปยอดก่อนปรับ และอัปเดตชีท Budgets ให้ตรงกับ Ledger จริง 100% ภายใต้ LockService พร้อมล้างแคช SmesCache ทันที
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 flex flex-col gap-1.5">
+          <div class="font-bold text-rose-600 dark:text-rose-300 text-sm flex items-center gap-1.5">
+            <span>📱</span> 4. Targeted LINE Flex Alert
+          </div>
+          <div class="text-slate-600 dark:text-slate-300">
+            แจ้งเตือนความผิดปกติอย่างคุ้มค่าโควต้า: ไม่ส่งหากระบบปกติ (0 Quota) และยิงตรงเฉพาะผู้ดูแลระบบ (Admin) และเจ้าหน้าที่การเงินเท่านั้น เมื่อตรวจพบความคลาดเคลื่อนจากการตรวจสอบ
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 1.3 ติดตามรายงานผลไตรมาส (SVG Flowchart) -->
