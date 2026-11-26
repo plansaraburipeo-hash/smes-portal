@@ -1567,7 +1567,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
         <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
         สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
         <span style="font-size: 11px; opacity: 0.8;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.12.0 (Build 87)</small>
+        <small id="portal-version-tag-login" style="color:#94a3b8; font-size:11px;">v2.13.0 (Build 88)</small>
       </div>
     </div>
     
@@ -5515,7 +5515,7 @@ var APP_LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeIAAAHiCAYAAA
           <b>S-MES</b> ระบบบริหารจัดการและประเมินผลเชิงยุทธศาสตร์<br>
           สงวนลิขสิทธิ์ &copy; 2026 สำนักงานศึกษาธิการจังหวัดสระบุรี<br>
           <span style="font-size: 11px; color: #94a3b8; display: inline-block; margin-top: 5px;">ออกแบบและพัฒนาระบบโดย : กลุ่มนโยบายและแผน</span><br>
-          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.12.0 (Build 87)</small>
+          <small id="portal-version-tag" style="color:#94a3b8; font-size:11px;">v2.13.0 (Build 88)</small>
         </div>
       </div>
       <button id="btn-back-to-top" onclick="scrollToTop()" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 9999; border: none; outline: none; background-color: #f59e0b; color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background-color 0.3s; width: 50px; height: 50px; align-items: center; justify-content: center;">
@@ -19557,6 +19557,225 @@ function filterComplaintsTable() {
   renderComplaintsTable(filtered);
 }
 
+// ==========================================
+// [HELPER] แปลง URL Google Drive ให้อยู่ในรูปแบบ Preview IFrame ที่ฝังในเว็บได้
+// ==========================================
+function getGoogleDrivePreviewUrl(url) {
+  if (!url) return '';
+  var idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/) || url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (idMatch && idMatch[1]) {
+    return 'https://drive.google.com/file/d/' + idMatch[1] + '/preview';
+  }
+  return url;
+}
+
+// ==========================================
+// [HELPER] เรนเดอร์ลิงก์หลักฐานแนบเรื่องร้องเรียน (In-App Interactive Preview Gallery)
+// ==========================================
+function formatEvidenceHtml(evidenceRaw) {
+  if (!evidenceRaw || typeof evidenceRaw !== 'string' || evidenceRaw.trim() === '' || evidenceRaw.trim() === '-') {
+    return '<span style="color: #94a3b8;">-</span>';
+  }
+
+  // ค้นหา URLs ทั้งหมดที่ขึ้นต้นด้วย http:// หรือ https://
+  var urlRegex = /(https?:\/\/[^\s,;"'<>]+)/gi;
+  var urls = [];
+  var match;
+  while ((match = urlRegex.exec(evidenceRaw)) !== null) {
+    var cleanUrl = match[1].replace(/[.,;)]+$/, '').trim();
+    if (cleanUrl) {
+      urls.push(cleanUrl);
+    }
+  }
+
+  // หากไม่มี URL ให้แสดงเป็นข้อความ safeTxt ธรรมดา
+  if (urls.length === 0) {
+    return safeTxt(evidenceRaw);
+  }
+
+  var previewUrls = urls.map(function(u) { return getGoogleDrivePreviewUrl(u); });
+  var encodedUrls = encodeURIComponent(JSON.stringify(urls));
+  var encodedPreviews = encodeURIComponent(JSON.stringify(previewUrls));
+
+  var html = '<div class="evidence-container" data-urls="' + encodedUrls + '" data-previews="' + encodedPreviews + '" data-current="0" style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">';
+
+  // 1. แถบปุ่มเลือกไฟล์ (Evidence Chips)
+  html += '<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">';
+
+  var baseChipStyle = 'display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.15s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04);';
+  var activeChipStyle = baseChipStyle + ' background: #2563eb; color: #ffffff; border: 1px solid #1d4ed8; font-weight: 700;';
+  var inactiveChipStyle = baseChipStyle + ' background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 500;';
+
+  urls.forEach(function(url, idx) {
+    var label = urls.length === 1 ? '📄 ไฟล์หลักฐาน' : '📄 หลักฐานที่ ' + (idx + 1);
+    var style = (idx === 0) ? activeChipStyle : inactiveChipStyle;
+    html += '<button type="button" class="evidence-chip-btn" data-index="' + idx + '" onclick="switchEvidencePreview(this, ' + idx + ')" style="' + style + '" title="คลิกเพื่อพรีวิวไฟล์ที่ ' + (idx + 1) + '">';
+    html += label + '</button>';
+  });
+
+  // ปุ่มเปิด/ซ่อนพรีวิว
+  var toggleBtnStyle = 'display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s ease; margin-left: auto;';
+  html += '<button type="button" class="evidence-toggle-btn" onclick="toggleEvidencePreview(this)" style="' + toggleBtnStyle + '" title="ซ่อนหรือแสดงกล่องพรีวิว">';
+  html += '<span class="evidence-toggle-icon">👁️</span> <span class="evidence-toggle-text">ซ่อนพรีวิว</span></button>';
+
+  html += '</div>';
+
+  // 2. กล่องแสดงพรีวิว (Interactive In-App Viewer Box)
+  html += '<div class="evidence-preview-box" style="display: block; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">';
+  
+  // แถบควบคุมบนหัวกรอบพรีวิว
+  html += '  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9;">';
+  html += '    <div class="evidence-preview-label" style="font-weight: 700; font-size: 13px; color: #1e40af; display: flex; align-items: center; gap: 6px;">';
+  html += '      <i class="fas fa-file-alt"></i> <span>ไฟล์ที่ 1 จาก ' + urls.length + '</span>';
+  html += '    </div>';
+
+  // ปุ่มสลับหน้า (เฉพาะเมื่อมีมากกว่า 1 ไฟล์)
+  if (urls.length > 1) {
+    html += '    <div style="display: flex; gap: 6px; align-items: center;">';
+    html += '      <button type="button" class="evidence-nav-prev" onclick="stepEvidencePreview(this, -1)" disabled style="padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: not-allowed; border: 1px solid #cbd5e1; background: #f8fafc; color: #94a3b8; opacity: 0.6;">◀ ก่อนหน้า</button>';
+    html += '      <button type="button" class="evidence-nav-next" onclick="stepEvidencePreview(this, 1)" style="padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #93c5fd; background: #eff6ff; color: #1d4ed8;">ถัดไป ▶</button>';
+    html += '    </div>';
+  }
+
+  // ปุ่มเปิดไฟล์ในแท็บใหม่ (เปิดเดี่ยว ไม่มีโดนบล็อกแน่นอน)
+  var safeFirstHref = encodeURI(urls[0]).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  html += '    <div>';
+  html += '      <a class="evidence-preview-ext-btn" href="' + safeFirstHref + '" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; background: #f8fafc; color: #2563eb; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.15s ease;" title="เปิดเอกสารที่กำลังดูอยู่นี้ในหน้าต่างใหม่แบบเต็ม">';
+  html += '        <span>เปิดในแท็บใหม่</span> <span style="font-size: 11px;">↗</span></a>';
+  html += '    </div>';
+  html += '  </div>';
+
+  // กรอบ IFrame พรีวิว
+  html += '  <div style="position: relative; width: 100%; height: 420px; background: #f8fafc; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; margin-top: 8px;">';
+  html += '    <iframe class="evidence-preview-iframe" src="' + previewUrls[0] + '" width="100%" height="100%" style="border: none; display: block;" allow="autoplay" loading="lazy"></iframe>';
+  html += '  </div>';
+  html += '</div>';
+
+  // 3. ตรวจสอบว่ามีข้อความอื่นที่ไม่ใช่ URL อยู่ด้วยหรือไม่ (เช่น หมายเหตุเพิ่มเติม)
+  var textOnly = evidenceRaw.replace(urlRegex, '').replace(/[\s,;]+/g, ' ').trim();
+  if (textOnly && textOnly !== '-' && textOnly.length > 1) {
+    html += '<div style="font-size: 12px; color: #64748b; margin-top: 2px;">หมายเหตุ: ' + safeTxt(textOnly) + '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+// สลับการพรีวิวไฟล์ตาม index ที่เลือก
+function switchEvidencePreview(chipEl, targetIndex) {
+  var container = chipEl.closest ? chipEl.closest('.evidence-container') : chipEl.parentElement.parentElement;
+  if (!container || !container.dataset) return;
+
+  try {
+    var urls = JSON.parse(decodeURIComponent(container.dataset.urls));
+    var previews = JSON.parse(decodeURIComponent(container.dataset.previews));
+    if (!urls || targetIndex < 0 || targetIndex >= urls.length) return;
+
+    container.dataset.current = targetIndex;
+
+    // 1. อัปเดตสไตล์ของปุ่มชิป
+    var chips = container.querySelectorAll('.evidence-chip-btn');
+    chips.forEach(function(btn, idx) {
+      if (idx === targetIndex) {
+        btn.style.background = '#2563eb';
+        btn.style.color = '#ffffff';
+        btn.style.borderColor = '#1d4ed8';
+        btn.style.fontWeight = '700';
+      } else {
+        btn.style.background = '#eff6ff';
+        btn.style.color = '#1d4ed8';
+        btn.style.borderColor = '#bfdbfe';
+        btn.style.fontWeight = '500';
+      }
+    });
+
+    // 2. แสดงกล่องพรีวิวหากถูกซ่อนอยู่
+    var previewBox = container.querySelector('.evidence-preview-box');
+    var toggleBtn = container.querySelector('.evidence-toggle-btn');
+    if (previewBox && previewBox.style.display === 'none') {
+      previewBox.style.display = 'block';
+      if (toggleBtn) {
+        var iconEl = toggleBtn.querySelector('.evidence-toggle-icon');
+        var textEl = toggleBtn.querySelector('.evidence-toggle-text');
+        if (iconEl) iconEl.textContent = '👁️';
+        if (textEl) textEl.textContent = 'ซ่อนพรีวิว';
+      }
+    }
+
+    // 3. อัปเดตข้อความหัวข้อไฟล์
+    var labelEl = container.querySelector('.evidence-preview-label span');
+    if (labelEl) {
+      labelEl.textContent = 'ไฟล์ที่ ' + (targetIndex + 1) + ' จาก ' + urls.length;
+    }
+
+    // 4. อัปเดตปุ่มก่อนหน้า/ถัดไป
+    var prevBtn = container.querySelector('.evidence-nav-prev');
+    var nextBtn = container.querySelector('.evidence-nav-next');
+    if (prevBtn) {
+      var isFirst = (targetIndex === 0);
+      prevBtn.disabled = isFirst;
+      prevBtn.style.cursor = isFirst ? 'not-allowed' : 'pointer';
+      prevBtn.style.opacity = isFirst ? '0.6' : '1';
+      prevBtn.style.background = isFirst ? '#f8fafc' : '#eff6ff';
+      prevBtn.style.color = isFirst ? '#94a3b8' : '#1d4ed8';
+      prevBtn.style.borderColor = isFirst ? '#cbd5e1' : '#93c5fd';
+    }
+    if (nextBtn) {
+      var isLast = (targetIndex === urls.length - 1);
+      nextBtn.disabled = isLast;
+      nextBtn.style.cursor = isLast ? 'not-allowed' : 'pointer';
+      nextBtn.style.opacity = isLast ? '0.6' : '1';
+      nextBtn.style.background = isLast ? '#f8fafc' : '#eff6ff';
+      nextBtn.style.color = isLast ? '#94a3b8' : '#1d4ed8';
+      nextBtn.style.borderColor = isLast ? '#cbd5e1' : '#93c5fd';
+    }
+
+    // 5. อัปเดตลิงก์เปิดในแท็บใหม่
+    var extBtn = container.querySelector('.evidence-preview-ext-btn');
+    if (extBtn) {
+      extBtn.href = urls[targetIndex];
+    }
+
+    // 6. อัปเดต IFrame URL
+    var iframe = container.querySelector('.evidence-preview-iframe');
+    if (iframe && iframe.src !== previews[targetIndex]) {
+      iframe.src = previews[targetIndex];
+    }
+  } catch (err) {
+    console.error('Error switching evidence preview:', err);
+  }
+}
+
+// สลับไฟล์พรีวิวก่อนหน้า/ถัดไป
+function stepEvidencePreview(btnEl, delta) {
+  var container = btnEl.closest ? btnEl.closest('.evidence-container') : btnEl.parentElement.parentElement;
+  if (!container || !container.dataset) return;
+  var current = parseInt(container.dataset.current || '0', 10);
+  var target = current + delta;
+  var chips = container.querySelectorAll('.evidence-chip-btn');
+  if (chips && chips[target]) {
+    switchEvidencePreview(chips[target], target);
+  }
+}
+
+// เปิด/ปิดการแสดงผลกล่องพรีวิว
+function toggleEvidencePreview(btnEl) {
+  var container = btnEl.closest ? btnEl.closest('.evidence-container') : btnEl.parentElement.parentElement;
+  if (!container) return;
+  var previewBox = container.querySelector('.evidence-preview-box');
+  if (!previewBox) return;
+
+  var isHidden = (previewBox.style.display === 'none');
+  previewBox.style.display = isHidden ? 'block' : 'none';
+
+  var iconEl = btnEl.querySelector('.evidence-toggle-icon');
+  var textEl = btnEl.querySelector('.evidence-toggle-text');
+  if (iconEl && textEl) {
+    iconEl.textContent = isHidden ? '👁️' : '📁';
+    textEl.textContent = isHidden ? 'ซ่อนพรีวิว' : 'ดูพรีวิวเอกสาร';
+  }
+}
+
 function openComplaintModal(trackingId) {
   var item = globalComplaintsData.find(function(c) { return c.trackingId === trackingId; });
   if (!item) return;
@@ -19565,14 +19784,7 @@ function openComplaintModal(trackingId) {
   var contentDiv = document.getElementById('complaint-detail-content');
   if (!contentDiv) return;
   
-  var evidenceHtml = '-';
-  if (item.evidence && item.evidence.trim() !== '') {
-    if (item.evidence.indexOf('http') === 0) {
-      evidenceHtml = '<a href="' + item.evidence + '" target="_blank" style="color: #2563eb; font-weight: bold; text-decoration: underline;">🔗 คลิกเปิดดูหลักฐานแนบ</a>';
-    } else {
-      evidenceHtml = safeTxt(item.evidence);
-    }
-  }
+  var evidenceHtml = formatEvidenceHtml(item.evidence);
   
   var html = '';
   var cS = 'background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;';
@@ -19615,7 +19827,7 @@ function openComplaintModal(trackingId) {
   
   html += '<div style="grid-column: span 2; ' + cS + '">';
   html += '  <p style="' + lS + '">หลักฐานแนบเพิ่มเติม</p>';
-  html += '  <p style="' + vS + '">' + evidenceHtml + '</p>';
+  html += '  <div style="' + vS + '">' + evidenceHtml + '</div>';
   html += '</div>';
 
   html += '<div style="' + cS + '">';
@@ -19785,14 +19997,7 @@ function openCorruptModal(trackingId) {
   var contentDiv = document.getElementById('corrupt-detail-content');
   if (!contentDiv) return;
   
-  var evidenceHtml = '-';
-  if (item.evidence && item.evidence.trim() !== '') {
-    if (item.evidence.indexOf('http') === 0) {
-      evidenceHtml = '<a href="' + item.evidence + '" target="_blank" style="color: #2563eb; font-weight: bold; text-decoration: underline;">🔗 คลิกเปิดดูหลักฐานแนบ</a>';
-    } else {
-      evidenceHtml = safeTxt(item.evidence);
-    }
-  }
+  var evidenceHtml = formatEvidenceHtml(item.evidence);
   
   var html = '';
   var cS = 'background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;';
@@ -19835,7 +20040,7 @@ function openCorruptModal(trackingId) {
   
   html += '<div style="grid-column: span 2; ' + cS + '">';
   html += '  <p style="' + lS + '">หลักฐานแนบเพิ่มเติม</p>';
-  html += '  <p style="' + vS + '">' + evidenceHtml + '</p>';
+  html += '  <div style="' + vS + '">' + evidenceHtml + '</div>';
   html += '</div>';
 
   html += '<div style="' + cS + '">';
